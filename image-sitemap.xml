@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
+    <loc>https://pusoai.online/photos/community-photo-community_p_mwnrxj7g_jxxwdz/</loc>
+    <image:image>
+      <image:loc>https://bgteingwoenkzfublqkr.supabase.co/storage/v1/object/public/photogram/media/community_p_mwnrxj7g_jxxwdz-mwnrzzup.jpg</image:loc>
+      <image:title>Red Apple Photo</image:title>
+      <image:caption>A red apple image from the PusoAI public gallery. Explore more colorful still-life and creative images.</image:caption>
+    </image:image>
+  </url>
+  <url>
     <loc>https://pusoai.online/photos/community-photo-community_p_mw0tf682_ff03tl/</loc>
     <image:image>
       <image:loc>https://bgteingwoenkzfublqkr.supabase.co/storage/v1/object/public/photogram/media/community_p_mw0tf682_ff03tl-mw0tgpyw.jpg</image:loc>
