@@ -118,6 +118,8 @@ jobs:
           }
 
           function buildSeoTitle(photo) {
+            // Legacy dog upload was imported with a placeholder name; keep its URL stable but give it a useful SEO title.
+            if (String(photo.id) === 'community_p_mw0db6l2_ot8wwn') return 'Dog Photo';
             const original = cleanText(photo.name);
             if (/^community\s+user[- ]?upload$/i.test(original)) {
               const legacyText = cleanText([photo.caption, photo.tags].filter(Boolean).join(' ')).toLowerCase();
@@ -166,6 +168,9 @@ jobs:
 
           function buildDescription(photo) {
             const title = buildSeoTitle(photo);
+            if (title === 'Dog Photo') {
+              return 'A dog photo from the PusoAI public gallery. Explore more animal images and creative photography.';
+            }
             if (title === 'Dog Photo') {
               return 'A dog photo from the PusoAI public gallery. Explore more animal images and creative photography.';
             }
