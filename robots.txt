@@ -1,0 +1,15 @@
+# PusoAI crawler guidance
+# Public site pages and assets may be crawled.
+User-agent: *
+Allow: /
+
+# Allow OpenAI search crawling so PusoAI can be considered for ChatGPT search.
+User-agent: OAI-SearchBot
+Allow: /
+
+# GPTBot is separate from search crawling and is disallowed by default here.
+# This does not block OAI-SearchBot or ordinary Google/Bing search crawling.
+User-agent: GPTBot
+Disallow: /
+
+Sitemap: https://pusoai.online/sitemap.xml
