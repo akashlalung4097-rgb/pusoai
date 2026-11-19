@@ -7,7 +7,7 @@ on:
     paths:
       - "index.html"
       - "sitemap.xml"
-      - "d2c5f9da-fb75-478b-9482-5603884f7745.txt"
+      - "3bb471a4632e682c1ee3ce7ac3044218bc09def9191f8f7679b68.txt"
       - ".github/workflows/indexnow.yml"
   workflow_dispatch:
 
@@ -20,7 +20,7 @@ jobs:
     steps:
       - name: Wait until GitHub Pages publishes the verification key
         env:
-          INDEXNOW_KEY: "d2c5f9da-fb75-478b-9482-5603884f7745"
+          INDEXNOW_KEY: "3bb471a4632e682c1ee3ce7ac3044218bc09def9191f8f7679b68"
         run: |
           key_url="https://pusoai.online/${INDEXNOW_KEY}.txt"
           for attempt in {1..20}; do
@@ -37,7 +37,7 @@ jobs:
 
       - name: Submit the PusoAI homepage to IndexNow
         env:
-          INDEXNOW_KEY: "d2c5f9da-fb75-478b-9482-5603884f7745"
+          INDEXNOW_KEY: "3bb471a4632e682c1ee3ce7ac3044218bc09def9191f8f7679b68"
         run: |
           payload="$(jq -n \
             --arg host "pusoai.online" \
