@@ -100,7 +100,7 @@ jobs:
           }
 
           const isGenericPhotoName = value =>
-            !value || /^(?:community\s+photo|pusoai\s+photo|photo|image|picture|untitled|upload|[.\- _]+)$/i.test(cleanText(value));
+            !value || /^(?:community\s+(?:user[- ]?)?(?:photo|upload)|user[- ]?upload|pusoai\s+photo|photo|image|picture|untitled|upload|[.\- _]+)$/i.test(cleanText(value));
 
           const isGenericCategory = value =>
             !value || /^(?:other|general|uncategorized|photo|photography)$/i.test(cleanText(value));
