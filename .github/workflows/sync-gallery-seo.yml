@@ -352,7 +352,7 @@ jobs:
         if: steps.commit.outputs.changed == 'true'
         shell: bash
         run: |
-          KEY_FILE="$(find . -maxdepth 1 -type f -name '*.txt' | head -n 1)"
+          KEY_FILE="$(find . -maxdepth 1 -type f -name '*.txt' ! -name 'llms.txt' ! -name 'robots.txt' | head -n 1)"
           if [ -z "$KEY_FILE" ]; then echo "IndexNow verification key file missing."; exit 1; fi
           KEY="$(tr -d '\r\n' < "$KEY_FILE")"
           KEY_FILENAME="$(basename "$KEY_FILE")"
