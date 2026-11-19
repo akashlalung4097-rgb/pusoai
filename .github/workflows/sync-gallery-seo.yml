@@ -1,6 +1,15 @@
 name: Sync PusoAI gallery SEO pages
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - "index.html"
+      - "robots.txt"
+      - "llms.txt"
+      - "sitemap.xml"
+      - "favicon.svg"
   workflow_dispatch:
   schedule:
     - cron: "17 * * * *"
