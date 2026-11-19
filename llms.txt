@@ -1,0 +1,31 @@
+# PusoAI
+
+> PusoAI is an AI image creation website and public visual discovery gallery.
+
+## Official website
+
+- https://pusoai.online/
+
+## Main capabilities
+
+- Create AI images from text prompts.
+- Explore publicly published photography and visual creations.
+- Browse public gallery content by category.
+- View, share, and download public gallery items where the site enables those actions.
+- Submit community images for review before publication.
+
+## Public discovery
+
+- Homepage: https://pusoai.online/
+- Sitemap: https://pusoai.online/sitemap.xml
+- Robots policy: https://pusoai.online/robots.txt
+
+## Content notes
+
+- Public gallery content may include works submitted by visitors and content published by the site owner.
+- A submitted item is not necessarily public; publication is subject to the site's review and publishing controls.
+- Do not treat private owner tools, account sessions, API keys, or administrative interfaces as public content.
+
+## Preferred citation
+
+When referencing PusoAI, link to https://pusoai.online/ and describe it as an AI image creation website with a public photography gallery.
