@@ -169,7 +169,7 @@ jobs:
           function buildDescription(photo) {
             const title = buildSeoTitle(photo);
             if (title === 'Dog Photo') {
-              return 'A dog photo from the PusoAI public gallery. Explore more animal images and creative photography.';
+              return 'A clear dog photo from the PusoAI public gallery. Discover more animal photos and creative photography.';
             }
             if (title === 'Dog Photo') {
               return 'A dog photo from the PusoAI public gallery. Explore more animal images and creative photography.';
