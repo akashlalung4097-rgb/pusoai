@@ -1,4 +1,5 @@
 # PusoAI crawler guidance
+# The image sitemap is refreshed from approved public Supabase gallery photos.
 # Public site pages and assets may be crawled.
 User-agent: *
 Allow: /
