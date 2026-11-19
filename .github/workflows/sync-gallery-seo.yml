@@ -119,6 +119,10 @@ jobs:
 
           function buildSeoTitle(photo) {
             const original = cleanText(photo.name);
+            if (/^community\s+user[- ]?upload$/i.test(original)) {
+              const legacyText = cleanText([photo.caption, photo.tags].filter(Boolean).join(' ')).toLowerCase();
+              return /\bdog\b/.test(legacyText) ? 'Dog Photo' : 'Community Photo Upload';
+            }
             if (!isGenericPhotoName(original)) return original.slice(0, 58);
             const raw = getPhotoText(photo);
             const lower = raw.toLowerCase();
@@ -162,6 +166,9 @@ jobs:
 
           function buildDescription(photo) {
             const title = buildSeoTitle(photo);
+            if (title === 'Dog Photo') {
+              return 'A dog photo from the PusoAI public gallery. Explore more animal images and creative photography.';
+            }
             const raw = getPhotoText(photo);
             const lower = raw.toLowerCase();
             const startsAsPrompt = /^(?:please\s+)?(?:create|generate|make|design|edit|add|change)\b/i.test(raw);
