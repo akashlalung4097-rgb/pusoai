@@ -564,7 +564,7 @@ button:active,.primary:active,.secondary:active,.danger:active{transform:transla
 .photo-card img{object-fit:cover}
 .photo-card .badge{top:11px;left:11px;border-radius:99px;padding:5px 9px;font-size:10px;font-weight:750;letter-spacing:.02em;background:rgba(15,18,30,.68);backdrop-filter:blur(10px)}
 .photo-info{padding:13px 14px 14px}
-.photo-title{font-size:13px;font-weight:800;letter-spacing:-.01em;color:var(--text)}
+.photo-title{font-size:13px;font-weight:800;letter-spacing:-.01em;color:var(--text)}.photo-seo-link{color:inherit;text-decoration:none}.photo-seo-link:hover{color:var(--accent);text-decoration:underline}
 .photo-meta{font-size:11px;gap:7px;flex-wrap:wrap;color:var(--muted);margin-top:7px}
 .card-actions{gap:6px;margin-top:12px}
 .card-actions button{min-height:34px;padding:7px 8px;border-radius:9px;background:var(--panel2);border:1px solid transparent;color:var(--muted);font-size:11px;font-weight:700}
@@ -1896,6 +1896,10 @@ async function migrateLocalPhotos(){
 }
 
 function renderCategories(){const ch=document.getElementById('filterChips');ch.innerHTML='<button class="chip active" data-mode="latest">Latest</button><button class="chip" data-mode="popular">Popular</button><button class="chip" data-mode="featured">Featured</button><button class="chip" data-mode="trending">Trending</button><button class="chip" data-mode="all">All</button>'+categories.map(c=>`<button class="chip" data-cat="${esc(c)}" data-mode="category">${esc(c)}</button>`).join('');ch.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{ch.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));b.classList.add('active');renderGallery(b.dataset.cat||'All',document.getElementById('searchInput').value,b.dataset.mode||'all')});document.getElementById('categoryGrid').innerHTML=categories.map(c=>`<div class="category-card" data-cat="${esc(c)}"><strong>${esc(c)}</strong><span>${photos.filter(p=>p.category===c).length} photos</span></div>`).join('');document.querySelectorAll('.category-card').forEach(x=>{x.setAttribute('role','button');x.setAttribute('tabindex','0');const chooseCategory=()=>{document.querySelectorAll('.category-card').forEach(c=>{c.classList.remove('is-selected');c.setAttribute('aria-pressed','false')});x.classList.add('is-selected');x.setAttribute('aria-pressed','true');document.getElementById('searchInput').value='';const matching=Array.from(document.querySelectorAll('#filterChips .chip')).find(chip=>chip.dataset.cat===x.dataset.cat);if(matching)matching.click();else renderGallery(x.dataset.cat,'','category');location.hash='explore'};x.onclick=chooseCategory;x.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();chooseCategory()}}})}
+function photoSeoSlug(value){return String(value??'').normalize('NFKD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,48)||'pusoai-photo';}
+function photoSeoId(value){return String(value??'').toLowerCase().replace(/[^a-z0-9_-]+/g,'-').replace(/-+/g,'-').replace(/^-+|-+$/g,'').slice(0,80)||'item';}
+function photoPublicUrl(photo){return 'https://pusoai.online/photos/'+photoSeoSlug(photo?.name)+'-'+photoSeoId(photo?.id)+'/';}
+function photoAltText(photo){const name=String(photo?.name||'PusoAI photo').replace(/\\s+/g,' ').trim();const category=String(photo?.category||'Photography').replace(/\\s+/g,' ').trim();const caption=String(photo?.caption||'').replace(/\\s+/g,' ').trim();return (' '+name+' — '+category+'. '+(caption||'Explore this '+category.toLowerCase()+' image on PusoAI.')).trim().slice(0,240);}
 function score(p){return (p.likes*4)+(p.views*1)+(p.downloads*2)}
 function matches(p,q){if(!q)return true;q=q.toLowerCase().trim();return [p.name,p.category,p.caption,p.tags].join(' ').toLowerCase().includes(q)}
 function renderGallery(cat='All',q='',mode='latest'){
@@ -1910,8 +1914,8 @@ function renderGallery(cat='All',q='',mode='latest'){
     const mediaSrc=typeof p.src==='string'?p.src.trim():'';
     const media=p.mediaType==='video'
       ? `<video class="gallery-media" loading="lazy" ${mediaSrc?`src="${esc(mediaSrc)}"`:''} muted playsinline preload="metadata"></video><span class="badge" style="left:auto;right:10px">VIDEO</span>`
-      : `<img class="gallery-media" loading="lazy" decoding="async" ${mediaSrc?`src="${esc(mediaSrc)}"`:''} alt="${esc(p.name)}">`;
-    return `<article class="photo-card" style="--card-delay:${Math.min(i,12)*45}ms"><div class="thumb" data-photo-open="${esc(p.id)}" role="button" tabindex="0" aria-label="Open full-size photo: ${esc(p.name)}">${media}<span class="badge">${esc(p.category)}</span>${p.featured?'<span class="badge" style="left:auto;right:10px">Featured</span>':''}${p.overlay?`<span style="position:absolute;left:50%;bottom:12px;transform:translateX(-50%);color:${esc(p.overlayColor||'#fff')};font-weight:800;background:#0008;padding:6px 12px;border-radius:999px;white-space:nowrap;max-width:90%;overflow:hidden;text-overflow:ellipsis">${esc(p.overlay)}</span>`:''}</div><div class="card-actions" role="group" aria-label="Photo actions"><button type="button" class="${liked?'liked':''}" data-act="like" data-id="${esc(p.id)}" aria-label="${liked?'Unlike':'Like'} photo" aria-pressed="${liked?'true':'false'}" title="${liked?'Unlike':'Like'}">${liked?'♥':'♡'}</button><button type="button" data-act="share" data-id="${esc(p.id)}" aria-label="Share photo" title="Share">↗</button><button type="button" data-act="comment" data-id="${esc(p.id)}" aria-label="Open photo comments" title="Comments">💬</button></div><div class="photo-info"><div class="photo-title">${esc(p.name)}</div><div class="photo-meta"><span>♥ ${p.likes||0}</span><span>👁 ${p.views||0}</span><span>${esc(p.category)}</span></div></div></article>`
+      : `<img class="gallery-media" loading="lazy" decoding="async" ${mediaSrc?`src="${esc(mediaSrc)}"`:''} alt="${esc(photoAltText(p))}">`;
+    return `<article class="photo-card" style="--card-delay:${Math.min(i,12)*45}ms"><div class="thumb" data-photo-open="${esc(p.id)}" role="button" tabindex="0" aria-label="Open full-size photo: ${esc(p.name)}">${media}<span class="badge">${esc(p.category)}</span>${p.featured?'<span class="badge" style="left:auto;right:10px">Featured</span>':''}${p.overlay?`<span style="position:absolute;left:50%;bottom:12px;transform:translateX(-50%);color:${esc(p.overlayColor||'#fff')};font-weight:800;background:#0008;padding:6px 12px;border-radius:999px;white-space:nowrap;max-width:90%;overflow:hidden;text-overflow:ellipsis">${esc(p.overlay)}</span>`:''}</div><div class="card-actions" role="group" aria-label="Photo actions"><button type="button" class="${liked?'liked':''}" data-act="like" data-id="${esc(p.id)}" aria-label="${liked?'Unlike':'Like'} photo" aria-pressed="${liked?'true':'false'}" title="${liked?'Unlike':'Like'}">${liked?'♥':'♡'}</button><button type="button" data-act="share" data-id="${esc(p.id)}" aria-label="Share photo" title="Share">↗</button><button type="button" data-act="comment" data-id="${esc(p.id)}" aria-label="Open photo comments" title="Comments">💬</button></div><div class="photo-info"><div class="photo-title"><a class="photo-seo-link" href="${esc(photoPublicUrl(p))}" title="Open ${esc(p.name)} on PusoAI">${esc(p.name)}</a></div><div class="photo-meta"><span>♥ ${p.likes||0}</span><span>👁 ${p.views||0}</span><span>${esc(p.category)}</span></div></div></article>`
   }).join(''):(CLOUD_ENABLED&&remotePhotoLoadError&&!photos.length
     ? `<div class="empty cloud-load-error" style="grid-column:1/-1"><b>Photos could not load from cloud.</b><p style="margin:8px 0">${esc(remotePhotoLoadError)}</p><button class="primary" id="retryCloudPhotos">Retry loading photos</button></div>`
     : `<div class="empty" style="grid-column:1/-1">${photos.length===0?'No photos have been published yet. Admin can upload the first photo.':'No photos match this search or category. Try another name, category or hashtag.'}</div>`);
@@ -1999,7 +2003,7 @@ async function toggleLike(p){
 }
 
 async function sharePhoto(p){
-  const url=location.href.split('#')[0]+'#photo='+encodeURIComponent(p.id);
+  const url=photoPublicUrl(p);
   if(navigator.share){try{await navigator.share({title:p.name,text:p.caption||'PusoAI photo',url});return}catch(error){if(error?.name==='AbortError')return;console.warn('Native share failed; trying clipboard:',error)}}
   try{
     if(navigator.clipboard&&window.isSecureContext)await navigator.clipboard.writeText(url);
@@ -2174,7 +2178,7 @@ function showModal(){
     else toast('This video has no saved media URL.');
   }else{
     vid.pause();vid.removeAttribute('src');vid.load();vid.style.display='none';
-    img.style.display='block';img.alt=p.name||'Photo';
+    img.style.display='block';img.alt=photoAltText(p);
     if(p.src){img.src=p.src;img.onerror=()=>toast('Photo could not load. Check that its public Storage URL is valid.');}
     else toast('This photo has no saved media URL.');
   }
@@ -2187,7 +2191,7 @@ function showModal(){
   document.getElementById('modalLike').disabled=!p.like;
   document.getElementById('modalDownload').disabled=!p.download;
   document.getElementById('modalDownload').textContent=p.download?'↓ Download':'Download disabled';
-  const u=location.href.split('#')[0]+'#photo='+encodeURIComponent(p.id);
+  const u=photoPublicUrl(p);
   document.getElementById('shareWhatsApp').href='https://wa.me/?text='+encodeURIComponent(p.name+' '+u);
   document.getElementById('shareFacebook').href='https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(u);
   document.getElementById('shareX').href='https://twitter.com/intent/tweet?text='+encodeURIComponent(p.name)+'&url='+encodeURIComponent(u);
@@ -2472,7 +2476,7 @@ function updateHeroFeatured(){
     heroImage.src=fallbackImg;
   };
   heroImage.src=(hero&&hero.mediaType!=='video'&&hero.src)||fallbackImg;
-  heroImage.alt=hero?.name||'Featured photo';
+  heroImage.alt=hero?photoAltText(hero):'Featured photo on PusoAI';
   heroCaption.textContent=hero?.name||'Featured on PusoAI';
   if(heroImage.complete&&heroImage.naturalWidth>0)heroImage.classList.add('hero-loaded');
 }
