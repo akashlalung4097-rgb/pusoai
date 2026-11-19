@@ -10,6 +10,7 @@ on:
       - "llms.txt"
       - "sitemap.xml"
       - "favicon.svg"
+      - ".github/workflows/sync-gallery-seo.yml"
   workflow_dispatch:
   schedule:
     - cron: "17 * * * *"
@@ -98,19 +99,83 @@ jobs:
             return rows;
           }
 
+          const isGenericPhotoName = value =>
+            !value || /^(?:community\s+photo|pusoai\s+photo|photo|image|picture|untitled|upload|[.\- _]+)$/i.test(cleanText(value));
+
+          function getPhotoText(photo) {
+            return cleanText(photo.caption || photo.tags)
+              .replace(/^(?:instagram\s+prompt|ai\s+image\s+prompt|image\s+prompt|photo\s+prompt|prompt)\s*[:\-]?\s*/i, '')
+              .replace(/\s+/g, ' ')
+              .trim();
+          }
+
+          function titleCase(value) {
+            const smallWords = new Set(['a', 'an', 'and', 'as', 'at', 'by', 'for', 'in', 'of', 'on', 'or', 'the', 'to', 'with']);
+            return value.split(/\s+/).filter(Boolean).map((word, index) => {
+              if (/^(?:3d|4k|8k|ai|vr|hd)$/i.test(word)) return word.toUpperCase();
+              if (index > 0 && smallWords.has(word.toLowerCase())) return word.toLowerCase();
+              return word.split('-').map(part => part ? part.charAt(0).toUpperCase() + part.slice(1).toLowerCase() : part).join('-');
+            }).join(' ');
+          }
+
+          function buildSeoTitle(photo) {
+            const original = cleanText(photo.name);
+            if (!isGenericPhotoName(original)) return original.slice(0, 58);
+
+            const raw = getPhotoText(photo);
+            const lower = raw.toLowerCase();
+
+            // Preserve recognizable subjects in common prompt-style captions.
+            if (/\btata\s+punch\b/.test(lower)) return 'Tata Punch Car Photo';
+            if (/(?:t[ -]?shirt|tee shirt)/.test(lower) && /(?:change|colour|color|edit)/.test(lower)) return 'T-Shirt Color Change';
+            if (/\bmusic\s+edit\b/.test(lower)) return 'Aesthetic Instagram Music Edit';
+            if (/\bgiant\b/.test(lower) && /\bsmartphone\b/.test(lower)) return 'Giant Smartphone Fashion Scene';
+
+            let subject = raw
+              .replace(/^(?:please\s+)?(?:create|generate|make|design|edit|add|change)\s+/i, '')
+              .replace(/\b(?:ultra[- ]realistic|high[- ]quality|photorealistic|hyper[- ]realistic|cinematic|professional|detailed|eye-level|close-up)\b/gi, ' ')
+              .replace(/\b\d+\s*:\s*\d+\b/g, ' ')
+              .replace(/\b(?:vertical|horizontal|composition|aspect ratio|uploaded|reference|using|please|create|generate|make|design|photo|image|picture|in|of|the|a|an)\b/gi, ' ')
+              .split(/[.!?]/)[0]
+              .replace(/[#|]+/g, ' ')
+              .replace(/\s+/g, ' ')
+              .replace(/^[,\s-]+|[,\s-]+$/g, '')
+              .trim();
+
+            let words = subject.split(' ').filter(Boolean);
+            if (words.length > 8) words = words.slice(0, 8);
+            subject = titleCase(words.join(' ')).replace(/\bT Shirt\b/gi, 'T-Shirt').trim();
+
+            if (!subject || subject.length < 2) {
+              const category = cleanText(photo.category) || 'Photo';
+              subject = category + ' Photo';
+            }
+            return subject.length > 58 ? subject.slice(0, 55).replace(/\s+\S*$/, '') : subject;
+          }
+
           function buildDescription(photo) {
             const category = cleanText(photo.category) || 'Photography';
-            const caption = cleanText(photo.caption).replace(/^prompt\s*:\s*/i, '');
-            const tags = cleanText(photo.tags).replace(/[#|]+/g, ' ').replace(/\s+/g, ' ');
-            let text = caption || tags || `Explore this ${category.toLowerCase()} image in the PusoAI public gallery.`;
-            text = text.replace(/\s+/g, ' ').trim();
-            const suffix = ' View more creative images on PusoAI.';
-            if (!/pusoai/i.test(text)) text += suffix;
-            return text.length > 160 ? text.slice(0, 157).replace(/\s+\S*$/, '') + '…' : text;
+            const title = buildSeoTitle(photo);
+            const raw = getPhotoText(photo);
+            const startsAsPrompt = /^(?:please\s+)?(?:create|generate|make|design|edit|add|change)\b/i.test(raw);
+            const detail = raw.split(/[.!?]/)[0].replace(/\s+/g, ' ').trim();
+            const isUsefulCaption = detail.length >= 28 && !startsAsPrompt;
+
+            if (!isUsefulCaption) {
+              return (title + ' is a ' + category.toLowerCase() +
+                ' image in the PusoAI public gallery. Explore more visual creations on PusoAI.').slice(0, 160);
+            }
+
+            const suffix = ' Explore this photo on PusoAI.';
+            const maxDetail = 160 - suffix.length;
+            const shortened = detail.length > maxDetail
+              ? detail.slice(0, maxDetail - 1).replace(/\s+\S*$/, '') + '…'
+              : detail;
+            return shortened + suffix;
           }
 
           function pageHtml(photo, imageUrl, pageUrl) {
-            const name = cleanText(photo.name) || 'PusoAI Photo';
+            const name = buildSeoTitle(photo);
             const category = cleanText(photo.category) || 'Other';
             const description = buildDescription(photo);
             const title = `${name} | ${category} Photo - PusoAI`.slice(0, 70);
@@ -205,7 +270,7 @@ jobs:
               }
               desiredPaths.add(relative);
               sitemapUrls.push({ loc: pageUrl, lastmod: photo.created ? new Date(Number(photo.created)).toISOString().slice(0,10) : '' });
-              imageUrls.push({ pageUrl, imageUrl, title: cleanText(photo.name) || 'PusoAI Photo', caption: buildDescription(photo) });
+              imageUrls.push({ pageUrl, imageUrl, title: buildSeoTitle(photo), caption: buildDescription(photo) });
             }
 
             // Remove only generated photo landing pages that no longer have a public photos row.
