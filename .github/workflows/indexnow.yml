@@ -1,0 +1,61 @@
+name: IndexNow URL notification
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "index.html"
+      - "sitemap.xml"
+      - "d2c5f9da-fb75-478b-9482-5603884f7745.txt"
+      - ".github/workflows/indexnow.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  notify-indexnow:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait until GitHub Pages publishes the verification key
+        env:
+          INDEXNOW_KEY: "d2c5f9da-fb75-478b-9482-5603884f7745"
+        run: |
+          key_url="https://pusoai.online/${INDEXNOW_KEY}.txt"
+          for attempt in {1..20}; do
+            published="$(curl --fail --silent --show-error "$key_url" 2>/dev/null || true)"
+            if [ "$published" = "$INDEXNOW_KEY" ]; then
+              echo "IndexNow key is publicly available."
+              exit 0
+            fi
+            echo "Waiting for GitHub Pages deployment (attempt $attempt/20)..."
+            sleep 15
+          done
+          echo "The IndexNow key is not publicly available after 5 minutes."
+          exit 1
+
+      - name: Submit the PusoAI homepage to IndexNow
+        env:
+          INDEXNOW_KEY: "d2c5f9da-fb75-478b-9482-5603884f7745"
+        run: |
+          payload="$(jq -n \
+            --arg host "pusoai.online" \
+            --arg key "$INDEXNOW_KEY" \
+            --arg keyLocation "https://pusoai.online/$INDEXNOW_KEY.txt" \
+            --arg url "https://pusoai.online/" \
+            '{host:$host,key:$key,keyLocation:$keyLocation,urlList:[$url]}')"
+
+          status="$(curl --silent --show-error \
+            --output response.txt \
+            --write-out "%{http_code}" \
+            --request POST "https://api.indexnow.org/indexnow" \
+            --header "Content-Type: application/json; charset=utf-8" \
+            --data "$payload")"
+
+          cat response.txt || true
+          echo "IndexNow HTTP status: $status"
+          case "$status" in
+            200|202) echo "IndexNow accepted the URL submission." ;;
+            *) echo "IndexNow did not accept the submission."; exit 1 ;;
+          esac
