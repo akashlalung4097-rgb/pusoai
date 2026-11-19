@@ -8,10 +8,10 @@ on:
       - "index.html"
       - "robots.txt"
       - "llms.txt"
-      - "sitemap.xml"
       - "favicon.svg"
       - ".github/workflows/sync-gallery-seo.yml"
   workflow_dispatch:
+  # Poll the public Supabase photos table hourly; newly published photos are picked up automatically.
   schedule:
     - cron: "17 * * * *"
 
