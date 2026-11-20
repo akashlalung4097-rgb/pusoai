@@ -1183,8 +1183,9 @@ body.ai-gen-lock{overflow:hidden;}
 }
 </style>
 
+<link rel="stylesheet" href="/studio.css">
 </head>
-<body class="light">
+<body>
 <div id="aiGenerationOverlay" class="ai-generation-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="aiGenTitle" aria-describedby="aiGenDetail" aria-live="polite">
   <div class="ai-gen-card">
     <div class="ai-gen-icon-wrap" aria-hidden="true">
@@ -1203,11 +1204,35 @@ body.ai-gen-lock{overflow:hidden;}
   </div>
 </div>
 <header class="pg-top-header"><div class="container nav">
-<a class="brand pg-top-brand" href="#home" aria-label="PusoAI Home"><span class="pg-logo-mark" aria-hidden="true"><svg viewBox="0 0 34 34" fill="none"><path d="M7 23.7V10.4a3.5 3.5 0 0 1 3.5-3.5h13a3.5 3.5 0 0 1 3.5 3.5v13.3a3.5 3.5 0 0 1-3.5 3.5h-13A3.5 3.5 0 0 1 7 23.7Z" stroke="currentColor" stroke-width="2.6"/><circle cx="17" cy="17" r="5" stroke="currentColor" stroke-width="2.6"/><path d="M22.8 11h.1" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/></svg></span><span>Puso<b>AI</b></span></a>
-<nav class="navlinks" aria-label="Site navigation"><a href="#home" class="pg-active-link">Home</a><a href="#explore">Images</a><a href="#user-upload">AI Creator</a><a href="#categories">Categories</a><a href="#about">About</a></nav>
-<div class="navactions"><a class="pg-top-create" href="#user-upload"><span aria-hidden="true">✦</span> Create image</a><button class="iconbtn" id="themeBtn" title="Theme" aria-label="Toggle theme">☾</button><button class="admin-nav-btn primary" id="adminOpen" style="display:none">Admin</button></div>
-</div></header>
-<main id="home">
+<a class="brand pg-top-brand" href="#home" aria-label="PusoAI Home"><span class="pg-logo-mark" aria-hidden="true">✧</span><span>Puso<b>AI</b></span></a>
+<nav class="navlinks" aria-label="Studio modes"><a href="#studio" class="pg-active-link">Image mode</a><a href="#video-mode" class="pg-mode-disabled" aria-disabled="true" title="Video generation is not connected yet">Video mode <small>SOON</small></a><a href="#prompt-guide">AI Tools</a></nav>
+<div class="navactions"><label class="pg-global-search" aria-label="Search gallery"><span>⌕</span><input id="pgGlobalSearch" type="search" placeholder="Search gallery…"><kbd>↵</kbd></label><button class="iconbtn pg-top-icon" id="pgNotifications" type="button" aria-label="Notifications" aria-expanded="false">♧</button><a class="iconbtn pg-top-icon pg-message-link" href="#contact" aria-label="Messages and contact">✉</a><button class="iconbtn" id="themeBtn" title="Theme" aria-label="Toggle theme">☾</button><button class="admin-nav-btn primary" id="adminOpen" style="display:none">Admin</button></div>
+<div class="pg-notification-popover" id="pgNotificationPanel" hidden><b>You're all set</b><span>Your PusoAI studio is ready. Generated images stay private until submitted for review.</span></div></div></header>
+<aside class="pg-sidebar" aria-label="Main navigation"><a class="pg-sidebar-logo" href="#home"><span class="pg-sidebar-mark">✧</span><span>Puso<b>AI</b><small>CREATIVE STUDIO</small></span></a><div class="pg-sidebar-label">WORKSPACE</div><nav class="pg-sidebar-nav"><a class="active" href="#home"><span>⌂</span>Home</a><a href="#studio"><span>✦</span>AI Image Generator</a><a href="#explore"><span>▦</span>Gallery</a><a href="#prompt-guide"><span>✧</span>AI Tools</a><a href="#generationHistoryPanel"><span>◷</span>History</a><a href="#studioSettings"><span>⚙</span>Settings</a></nav><div class="pg-sidebar-bottom"><div class="pg-profile-avatar">G</div><div class="pg-profile-copy"><b>Guest Creator</b><small>No account needed</small></div><span class="pg-profile-dot"></span></div></aside>
+<nav class="pg-mobile-nav" aria-label="Mobile navigation"><a href="#home"><span>⌂</span>Home</a><a href="#studio"><span>✦</span>Create</a><a href="#explore"><span>▦</span>Gallery</a><a href="#generationHistoryPanel"><span>◷</span>History</a></nav>
+<main id="home" class="pg-main">
+<section class="pg-studio-dashboard" id="studio" aria-labelledby="pgStudioTitle">
+<div class="pg-studio-heading"><div><div class="pg-studio-eyebrow"><i></i> PUSOAI CREATIVE WORKSPACE</div><h1 id="pgStudioTitle">AI Image Generation</h1><p>Smart Creativity Starts Here. Turn your ideas into visuals with AI.</p></div><div class="pg-studio-status"><span>✦</span><div><b>AI Studio</b><small>Ready when you are</small></div></div></div>
+<div class="pg-studio-grid">
+<section class="pg-glass-panel pg-generator-panel" id="user-upload" aria-labelledby="pgGeneratorTitle">
+<div class="pg-generator-heading"><div class="pg-generator-orb">✦<i></i></div><div><small>YOUR CREATIVE SPACE</small><h2 id="pgGeneratorTitle">Create your image</h2><p>Describe it. Shape it. Generate it.</p></div></div>
+<form id="userPhotoForm" class="pg-generator-form" novalidate>
+<div class="pg-field-heading"><label for="userPhotoPrompt">Your prompt</label><button class="pg-suggest-btn" id="pgSuggestPrompt" type="button">✧ Suggest prompt</button></div>
+<textarea id="userPhotoPrompt" name="prompt" minlength="5" maxlength="1500" placeholder="A cinematic view of a quiet mountain lake at blue hour, soft mist, dramatic natural lighting…" required></textarea><div class="pg-prompt-meta"><span>Be descriptive for better results</span><span id="pgPromptCount">0 / 1500</span></div>
+<div class="pg-upload-section"><div class="pg-field-heading"><label for="userPhotoFile">Reference image</label><small>OPTIONAL</small></div><label class="pg-upload-zone" for="userPhotoFile"><span class="pg-upload-symbol">⇧</span><span><b>Upload a reference image</b><small>Drop an image here or <u>browse files</u></small></span><span class="pg-upload-arrow">＋</span></label><input id="userPhotoFile" class="pg-file-input" name="photo" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif"><div class="pg-upload-status"><span id="aiModeHint" aria-live="polite">Text-to-image mode · No reference selected</span><button type="button" id="cancelSelectedPhoto">Remove</button></div></div>
+<div class="pg-control-grid" id="studioSettings"><div class="pg-control-field"><label for="pgStyleSelect">Visual style</label><select id="pgStyleSelect"><option value="none">Auto · Balanced</option><option value="cinematic">Cinematic</option><option value="photorealistic">Photorealistic</option><option value="digital-art">Digital art</option><option value="anime">Anime</option><option value="illustration">Illustration</option><option value="minimal">Minimal</option><option value="3d">3D render</option></select></div><div class="pg-control-field pg-model-field"><span>AI model</span><b id="pgActiveModel">FLUX.1 Schnell</b><small>Auto-selected for your workflow</small></div></div>
+<div class="pg-ratio-section"><div class="pg-field-heading"><label>Aspect ratio</label><small>COMPOSITION</small></div><div class="pg-ratio-options" role="group" aria-label="Image aspect ratio"><button type="button" class="pg-ratio-btn active" data-ratio="1:1" aria-pressed="true"><i class="sq"></i>1:1</button><button type="button" class="pg-ratio-btn" data-ratio="4:3" aria-pressed="false"><i class="land"></i>4:3</button><button type="button" class="pg-ratio-btn" data-ratio="3:4" aria-pressed="false"><i class="port"></i>3:4</button><button type="button" class="pg-ratio-btn" data-ratio="16:9" aria-pressed="false"><i class="wide"></i>16:9</button><button type="button" class="pg-ratio-btn" data-ratio="9:16" aria-pressed="false"><i class="tall"></i>9:16</button></div></div>
+<div class="pg-generate-actions"><button class="pg-generate-btn" id="generateAiImage" type="button"><span>✦</span> Generate image <b>→</b></button><button class="pg-cancel-generation" id="cancelAiGeneration" type="button" style="display:none">Cancel generation</button></div>
+<div class="pg-secondary-actions"><button class="pg-submit-btn" type="submit" id="submitUserPhoto">Submit to community review</button><button class="pg-clear-btn" type="reset" id="resetUserPhoto">Clear</button><button class="pg-cancel-upload" id="cancelPhotoUpload" type="button" style="display:none">Cancel upload</button></div>
+<p class="pg-generator-status" id="userPhotoStatus" role="status" aria-live="polite">Your generated image is private until you submit it for review.</p>
+<div id="aiGenerationError" class="ai-gen-error" role="alert" hidden><div class="ai-gen-error-copy"><strong>AI image generation failed</strong><span id="aiGenerationErrorText">Please try again.</span></div><button class="ai-gen-retry" id="retryAiGeneration" type="button">↻ Retry</button></div>
+</form></section>
+<section class="pg-glass-panel pg-preview-panel" aria-labelledby="pgPreviewTitle"><div class="pg-preview-header"><div><small>CANVAS PREVIEW</small><h2 id="pgPreviewTitle">Your creation</h2></div><span class="pg-preview-live"><i></i> LIVE PREVIEW</span></div>
+<div class="pg-preview-stage" id="pgPreviewStage"><img id="userPhotoPreview" class="user-upload-preview" alt="Reference or successfully generated AI image" style="display:none"><div class="pg-preview-empty" id="pgPreviewEmpty"><div class="pg-empty-orbit">✧</div><b>Your canvas is waiting</b><p>Your image appears here after the AI API responds successfully.</p><small>PNG · JPG · WEBP</small></div></div>
+<div class="pg-preview-toolbar"><span><i></i> Generation preview</span><div><button type="button" id="pgPreviewFavorite" aria-pressed="false" title="Favorite this result">♡</button><button type="button" id="pgMore" title="Copy prompt">•••</button></div></div>
+<div class="pg-preview-actions"><button class="pg-preview-download" id="downloadGeneratedAiImage" type="button" style="display:none">↓ Download</button><button class="pg-preview-regenerate" id="pgRegenerate" type="button">↻ Regenerate</button><button class="pg-preview-undo" id="pgUndo" type="button" disabled>↶ Undo</button></div><div class="pg-preview-foot"><span>✦ Crafted with PusoAI</span><span>Private by default</span></div></section>
+<aside class="pg-glass-panel pg-history-panel" id="generationHistoryPanel" aria-labelledby="pgHistoryTitle"><div class="pg-history-heading"><div><small>YOUR WORKSPACE</small><h2 id="pgHistoryTitle">Recent history</h2></div><button id="pgViewAllHistory" type="button">View all</button></div><p class="pg-history-subtitle">Your latest creations in this session</p><div class="pg-history-list" id="pgGenerationHistoryList"><div class="pg-history-empty"><span>◷</span><b>No images yet</b><small>Your generated images will appear here.</small></div></div><div class="pg-history-note"><span>🔒</span><p>History stays in this browser session. Nothing is published unless you submit it for community review.</p></div></aside>
+</div></section>
 <section class="hero pg-bing-hero" aria-labelledby="pg-hero-title">
   <div class="pg-hero-shade" aria-hidden="true"></div>
   <div class="container pg-hero-content">
@@ -1240,26 +1265,6 @@ body.ai-gen-lock{overflow:hidden;}
 </section>
 <section class="section container" id="explore"><div class="section-head"><div><div class="pg-section-tag">DISCOVER THE GALLERY</div><h2>Explore the extraordinary</h2><p>Fresh captures, creative visions, and inspiring discoveries.</p></div><div class="searchbar"><input id="searchInput" placeholder="Search name, category or #hashtag…"><button class="primary" id="searchBtn">Search</button></div></div><div class="chips" id="filterChips"></div><div class="grid" id="photoGrid"></div></section>
 <section class="section container" id="categories"><div class="section-head"><div><div class="pg-section-tag">CHOOSE YOUR WORLD</div><h2>Find your kind of inspiration</h2><p>Discover photos by the things you love.</p></div></div><div class="category-grid" id="categoryGrid"></div></section>
-<section class="section container" id="user-upload">
-  <div class="community-upload">
-    <div class="section-head" style="margin-bottom:0;align-items:start">
-      <div><div class="pg-section-tag">YOUR CREATIVE STUDIO</div><h2>Create something incredible with AI</h2><p>Turn words into images, or transform a reference photo with a prompt.</p></div>
-    </div>
-    <p class="community-note">AI Generate uses your uploaded photo as a reference when selected, and does not publish it. “Submit Photo for Review” is a separate action that uploads your photo to the owner. Only use photos you own or have permission to edit. Maximum 10 MB.</p>
-    <form id="userPhotoForm" novalidate>
-      <div class="community-upload-grid">
-        <div class="field full"><label for="userPhotoFile">Choose photo (optional AI reference)</label><input id="userPhotoFile" name="photo" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif"><div class="admin-actions" style="margin-top:8px"><button class="secondary" type="button" id="cancelSelectedPhoto">✕ Cancel selected photo</button></div><p class="community-note" id="aiModeHint" aria-live="polite">Text-only AI mode: no reference photo selected.</p><img id="userPhotoPreview" class="user-upload-preview" alt="Selected photo preview"></div>
-        <div class="field full"><label for="userPhotoPrompt">Text prompt / photo description *</label><textarea id="userPhotoPrompt" name="prompt" minlength="5" maxlength="1500" placeholder="Describe the image you want to generate..." required></textarea><span class="community-note">With a selected photo, AI generates an edited version based on your prompt (FLUX.2 Klein). Without one, AI generates a new image from text (FLUX.1 Schnell). Reference photos are resized locally before processing. AI results are not public unless you submit them.</span><div class="admin-actions" style="margin-top:12px"><button class="secondary" type="button" id="generateAiImage">✨ Generate / Edit With AI</button><button class="danger" type="button" id="cancelAiGeneration" style="display:none">Cancel Generation</button><button class="secondary" type="button" id="downloadGeneratedAiImage" style="display:none">Download AI Image</button></div></div>
-      </div>
-      <div class="admin-actions" style="margin-top:16px"><button class="primary" type="submit" id="submitUserPhoto">Submit Photo for Review</button><button class="secondary" type="reset" id="resetUserPhoto">Clear</button><button class="danger" type="button" id="cancelPhotoUpload" style="display:none">Cancel Upload</button></div>
-      <p class="community-note" id="userPhotoStatus" role="status" aria-live="polite"></p>
-      <div id="aiGenerationError" class="ai-gen-error" role="alert" hidden>
-        <div class="ai-gen-error-copy"><strong>AI image generation failed</strong><span id="aiGenerationErrorText">Please try again.</span></div>
-        <button class="ai-gen-retry" id="retryAiGeneration" type="button">↻ Retry</button>
-      </div>
-    </form>
-  </div>
-</section>
 <section class="section container" id="prompt-guide">
   <div class="section-head"><div><h2>AI Image Prompt Guide</h2><p>Practical ways to describe an image clearly and create more intentional results.</p></div></div>
   <div class="panel legal-copy">
@@ -2560,6 +2565,17 @@ function downloadGeneratedAiImage(){
   setTimeout(()=>URL.revokeObjectURL(url),1500);
   status.textContent='AI image download started.';
 }
+function restorePusoAiHistory(file,prompt){
+  if(!(file instanceof Blob))return;
+  const preview=document.getElementById('userPhotoPreview');if(!preview)return;
+  if(preview.src.startsWith('blob:'))URL.revokeObjectURL(preview.src);
+  preview.src=URL.createObjectURL(file);preview.style.display='block';generatedImageFile=file;
+  const download=document.getElementById('downloadGeneratedAiImage');if(download)download.style.display='inline-flex';
+  const promptInput=document.getElementById('userPhotoPrompt');if(promptInput){promptInput.value=String(prompt||'');promptInput.dispatchEvent(new Event('input',{bubbles:true}));}
+  const status=document.getElementById('userPhotoStatus');if(status)status.textContent='Restored a previous result from this browser session. You can download it or submit it for review.';
+}
+window.restorePusoAiHistory=restorePusoAiHistory;
+
 // A reference photo must reach the image-to-image model as actual image bytes.
 // FLUX.2 Klein requires a reference smaller than 512x512. Convert locally to JPEG
 // to avoid shipping the original 10 MB photo to Supabase/Cloudflare.
@@ -2685,7 +2701,12 @@ async function readAiGenerationResponse(response,onProgress){
   throw new Error(streamError||'The AI progress stream ended before an image was returned.');
 }
 async function generateAiImage(){
-  const promptText=document.getElementById('userPhotoPrompt')?.value.trim()||'';
+  const basePromptText=document.getElementById('userPhotoPrompt')?.value.trim()||'';
+  const styleValue=document.getElementById('pgStyleSelect')?.value||'none';
+  const styles={cinematic:'Cinematic lighting, rich atmosphere and polished film-still composition.',photorealistic:'Photorealistic detail, natural materials, realistic lighting and textures.','digital-art':'Refined digital art with expressive color and intentional composition.',anime:'High-quality anime illustration, clean linework and expressive lighting.',illustration:'Editorial illustration with refined shapes and balanced color.',minimal:'Minimal composition, restrained palette and clean negative space.','3d':'Polished 3D render, realistic materials and soft global illumination.'};
+  const ratio=document.querySelector('.pg-ratio-btn[aria-pressed="true"]')?.dataset.ratio||'1:1';
+  const ratioText=ratio==='1:1'?'square':ratio==='4:3'?'landscape 4:3':ratio==='3:4'?'portrait 3:4':ratio==='16:9'?'wide landscape 16:9':'vertical portrait 9:16';
+  const promptText=[basePromptText,styles[styleValue]||'',`Composition: ${ratioText} aspect ratio.`].filter(Boolean).join('\\n');
   const btn=document.getElementById('generateAiImage');
   const fileInput=document.getElementById('userPhotoFile');
   const preview=document.getElementById('userPhotoPreview');
@@ -2696,7 +2717,7 @@ async function generateAiImage(){
   const errorPanel=document.getElementById('aiGenerationError');
   const selectedReference=fileInput?.files?.[0]||null;
   if(!CLOUD_ENABLED||!sbClient){status.textContent='AI image generation is not configured. Please contact the site owner.';showAiGenerationError('AI generation is not configured. Check the Supabase connection and deployed generate-image function.');return;}
-  if(promptText.length<5||promptText.length>1500){status.textContent='Enter a prompt between 5 and 1,500 characters.';return;}
+  if(basePromptText.length<5||basePromptText.length>1500){status.textContent='Enter a prompt between 5 and 1,500 characters.';return;}
   if(aiGenerationController){status.textContent='AI image generation is already running.';return;}
   // Never allow a previous result to be submitted after a new generation fails.
   // Keep the selected reference preview visible; only clear a previous generated result.
@@ -2784,7 +2805,9 @@ async function generateAiImage(){
     if(timedOut)throw new Error('AI image generation timed out after 120 seconds. Please retry.');
     if(controller.signal.aborted)throw new DOMException('AI image generation canceled.','AbortError');
     generatedImageFile=outputFile;
+    window.PusoAIStudioHistory?.record(outputFile,basePromptText);
     fileInput.value='';
+    const activeModelBadge=document.getElementById('pgActiveModel');if(activeModelBadge)activeModelBadge.textContent=selectedReference?'FLUX.2 Klein':'FLUX.1 Schnell';
     if(downloadBtn)downloadBtn.style.display='inline-flex';
     if(modeHint)modeHint.textContent='AI result ready. You can download it or submit it for owner review.';
     status.textContent=reference?'Your uploaded photo was used as an AI reference (FLUX.2 Klein). Download the edited image or submit it for review.':'AI image generated from text (FLUX.1 Schnell). Download it or submit it for review.';
@@ -3837,4 +3860,5 @@ bootApp();
   });
 })();
 </script>
+<script src="/studio.js" defer></script>
 </body></html>
