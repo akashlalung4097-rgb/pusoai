@@ -162,3 +162,96 @@ body.light #explore .chips .chip.active{background:linear-gradient(100deg,#267fe
 @media(max-width:720px){
   body.light .pg-mobile-nav{box-shadow:0 -5px 20px #00000008!important}
 }
+
+
+/* PusoAI complete-site white light theme: normalize every page section, card,
+   modal, form control and footer instead of only the AI studio panels. */
+body.light,
+body.light main,
+body.light .pg-main,
+body.light .container,
+body.light section,
+body.light footer,
+body.light .site-footer,
+body.light .footer,
+body.light .legal-copy,
+body.light .modal,
+body.light .modal-content,
+body.light .dialog,
+body.light .dropdown-menu,
+body.light .popover,
+body.light .settings-panel,
+body.light .admin-panel,
+body.light .panel,
+body.light .card,
+body.light .photo-card,
+body.light .category-card {
+  color:#171717;
+}
+body.light main,
+body.light .pg-main,
+body.light section,
+body.light footer,
+body.light .site-footer,
+body.light .footer,
+body.light .legal-copy,
+body.light .modal,
+body.light .modal-content,
+body.light .dialog,
+body.light .dropdown-menu,
+body.light .popover,
+body.light .settings-panel,
+body.light .admin-panel {
+  background-color:#fff!important;
+}
+body.light h1,body.light h2,body.light h3,body.light h4,
+body.light h5,body.light h6,body.light p,body.light label,
+body.light li,body.light dt,body.light dd,body.light strong,
+body.light b,body.light .section-head p,body.light .section-head h2,
+body.light .legal-copy,body.light .legal-copy p {
+  color:#202020;
+}
+body.light small,body.light .muted,body.light .text-muted,
+body.light .subtitle,body.light .description,body.light .photo-meta {
+  color:#707070;
+}
+body.light input:not([type=checkbox]):not([type=radio]):not([type=file]),
+body.light textarea,body.light select {
+  color:#202020!important;
+  background:#fff!important;
+  border-color:#dedede!important;
+}
+body.light input::placeholder,body.light textarea::placeholder {
+  color:#929292!important;
+}
+body.light button:not(.pg-generate-btn):not(.pg-preview-download),
+body.light .btn:not(.primary):not(.active) {
+  color:#333;
+}
+body.light .photo-card,body.light .category-card,
+body.light .panel,body.light .card,body.light .settings-card,
+body.light .admin-card,body.light .upload-card {
+  background:#fff!important;
+  border-color:#e8e8e8!important;
+  box-shadow:0 8px 26px #00000008!important;
+}
+body.light a:not(.pg-generate-btn) {color:#315fc8}
+body.light hr,body.light .divider {border-color:#eaeaea!important}
+body.light .pg-top-header .navlinks a,
+body.light .pg-sidebar-nav a,
+body.light .pg-mobile-nav a {color:#444!important}
+body.light .pg-sidebar-nav a.active,
+body.light .pg-sidebar-nav a:hover {color:#222!important}
+body.light .pg-preview-toolbar>span,
+body.light .pg-generator-status,
+body.light .pg-upload-status {color:#666!important}
+body.light .pg-prompt-meta {color:#777!important}
+body.light .pg-history-empty {border-color:#ddd!important;color:#777!important}
+body.light .pg-history-empty>b {color:#333!important}
+body.light .pg-secondary-actions button,
+body.light .pg-history-heading>button,
+body.light .pg-upload-status button {background:#f6f6f6!important;color:#444!important;border-color:#e5e5e5!important}
+body.light .pg-preview-toolbar button[aria-pressed=true] {color:#c02d70!important;background:#fff0f6!important;border-color:#e9a4c4!important}
+body.light .pg-preview-actions .pg-preview-download,
+body.light .pg-generate-btn {color:#fff!important}
+body.light .pg-bing-hero {background:#fff!important}
