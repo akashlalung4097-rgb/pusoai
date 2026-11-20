@@ -1207,7 +1207,7 @@ body.ai-gen-lock{overflow:hidden;}
 <a class="brand pg-top-brand" href="#home" aria-label="PusoAI Home"><span class="pg-logo-mark" aria-hidden="true">✧</span><span>Puso<b>AI</b></span></a>
 <nav class="navlinks" aria-label="Studio modes"><a href="#studio" class="pg-active-link">Image mode</a><a href="#video-mode" class="pg-mode-disabled" aria-disabled="true" title="Video generation is not connected yet">Video mode <small>SOON</small></a><a href="#prompt-guide">AI Tools</a></nav>
 <div class="navactions"><label class="pg-global-search" aria-label="Search gallery"><span>⌕</span><input id="pgGlobalSearch" type="search" placeholder="Search gallery…"><kbd>↵</kbd></label><button class="iconbtn pg-top-icon" id="pgNotifications" type="button" aria-label="Notifications" aria-expanded="false">♧</button><a class="iconbtn pg-top-icon pg-message-link" href="#contact" aria-label="Messages and contact">✉</a><button class="iconbtn" id="themeBtn" title="Theme" aria-label="Toggle theme">☾</button><button class="admin-nav-btn primary" id="adminOpen" style="display:none">Admin</button></div>
-<div class="pg-notification-popover" id="pgNotificationPanel" hidden><b>You're all set</b><span>Your PusoAI studio is ready. Generated images stay private until submitted for review.</span></div></div></header>
+<div class="pg-notification-popover" id="pgNotificationPanel" hidden><b>No new notifications</b><span>Your PusoAI studio updates and alerts will appear here.</span></div></div></header>
 <aside class="pg-sidebar" aria-label="Main navigation"><a class="pg-sidebar-logo" href="#home"><span class="pg-sidebar-mark">✧</span><span>Puso<b>AI</b><small>CREATIVE STUDIO</small></span></a><div class="pg-sidebar-label">WORKSPACE</div><nav class="pg-sidebar-nav"><a class="active" href="#home"><span>⌂</span>Home</a><a href="#studio"><span>✦</span>AI Image Generator</a><a href="#explore"><span>▦</span>Gallery</a><a href="#prompt-guide"><span>✧</span>AI Tools</a><a href="#generationHistoryPanel"><span>◷</span>History</a><a href="#studioSettings"><span>⚙</span>Settings</a></nav><div class="pg-sidebar-bottom"><div class="pg-profile-avatar">G</div><div class="pg-profile-copy"><b>Guest Creator</b><small>No account needed</small></div><span class="pg-profile-dot"></span></div></aside>
 <nav class="pg-mobile-nav" aria-label="Mobile navigation"><a href="#home"><span>⌂</span>Home</a><a href="#studio"><span>✦</span>Create</a><a href="#explore"><span>▦</span>Gallery</a><a href="#generationHistoryPanel"><span>◷</span>History</a></nav>
 <main id="home" class="pg-main">
@@ -2569,7 +2569,8 @@ function restorePusoAiHistory(file,prompt){
   if(!(file instanceof Blob))return;
   const preview=document.getElementById('userPhotoPreview');if(!preview)return;
   if(preview.src.startsWith('blob:'))URL.revokeObjectURL(preview.src);
-  preview.src=URL.createObjectURL(file);preview.style.display='block';generatedImageFile=file;
+  const restoredFile=new File([file], 'pusoai-history-'+Date.now()+'.'+(file.type==='image/jpeg'?'jpg':file.type==='image/webp'?'webp':'png'), {type:file.type||'image/png'});
+  preview.src=URL.createObjectURL(restoredFile);preview.style.display='block';generatedImageFile=restoredFile;
   const download=document.getElementById('downloadGeneratedAiImage');if(download)download.style.display='inline-flex';
   const promptInput=document.getElementById('userPhotoPrompt');if(promptInput){promptInput.value=String(prompt||'');promptInput.dispatchEvent(new Event('input',{bubbles:true}));}
   const status=document.getElementById('userPhotoStatus');if(status)status.textContent='Restored a previous result from this browser session. You can download it or submit it for review.';
