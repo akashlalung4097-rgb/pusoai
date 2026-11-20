@@ -47,3 +47,9 @@ body{overflow-x:hidden;background:radial-gradient(ellipse at 65% -20%,#3054b23d,
 @media(min-width:801px) and (max-width:1050px){
   .pg-studio-dashboard{padding-left:18px;padding-right:18px}
 }
+
+/* Show the actual support address in Contact Us, while retaining its clickable Gmail icon.
+   The JS settings updater continues to own the displayed address text. */
+.legal-copy p:has(#contactEmailLink){font-size:13px!important;line-height:1.7}
+.legal-copy #contactEmailText{display:inline!important;font-size:13px!important;color:inherit;overflow-wrap:anywhere}
+.legal-copy #contactEmailLink{display:inline-flex;align-items:center;gap:8px!important;vertical-align:middle}
