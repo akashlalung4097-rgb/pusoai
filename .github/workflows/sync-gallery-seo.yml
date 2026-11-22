@@ -108,8 +108,14 @@ jobs:
 
           const isGenericPhotoName = value => {
             const name = normalizePhotoName(value).toLowerCase();
-            return !name || /^(?:community\\s+(?:user[- ]?)?(?:photo|upload)|user[- ]?upload|pusoai\\s+photo|photo|image|picture|untitled|upload|[.\\- _]+)$/i.test(name) ||
-              (/\\bcommunity\\b/.test(name) && /\\b(?:user|upload|photo)\\b/.test(name));
+            const placeholders = [
+              'community user-upload', 'community user upload',
+              'community photo', 'community upload',
+              'user-upload', 'user upload', 'pusoai photo',
+              'photo', 'image', 'picture', 'untitled', 'upload'
+            ];
+            return !name || placeholders.includes(name) ||
+              (name.includes('community') && ['user', 'upload', 'photo'].some(word => name.includes(word)));
           };
 
           const isGenericCategory = value =>
@@ -128,9 +134,9 @@ jobs:
             // Legacy dog upload was imported with a placeholder name; keep its URL stable but give it a useful SEO title.
             if (String(photo.id) === 'community_p_mw0db6l2_ot8wwn') return 'Dog Photo';
             const original = normalizePhotoName(photo.name);
-            if (/^community\s+user[- ]?upload$/i.test(original)) {
+            if (['community user-upload', 'community user upload'].includes(original.toLowerCase())) {
               const legacyText = cleanText([photo.caption, photo.tags].filter(Boolean).join(' ')).toLowerCase();
-              return /\bdog\b/.test(legacyText) ? 'Dog Photo' : 'Community Photo Upload';
+              return /\bdog\b/.test(legacyText) ? 'Dog Photo' : 'Public Gallery Photo';
             }
             if (!isGenericPhotoName(original)) return original.slice(0, 58);
             const raw = getPhotoText(photo);
