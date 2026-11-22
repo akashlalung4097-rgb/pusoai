@@ -142,6 +142,7 @@ jobs:
             if (!isGenericPhotoName(original)) return original.slice(0, 58);
             const raw = getPhotoText(photo);
             const lower = raw.toLowerCase();
+            if (lower.includes('community') && lower.includes('upload')) return 'Public Gallery Photo';
 
             if (/\borange\s+cat\b/.test(lower) && /\b(?:window|windowsill|sunlit)\b/.test(lower)) return 'Orange Cat on a Sunlit Windowsill';
             if (/\btata\s+punch\b/.test(lower)) return 'Tata Punch Car Photo';
