@@ -4050,7 +4050,8 @@ async function bootApp(){
   bootAdmin();
   applyTextAnimation();
   renderCategories();
-  renderGallery();
+  if(CLOUD_ENABLED&&!photos.length)showGalleryLoading();
+  else renderGallery();
   updateHeroFeatured();
   applySiteSettings();
   if(location.hash.toLowerCase()==='#owner'&&isAdmin()){
@@ -4062,19 +4063,20 @@ async function bootApp(){
     try{id=decodeURIComponent(location.hash.slice(7));}catch(_error){id=location.hash.slice(7);}
     if(id)setTimeout(()=>openPhoto(id),200);
   }
-  if(CLOUD_ENABLED)void initializeCloudData();
 }
 async function startPusoAI(){
-  if(CLOUD_ENABLED){
-    try{
-      await loadSupabaseLibrary();
-      initializeSupabaseClient();
-    }catch(error){
-      remotePhotoLoadError=error?.message||'Supabase could not be loaded.';
-      console.error('Supabase lazy-load failed:',error);
-    }
-  }
+  // Start rendering and attach all public controls before loading external SDKs.
   await bootApp();
+  if(!CLOUD_ENABLED)return;
+  try{
+    await loadSupabaseLibrary();
+    initializeSupabaseClient();
+    void initializeCloudData();
+  }catch(error){
+    remotePhotoLoadError=error?.message||'Supabase could not be loaded.';
+    console.error('Supabase lazy-load failed:',error);
+    renderGallery();
+  }
 }
 window.editPhoto=editPhoto;window.deletePhoto=deletePhoto;window.removeCategory=removeCategory;window.editComment=editComment;window.deleteComment=deleteComment;window.replySharedComment=replySharedComment;
 startPusoAI();
