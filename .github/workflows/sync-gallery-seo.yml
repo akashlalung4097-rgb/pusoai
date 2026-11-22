@@ -99,10 +99,17 @@ jobs:
             return rows;
           }
 
+          const normalizePhotoName = value => cleanText(value)
+            .normalize('NFKC')
+            .replace(/[\\u00AD\\u200B-\\u200D\\uFEFF]/g, '')
+            .replace(/\\p{Pd}+/gu, '-')
+            .replace(/\\s+/g, ' ')
+            .trim();
+
           const isGenericPhotoName = value => {
-            const name = cleanText(value).toLowerCase();
-            return !name || /^(?:community\s+(?:user[- ]?)?(?:photo|upload)|user[- ]?upload|pusoai\s+photo|photo|image|picture|untitled|upload|[.\- _]+)$/i.test(name) ||
-              (/\bcommunity\b/.test(name) && /\b(?:user|upload|photo)\b/.test(name));
+            const name = normalizePhotoName(value).toLowerCase();
+            return !name || /^(?:community\\s+(?:user[- ]?)?(?:photo|upload)|user[- ]?upload|pusoai\\s+photo|photo|image|picture|untitled|upload|[.\\- _]+)$/i.test(name) ||
+              (/\\bcommunity\\b/.test(name) && /\\b(?:user|upload|photo)\\b/.test(name));
           };
 
           const isGenericCategory = value =>
@@ -120,7 +127,7 @@ jobs:
           function buildSeoTitle(photo) {
             // Legacy dog upload was imported with a placeholder name; keep its URL stable but give it a useful SEO title.
             if (String(photo.id) === 'community_p_mw0db6l2_ot8wwn') return 'Dog Photo';
-            const original = cleanText(photo.name);
+            const original = normalizePhotoName(photo.name);
             if (/^community\s+user[- ]?upload$/i.test(original)) {
               const legacyText = cleanText([photo.caption, photo.tags].filter(Boolean).join(' ')).toLowerCase();
               return /\bdog\b/.test(legacyText) ? 'Dog Photo' : 'Community Photo Upload';
@@ -483,6 +490,7 @@ jobs:
             Array.from({length: Math.ceil(list.length / 10000)}, (_, i) => list.slice(i * 10000, (i + 1) * 10000))
           ));
           NODE
+          KEY_LOCATION="https://pusoai.online/$KEY_FILENAME"
           export INDEXNOW_KEY="$KEY"
           export INDEXNOW_KEY_LOCATION="$KEY_LOCATION"
           node <<'NODE'
