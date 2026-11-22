@@ -1269,7 +1269,7 @@ body.light #downloadGeneratedAiImage:focus-visible{
     <div class="hero-actions pg-hero-actions"><a class="pg-hero-primary" href="#explore">Explore gallery <span aria-hidden="true">↗</span></a><a class="pg-hero-outline" href="#user-upload">Generate with AI <span aria-hidden="true">✦</span></a><button class="secondary pg-visually-hidden" id="heroSearch" type="button">Search photos</button></div>
   </div>
   <div class="container pg-hero-bottom"><div class="pg-wallpaper-info"><span class="pg-scenery-icon" aria-hidden="true">◉</span><div><strong>A little moment of wonder</strong><small>Discover something beautiful today</small></div></div>
-    <div class="hero-card pg-featured-card" tabindex="0" role="button" aria-label="Open featured photo full size"><img id="heroImage" alt="Featured photo" decoding="async"><div class="pg-featured-eyebrow">✦ Featured photo</div><div class="hero-caption" id="heroCaption">Featured on PusoAI</div><span class="pg-featured-arrow" aria-hidden="true">↗</span></div>
+    <div class="hero-card pg-featured-card" tabindex="0" role="button" aria-label="Open featured photo full size"><img id="heroImage" alt="Featured photo" decoding="async" fetchpriority="high"><div class="pg-featured-eyebrow">✦ Featured photo</div><div class="hero-caption" id="heroCaption">Featured on PusoAI</div><span class="pg-featured-arrow" aria-hidden="true">↗</span></div>
   </div>
   <div class="pg-hero-scroll" aria-hidden="true">SCROLL TO DISCOVER <span>↓</span></div>
 </section>
@@ -1400,7 +1400,7 @@ body.light #downloadGeneratedAiImage:focus-visible{
 <div class="stats"><div class="stat"><div class="kpi-icon">▧</div><span>Published photos</span><b id="sPhotos">0</b></div><div class="stat"><div class="kpi-icon">◉</div><span>Photo views</span><b id="sViews">0</b></div><div class="stat"><div class="kpi-icon">♥</div><span>Likes</span><b id="sLikes">0</b></div><div class="stat"><div class="kpi-icon">↓</div><span>Downloads</span><b id="sDownloads">0</b></div><div class="stat"><div class="kpi-icon">⚑</div><span>Visitor reports</span><b id="sReports">—</b></div></div>
 <div class="admin-grid-panels"><div class="panel"><div class="admin-dashboard-head"><div><h3>Visitor traffic</h3><p id="trafficChartSubtitle">Daily activity · UTC</p></div><div class="analytics-controls"><label for="analyticsPeriod">Period</label><select id="analyticsPeriod"><option value="7">Last 7 days</option><option value="30" selected>Last 30 days</option><option value="90">Last 90 days</option></select><label for="analyticsMetric">Metric</label><select id="analyticsMetric"><option value="pageViews">Page views</option><option value="photoViews">Photo views</option><option value="downloads">Downloads</option><option value="likes">Likes</option></select></div></div><div id="trafficChart" aria-live="polite"></div><div id="trafficSummary" class="chart-legend"></div><div id="dashboardTrafficDetails" class="section-note" style="margin-top:10px"></div></div><div class="panel"><h3>Audience snapshot</h3><div class="traffic-preview"><span><span class="dot"></span>Unique visitors<small>Distinct browsers · selected period</small></span><b id="dVisitors">—</b></div><div class="traffic-preview"><span><span class="dot" style="background:#4ddac4"></span>Page views<small>Pages opened</small></span><b id="dPageViews">—</b></div><div class="traffic-preview"><span><span class="dot" style="background:#ffaf73"></span>Sessions<small>Browser sessions</small></span><b id="dSessions">—</b></div><div class="traffic-preview"><span><span class="dot" style="background:#ff7d9b"></span>Today<small>Today's page views (UTC)</small></span><b id="dToday">—</b></div></div></div>
 <div class="admin-grid-panels"><div class="panel"><h3>Most viewed media</h3><div id="topMediaList" class="section-note">No traffic yet.</div></div></div></div>
-<div id="tab-upload" class="tab hidden"><div class="panel"><h3>Upload / Edit Photo</h3><div class="admin-grid"><div class="field full"><label>Photo / Video file</label><input id="photoFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif,video/mp4,video/webm,video/quicktime"></div><div class="field"><label>Photo name</label><input id="photoName" placeholder="Sunset Mountain"></div><div class="field"><label>Category</label><select id="photoCategory"></select></div><div class="field full"><label>Caption</label><textarea id="photoCaption"></textarea></div><div class="field full"><label>Tags / hashtags</label><input id="photoTags" placeholder="#nature #travel #sunset"></div><div class="field"><label>Photo text overlay</label><input id="photoOverlayText" placeholder="Optional text on photo"></div><div class="field"><label>Overlay color</label><input id="photoOverlayColor" type="color" value="#ffffff"></div><div class="field"><label>Download allowed</label><label class="toggle"><span class="switch"><input id="photoDownload" type="checkbox" checked><span class="slider"></span></span>Visitors can download</label></div><div class="field"><label>Likes enabled</label><label class="toggle"><span class="switch"><input id="photoLikes" type="checkbox" checked><span class="slider"></span></span>Visitors can like</label></div><div class="field"><label>Featured</label><label class="toggle"><span class="switch"><input id="photoFeatured" type="checkbox"><span class="slider"></span></span>Show as featured</label></div></div><div class="admin-actions"><button class="primary" id="savePhoto">Upload Photo</button><button class="secondary" id="clearPhotoForm">Clear</button></div><p id="adminUploadStatus" role="status" aria-live="polite" style="color:var(--muted);font-size:13px;margin-top:12px">Image max 10 MB · Video max 20 MB. Public photos are saved to Supabase Storage.</p><input type="hidden" id="editingId"></div></div>
+<div id="tab-upload" class="tab hidden"><div class="panel"><h3>Upload / Edit Photo</h3><div class="admin-grid"><div class="field full"><label>Photo / Video file</label><input id="photoFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif,video/mp4,video/webm,video/quicktime"></div><div class="field"><label>Photo name</label><input id="photoName" placeholder="Sunset Mountain"></div><div class="field"><label>Category</label><select id="photoCategory"></select></div><div class="field full"><label>Caption</label><textarea id="photoCaption"></textarea></div><div class="field full"><label>Tags / hashtags</label><input id="photoTags" placeholder="#nature #travel #sunset"></div><div class="field"><label>Photo text overlay</label><input id="photoOverlayText" placeholder="Optional text on photo"></div><div class="field"><label>Overlay color</label><input id="photoOverlayColor" type="color" value="#ffffff"></div><div class="field"><label>Download allowed</label><label class="toggle"><span class="switch"><input id="photoDownload" type="checkbox" checked><span class="slider"></span></span>Visitors can download</label></div><div class="field"><label>Likes enabled</label><label class="toggle"><span class="switch"><input id="photoLikes" type="checkbox" checked><span class="slider"></span></span>Visitors can like</label></div><div class="field"><label>Featured</label><label class="toggle"><span class="switch"><input id="photoFeatured" type="checkbox"><span class="slider"></span></span>Show as featured</label></div></div><div class="admin-actions"><button class="primary" id="savePhoto">Upload Photo</button><button class="secondary" id="clearPhotoForm">Clear</button></div><p id="adminUploadStatus" role="status" aria-live="polite" style="color:var(--muted);font-size:13px;margin-top:12px">Image max 10 MB · Video max 20 MB. Public photos are saved to Supabase Storage.</p><div class="admin-actions" style="margin-top:16px"><button class="secondary" id="optimizeGalleryImages" type="button">Optimize Existing Gallery Images</button></div><p id="galleryOptimizationStatus" role="status" aria-live="polite" style="color:var(--muted);font-size:12px;margin-top:8px">Create lightweight WebP gallery thumbnails for existing photos. Original files stay unchanged for fullscreen and downloads.</p><input type="hidden" id="editingId"></div></div>
 <div id="tab-photos" class="tab hidden"><div class="panel"><div class="field"><label>Search admin photos</label><input id="adminPhotoSearch" placeholder="Search by name, category, tag…"></div><div id="adminPhotoList"></div></div></div>
 <div id="tab-categories" class="tab hidden"><div class="panel"><h3>Categories</h3><div class="field"><label>Add category</label><div style="display:flex;gap:8px"><input id="newCategory"><button class="primary" id="addCategory">Add</button></div></div><div id="adminCategories"></div></div></div>
 <div id="tab-reports" class="tab hidden"><div class="panel"><div class="section-head"><div><h3>Visitor reports</h3><p>Reports submitted by visitors across devices.</p></div><button type="button" class="secondary" id="refreshReports">↻ Refresh</button></div><div id="reportList"></div></div></div>
@@ -1850,16 +1850,97 @@ function fileExtension(file){
   const ext=match?.[1]?.toLowerCase();
   return ext&&['jpg','jpeg','png','webp','gif','avif','mp4','webm','mov'].includes(ext)?ext:'bin';
 }
+async function createGalleryThumbnail(file){
+  if(!file||!String(file.type||'').startsWith('image/'))return null;
+  // Preserve animated GIF/WebP files rather than flattening their animation.
+  if(file.type==='image/gif'||file.type==='image/webp')return null;
+  let source=null,objectUrl='';
+  try{
+    if(typeof createImageBitmap==='function')source=await createImageBitmap(file);
+    else{
+      const image=new Image();
+      objectUrl=URL.createObjectURL(file);
+      await new Promise((resolve,reject)=>{
+        image.onload=resolve;
+        image.onerror=()=>reject(new Error('The browser could not decode this image.'));
+        image.src=objectUrl;
+      });
+      source=image;
+    }
+    const width=Number(source.width||source.naturalWidth||0);
+    const height=Number(source.height||source.naturalHeight||0);
+    if(!width||!height)return null;
+    const scale=Math.min(1,720/Math.max(width,height));
+    const canvas=document.createElement('canvas');
+    canvas.width=Math.max(1,Math.round(width*scale));
+    canvas.height=Math.max(1,Math.round(height*scale));
+    const context=canvas.getContext('2d',{alpha:true});
+    if(!context)return null;
+    context.drawImage(source,0,0,canvas.width,canvas.height);
+    const thumbnail=await new Promise(resolve=>canvas.toBlob(resolve,'image/webp',0.78));
+    if(!thumbnail||thumbnail.type!=='image/webp'||thumbnail.size>=file.size*0.92)return null;
+    return thumbnail;
+  }catch(error){
+    console.warn('PusoAI thumbnail conversion skipped; original file will be used:',error);
+    return null;
+  }finally{
+    if(source&&typeof source.close==='function')source.close();
+    if(objectUrl)URL.revokeObjectURL(objectUrl);
+  }
+}
+async function uploadGalleryThumbnailToCloud(blob,id){
+  const safeId=String(id||'photo').replace(/[^a-z0-9_-]/gi,'_').slice(0,90);
+  const path='media/thumbs/'+safeId+'-'+Date.now().toString(36)+'.webp';
+  const {error}=await sbClient.storage.from(STORAGE_BUCKET).upload(path,blob,{
+    cacheControl:'31536000',contentType:'image/webp',upsert:false
+  });
+  if(error)throw new Error(uploadErrorMessage(error,'gallery thumbnail'));
+  const pub=sbClient.storage.from(STORAGE_BUCKET).getPublicUrl(path);
+  return {path,publicUrl:pub.data.publicUrl};
+}
 async function uploadToCloud(file,id){
+  const thumbnailBlob=await createGalleryThumbnail(file);
   const path='media/'+id+'-'+Date.now().toString(36)+'.'+fileExtension(file);
   const {error}=await sbClient.storage.from(STORAGE_BUCKET).upload(path,file,{
     cacheControl:'31536000',
     contentType:file.type||'application/octet-stream',
-    upsert:false // A unique path is used; UPDATE permission is not necessary.
+    upsert:false
   });
   if(error)throw new Error(uploadErrorMessage(error,'owner gallery'));
   const pub=sbClient.storage.from(STORAGE_BUCKET).getPublicUrl(path);
-  return {path,publicUrl:pub.data.publicUrl};
+  let thumbnailPath='',thumbnailUrl='';
+  if(thumbnailBlob){
+    try{
+      const thumbnail=await uploadGalleryThumbnailToCloud(thumbnailBlob,id);
+      thumbnailPath=thumbnail.path;
+      thumbnailUrl=thumbnail.publicUrl;
+    }catch(error){
+      // Do not block publishing when thumbnail upload is unavailable.
+      console.warn('PusoAI thumbnail upload failed; keeping original as gallery image:',error);
+    }
+  }
+  return {path,publicUrl:pub.data.publicUrl,thumbnailPath,thumbnailUrl,galleryUrl:thumbnailUrl||pub.data.publicUrl};
+}
+function isGalleryThumbnailUrl(url){
+  return typeof url==='string'&&url.includes('/storage/v1/object/public/'+STORAGE_BUCKET+'/media/thumbs/');
+}
+function storagePathFromPublicUrl(url){
+  if(typeof url!=='string'||!url)return '';
+  const marker='/storage/v1/object/public/'+STORAGE_BUCKET+'/';
+  try{
+    const pathname=new URL(url,location.origin).pathname;
+    const index=pathname.indexOf(marker);
+    return index<0?'':decodeURIComponent(pathname.slice(index+marker.length));
+  }catch(_error){return '';}
+}
+function originalMediaUrl(photo){
+  if(!photo||!photo.src)return '';
+  const path=photo.storagePath||photo.storage_path||'';
+  if(isGalleryThumbnailUrl(photo.src)&&path&&sbClient){
+    try{return sbClient.storage.from(STORAGE_BUCKET).getPublicUrl(path).data.publicUrl||photo.src;}
+    catch(_error){return photo.src;}
+  }
+  return photo.src;
 }
 async function deleteCloudFile(path){
   if(!CLOUD_ENABLED||!path)return true;
@@ -1870,6 +1951,69 @@ async function deleteCloudFile(path){
   }catch(error){
     console.warn('Cloud file delete warning:',error);
     return false;
+  }
+}
+async function deleteCloudPhotoFiles(originalPath,galleryUrl){
+  const paths=Array.from(new Set([originalPath,storagePathFromPublicUrl(galleryUrl)].filter(Boolean)));
+  if(!paths.length)return true;
+  try{
+    const {error}=await sbClient.storage.from(STORAGE_BUCKET).remove(paths);
+    if(error)throw error;
+    return true;
+  }catch(error){
+    console.warn('Cloud photo file cleanup warning:',error);
+    return false;
+  }
+}
+async function optimizeExistingGalleryImages(){
+  if(!requireAdmin())return;
+  if(!CLOUD_ENABLED||!sbClient)return toast('Cloud Storage is unavailable. Refresh and try again.');
+  const candidates=photos.filter(photo=>
+    photo&&photo.mediaType!=='video'&&(photo.storagePath||photo.storage_path)&&photo.src&&!isGalleryThumbnailUrl(photo.src)
+  );
+  const status=document.getElementById('galleryOptimizationStatus');
+  if(!candidates.length){
+    if(status)status.textContent='No eligible original gallery photos need optimization. Videos, animated files and non-Storage images are left unchanged.';
+    return toast('No existing photos need optimization.');
+  }
+  if(!confirm('Create smaller WebP gallery thumbnails for '+candidates.length+' existing photos? Original Storage files will remain untouched. Fullscreen and downloads will continue using the original files.'))return;
+  const button=document.getElementById('optimizeGalleryImages');
+  let optimized=0,skipped=0,failed=0;
+  if(button){button.disabled=true;button.textContent='Optimizing…';}
+  try{
+    for(let index=0;index<candidates.length;index++){
+      const photo=candidates[index];
+      const path=photo.storagePath||photo.storage_path;
+      let uploadedThumbnail=null;
+      try{
+        const originalUrl=sbClient.storage.from(STORAGE_BUCKET).getPublicUrl(path).data.publicUrl;
+        const response=await fetch(originalUrl,{mode:'cors'});
+        if(!response.ok)throw new Error('Original image request failed with HTTP '+response.status);
+        const blob=await response.blob();
+        const base=String(path).split('/').pop()||('photo-'+photo.id+'.jpg');
+        const file=new File([blob],base,{type:blob.type||'image/jpeg'});
+        const thumbnailBlob=await createGalleryThumbnail(file);
+        if(!thumbnailBlob){skipped++;continue;}
+        uploadedThumbnail=await uploadGalleryThumbnailToCloud(thumbnailBlob,photo.id);
+        const {error}=await sbClient.from(PHOTOS_TABLE).update({src:uploadedThumbnail.publicUrl}).eq('id',photo.id);
+        if(error)throw error;
+        photo.src=uploadedThumbnail.publicUrl;
+        optimized++;
+      }catch(error){
+        if(uploadedThumbnail?.path)await deleteCloudFile(uploadedThumbnail.path);
+        failed++;
+        console.warn('Existing gallery image optimization failed for '+photo.id+':',error);
+      }finally{
+        if(status)status.textContent='Processing '+(index+1)+' of '+candidates.length+' · Optimized '+optimized+' · Skipped '+skipped+' · Failed '+failed;
+      }
+    }
+    try{save()}catch(error){console.warn('Optimized gallery cache could not be saved:',error);}
+    renderGallery();renderAdminPhotos();updateHeroFeatured();
+    const summary='Finished: '+optimized+' optimized, '+skipped+' safely skipped, '+failed+' failed. Original files were preserved.';
+    if(status)status.textContent=summary;
+    toast(summary);
+  }finally{
+    if(button){button.disabled=false;button.textContent='Optimize Existing Gallery Images';}
   }
 }
 async function migrateLocalPhotos(){
@@ -1883,7 +2027,7 @@ async function migrateLocalPhotos(){
   if(button){button.disabled=true;button.textContent='Migrating…';}
   try{
     for(const old of local){
-      let uploadedPath='';
+      let uploadedPath='',uploadedGalleryUrl='';
       try{
         if(!old||!old.id||!old.src||old.src===fallbackImg){skipped++;continue;}
         const photo=remoteToLocalPhoto(localToRemotePhoto(old));
@@ -1894,13 +2038,14 @@ async function migrateLocalPhotos(){
           const file=new File([blob],(photo.name||('media-'+photo.id))+'.'+fileExtension(blob),{type:blob.type||'application/octet-stream'});
           const uploaded=await uploadToCloud(file,photo.id);
           uploadedPath=uploaded.path;
-          photo.src=uploaded.publicUrl;
+          uploadedGalleryUrl=uploaded.galleryUrl;
+          photo.src=uploaded.galleryUrl;
           photo.storagePath=uploaded.path;
         }
         await syncRemotePhoto(photo);
         ok++;
       }catch(error){
-        if(uploadedPath)await deleteCloudFile(uploadedPath);
+        if(uploadedPath)await deleteCloudPhotoFiles(uploadedPath,uploadedGalleryUrl);
         console.error('Local photo migration failed:',old?.id,error);
         fail++;
         remaining.push(old);
@@ -1938,7 +2083,7 @@ function renderGallery(cat='All',q='',mode='latest'){
     const mediaSrc=typeof p.src==='string'?p.src.trim():'';
     const media=p.mediaType==='video'
       ? `<video class="gallery-media" loading="lazy" ${mediaSrc?`src="${esc(mediaSrc)}"`:''} muted playsinline preload="metadata"></video><span class="badge" style="left:auto;right:10px">VIDEO</span>`
-      : `<img class="gallery-media" loading="lazy" decoding="async" ${mediaSrc?`src="${esc(mediaSrc)}"`:''} alt="${esc(photoAltText(p))}">`;
+      : `<img class="gallery-media" loading="lazy" decoding="async" fetchpriority="low" ${mediaSrc?`src="${esc(mediaSrc)}"`:''} alt="${esc(photoAltText(p))}">`;
     return `<article class="photo-card" style="--card-delay:${Math.min(i,12)*45}ms"><div class="thumb" data-photo-open="${esc(p.id)}" role="button" tabindex="0" aria-label="Open full-size photo: ${esc(p.name)}">${media}<span class="badge">${esc(p.category)}</span>${p.featured?'<span class="badge" style="left:auto;right:10px">Featured</span>':''}${p.overlay?`<span style="position:absolute;left:50%;bottom:12px;transform:translateX(-50%);color:${esc(p.overlayColor||'#fff')};font-weight:800;background:#0008;padding:6px 12px;border-radius:999px;white-space:nowrap;max-width:90%;overflow:hidden;text-overflow:ellipsis">${esc(p.overlay)}</span>`:''}</div><div class="card-actions" role="group" aria-label="Photo actions"><button type="button" class="${liked?'liked':''}" data-act="like" data-id="${esc(p.id)}" aria-label="${liked?'Unlike':'Like'} photo" aria-pressed="${liked?'true':'false'}" title="${liked?'Unlike':'Like'}">${liked?'♥':'♡'}</button><button type="button" data-act="share" data-id="${esc(p.id)}" aria-label="Share photo" title="Share">↗</button><button type="button" data-act="comment" data-id="${esc(p.id)}" aria-label="Open photo comments" title="Comments">💬</button></div><div class="photo-info"><div class="photo-title"><a class="photo-seo-link" href="${esc(photoPublicUrl(p))}" title="Open ${esc(p.name)} on PusoAI">${esc(p.name)}</a></div><div class="photo-meta"><span>♥ ${p.likes||0}</span><span>👁 ${p.views||0}</span><span>${esc(p.category)}</span></div></div></article>`
   }).join(''):(CLOUD_ENABLED&&remotePhotoLoadError&&!photos.length
     ? `<div class="empty cloud-load-error" style="grid-column:1/-1"><b>Photos could not load from cloud.</b><p style="margin:8px 0">${esc(remotePhotoLoadError)}</p><button class="primary" id="retryCloudPhotos">Retry loading photos</button></div>`
@@ -2203,7 +2348,8 @@ function showModal(){
   }else{
     vid.pause();vid.removeAttribute('src');vid.load();vid.style.display='none';
     img.style.display='block';img.alt=photoAltText(p);
-    if(p.src){img.src=p.src;img.onerror=()=>toast('Photo could not load. Check that its public Storage URL is valid.');}
+    const fullSizeUrl=originalMediaUrl(p);
+    if(fullSizeUrl){img.src=fullSizeUrl;img.onerror=()=>toast('Photo could not load. Check that its public Storage URL is valid.');}
     else toast('This photo has no saved media URL.');
   }
   document.getElementById('modalTitle').textContent=p.name;
@@ -2320,12 +2466,13 @@ async function downloadPhoto(){
   const p=currentList[currentIndex];
   if(!p?.download)return toast('Download is disabled by admin.');
   if(!p.src)return toast('This media has no file URL.');
-  const ext=p.mediaType==='video'?(String(p.src).match(/\.([a-z0-9]{2,5})(?:[?#]|$)/i)?.[1]||'mp4'):(String(p.src).match(/\.([a-z0-9]{2,5})(?:[?#]|$)/i)?.[1]||'jpg');
+  const sourceUrl=originalMediaUrl(p);
+  const ext=p.mediaType==='video'?(String(sourceUrl).match(/\.([a-z0-9]{2,5})(?:[?#]|$)/i)?.[1]||'mp4'):(String(sourceUrl).match(/\.([a-z0-9]{2,5})(?:[?#]|$)/i)?.[1]||'jpg');
   const filename=(p.name||'pusoai-media').replace(/[^a-z0-9_-]+/gi,'-')+'.'+ext;
   try{
-    let href=p.src, objectUrl='';
-    if(!/^(data:|blob:)/i.test(p.src)){
-      const response=await fetch(p.src,{mode:'cors'});
+    let href=sourceUrl, objectUrl='';
+    if(!/^(data:|blob:)/i.test(sourceUrl)){
+      const response=await fetch(sourceUrl,{mode:'cors'});
       if(!response.ok)throw new Error('HTTP '+response.status);
       objectUrl=URL.createObjectURL(await response.blob());href=objectUrl;
     }
@@ -2337,7 +2484,7 @@ async function downloadPhoto(){
     updateStats();toast('Download started');
   }catch(error){
     console.warn('Download failed:',error);
-    const opened=window.open(p.src,'_blank','noopener,noreferrer');
+    const opened=window.open(sourceUrl,'_blank','noopener,noreferrer');
     toast(opened?'Opened media in a new tab; use the browser download option.':'Download blocked by browser. Open the media link directly.');
   }
 }
@@ -2980,14 +3127,14 @@ async function approveUserSubmission(id){
     const file=new File([blob],base,{type:blob.type||'image/jpeg'});
     const photoId='community_'+row.id;
     const uploaded=await uploadToCloud(file,photoId);
-    const photo={id:photoId,name:(row.submitter_name&&row.submitter_name!=='Anonymous'?row.submitter_name:'Community photo').slice(0,80),category:'Other',caption:'Prompt: '+row.prompt,tags:'#community #user-upload',src:uploaded.publicUrl,storagePath:uploaded.path,created:Number(row.created||Date.now()),views:0,likes:0,downloads:0,featured:false,download:true,like:true,overlay:'',overlayColor:'#ffffff',mediaType:'image',comments:[]};
-    try{await syncRemotePhoto(photo);}catch(writeError){await deleteCloudFile(uploaded.path);throw writeError;}
+    const photo={id:photoId,name:(row.submitter_name&&row.submitter_name!=='Anonymous'?row.submitter_name:'Community photo').slice(0,80),category:'Other',caption:'Prompt: '+row.prompt,tags:'#community #user-upload',src:uploaded.galleryUrl,storagePath:uploaded.path,created:Number(row.created||Date.now()),views:0,likes:0,downloads:0,featured:false,download:true,like:true,overlay:'',overlayColor:'#ffffff',mediaType:'image',comments:[]};
+    try{await syncRemotePhoto(photo);}catch(writeError){await deleteCloudPhotoFiles(uploaded.path,uploaded.galleryUrl);throw writeError;}
     const {data:reviewedRow,error:updateError}=await sbClient.from(SUBMISSIONS_TABLE)
       .update({status:'approved',reviewed_at:new Date().toISOString(),approved_photo_id:photoId})
       .eq('id',id).select('id').maybeSingle();
     if(updateError||!reviewedRow){
       const rollback=await sbClient.from(PHOTOS_TABLE).delete().eq('id',photoId);
-      const fileRemoved=await deleteCloudFile(uploaded.path);
+      const fileRemoved=await deleteCloudPhotoFiles(uploaded.path,uploaded.galleryUrl);
       if(rollback?.error||!fileRemoved)console.warn('Submission approval rollback was incomplete:',rollback?.error||'public Storage cleanup failed');
       throw updateError||new Error('Submission row was not updated. Check owner permissions.');
     }
@@ -3138,16 +3285,17 @@ async function savePhoto(){
   if(!p){p={id:uid(),created:Date.now(),views:0,likes:0,downloads:0,comments:[]};photos.unshift(p)}
   const original=isNew?null:{...p,comments:Array.isArray(p.comments)?p.comments.slice():[]};
   const oldStoragePath=p.storagePath||p.storage_path||'';
-  let newStoragePath='';
+  let newStoragePath='',newGalleryUrl='';
   let oldStorageCleanupFailed=false;
   let previouslyFeatured=[];
   try{
     if(f){
       if(CLOUD_ENABLED){
         const uploaded=await uploadToCloud(f,p.id);
-        p.src=uploaded.publicUrl;
+        p.src=uploaded.galleryUrl;
         p.storagePath=uploaded.path;
         newStoragePath=uploaded.path;
+        newGalleryUrl=uploaded.galleryUrl;
       }else{
         p.src=await readFile(f);
         p.storagePath='';
@@ -3179,7 +3327,7 @@ async function savePhoto(){
       }
     }
     if(CLOUD_ENABLED&&oldStoragePath&&newStoragePath&&oldStoragePath!==newStoragePath){
-      oldStorageCleanupFailed=!(await deleteCloudFile(oldStoragePath));
+      oldStorageCleanupFailed=!(await deleteCloudPhotoFiles(oldStoragePath,original?.src));
     }
     try{save()}catch(cacheError){console.warn('Local cache save failed:',cacheError)}
     clearForm();renderGallery();renderCategories();renderAdminPhotos();updateStats();updateHeroFeatured();
@@ -3189,7 +3337,7 @@ async function savePhoto(){
     toast(oldStorageCleanupFailed?'Media saved, but the old file remains in Storage.':'Media saved successfully');
   }catch(err){
     console.error('Photo upload/save failed:',err);
-    if(newStoragePath)await deleteCloudFile(newStoragePath);
+    if(newStoragePath)await deleteCloudPhotoFiles(newStoragePath,newGalleryUrl);
     if(makeArray(previouslyFeatured).length){
       for(const previous of previouslyFeatured){const other=photos.find(item=>item.id===previous.id);if(other)other.featured=true;}
     }
@@ -3226,7 +3374,7 @@ async function deletePhoto(id){
       if(error)throw error;
       if(!deletedRow)throw new Error('No photo row was deleted. Check the photo ID and owner permissions.');
       const storagePath=p?.storagePath||p?.storage_path||'';
-      if(storagePath&&!await deleteCloudFile(storagePath))storageCleanupFailed=true;
+      if(storagePath&&!await deleteCloudPhotoFiles(storagePath,p?.src))storageCleanupFailed=true;
     }
     photos=photos.filter(item=>item.id!==id);
     sharedComments=sharedComments.filter(comment=>comment.photoId!==String(id));
@@ -3765,6 +3913,7 @@ function bootAdmin(){
   };
   document.getElementById('savePhoto').onclick=savePhoto;
   document.getElementById('clearPhotoForm').onclick=clearForm;
+  document.getElementById('optimizeGalleryImages').onclick=optimizeExistingGalleryImages;
   document.getElementById('adminPhotoSearch').oninput=renderAdminPhotos;
   document.getElementById('addCategory').onclick=addCategory;
   document.getElementById('saveSettings').onclick=saveSettings;
