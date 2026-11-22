@@ -1906,14 +1906,14 @@ async function createGalleryThumbnail(file){
     const width=Number(source.width||source.naturalWidth||0);
     const height=Number(source.height||source.naturalHeight||0);
     if(!width||!height)return null;
-    const scale=Math.min(1,720/Math.max(width,height));
+    const scale=Math.min(1,480/Math.max(width,height));
     const canvas=document.createElement('canvas');
     canvas.width=Math.max(1,Math.round(width*scale));
     canvas.height=Math.max(1,Math.round(height*scale));
     const context=canvas.getContext('2d',{alpha:true});
     if(!context)return null;
     context.drawImage(source,0,0,canvas.width,canvas.height);
-    const thumbnail=await new Promise(resolve=>canvas.toBlob(resolve,'image/webp',0.78));
+    const thumbnail=await new Promise(resolve=>canvas.toBlob(resolve,'image/webp',0.72));
     if(!thumbnail||thumbnail.type!=='image/webp'||thumbnail.size>=file.size*0.92)return null;
     return thumbnail;
   }catch(error){
@@ -2005,7 +2005,7 @@ async function optimizeExistingGalleryImages(){
   if(!requireAdmin())return;
   if(!CLOUD_ENABLED||!sbClient)return toast('Cloud Storage is unavailable. Refresh and try again.');
   const candidates=photos.filter(photo=>
-    photo&&photo.mediaType!=='video'&&(photo.storagePath||photo.storage_path)&&photo.src&&!isGalleryThumbnailUrl(photo.src)
+    photo&&photo.mediaType!=='video'&&(photo.storagePath||photo.storage_path)&&photo.src
   );
   const status=document.getElementById('galleryOptimizationStatus');
   if(!candidates.length){
@@ -2031,10 +2031,15 @@ async function optimizeExistingGalleryImages(){
         const thumbnailBlob=await createGalleryThumbnail(file);
         if(!thumbnailBlob){skipped++;continue;}
         uploadedThumbnail=await uploadGalleryThumbnailToCloud(thumbnailBlob,photo.id);
+        const previousThumbnailPath=isGalleryThumbnailUrl(photo.src)?storagePathFromPublicUrl(photo.src):'';
         const {error}=await sbClient.from(PHOTOS_TABLE).update({src:uploadedThumbnail.publicUrl}).eq('id',photo.id);
         if(error)throw error;
         photo.src=uploadedThumbnail.publicUrl;
         optimized++;
+        // Remove only the superseded thumbnail after the database points to the new one.
+        if(previousThumbnailPath&&previousThumbnailPath!==uploadedThumbnail.path){
+          try{await deleteCloudFile(previousThumbnailPath);}catch(cleanupError){console.warn('Old thumbnail cleanup deferred:',cleanupError);}
+        }
       }catch(error){
         if(uploadedThumbnail?.path)await deleteCloudFile(uploadedThumbnail.path);
         failed++;
