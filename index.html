@@ -9,6 +9,9 @@
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
 <meta name="description" content="Create AI images from text prompts, explore public photography, and discover creative inspiration in the PusoAI gallery. Browse, share, and download published works.">
 <link rel="canonical" href="https://pusoai.online/">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://bgteingwoenkzfublqkr.supabase.co" crossorigin>
+<link rel="dns-prefetch" href="//pagead2.googlesyndication.com">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <meta name="application-name" content="PusoAI">
 <meta property="og:type" content="website">
@@ -87,6 +90,18 @@ body:not(.reduce-motion) .panel h3{
 }
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
+}
+/* Keep the mobile first paint light: avoid blur, shimmer and many simultaneous animations. */
+@media(max-width:700px){
+  body:not(.reduce-motion) :is(h1,h2,h3,h4,h5,h6,p,label,.brand,.eyebrow,.hero-caption,.photo-title,.photo-meta,.category-card strong,.category-card span,.stat span,.stat b,.panel,.report,.table th,.table td,.admintop h1,.aside h2,.menu button,.navlinks a,.footer-links a,.badge){
+    animation:none!important;
+  }
+  body:not(.reduce-motion) .grad{animation:none!important;background-position:0 50%}
+  body:not(.reduce-motion) .photo-card{animation:none!important;will-change:auto}
+  body:not(.reduce-motion) .photo-card .thumb::before{animation:none!important;opacity:0}
+  body:not(.reduce-motion) .badge{animation:none!important}
+  header,.mobile-nav{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  .photo-card img{transition:none!important}
 }
 
 
@@ -1416,7 +1431,6 @@ body.light #downloadGeneratedAiImage:focus-visible{
 </div>
 </section></div>
 <div id="toast" style="position:fixed;right:18px;bottom:18px;z-index:5000;background:var(--panel);border:1px solid var(--line);padding:12px 15px;border-radius:12px;box-shadow:var(--shadow);display:none"></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 'use strict';
 
@@ -1439,7 +1453,28 @@ let uploadInProgress=false;
 let uploadCancelRequested=false;
 const CLOUD_ENABLED=!SUPABASE_URL.includes('YOUR_PROJECT') &&
                     !SUPABASE_PUBLISHABLE_KEY.includes('YOUR_SUPABASE_PUBLISHABLE_KEY');
-const sbClient=(CLOUD_ENABLED && typeof window.supabase?.createClient==='function')?window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY):null;
+let sbClient=null;
+function initializeSupabaseClient(){
+  if(!CLOUD_ENABLED)return null;
+  if(!sbClient&&typeof window.supabase?.createClient==='function'){
+    sbClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+  }
+  return sbClient;
+}
+function loadSupabaseLibrary(){
+  if(window.supabase?.createClient)return Promise.resolve();
+  if(window.__pusoaiSupabaseLoadPromise)return window.__pusoaiSupabaseLoadPromise;
+  window.__pusoaiSupabaseLoadPromise=new Promise((resolve,reject)=>{
+    const script=document.createElement('script');
+    script.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+    script.async=true;
+    script.crossOrigin='anonymous';
+    script.onload=()=>window.supabase?.createClient?resolve():reject(new Error('Supabase library loaded without createClient.'));
+    script.onerror=()=>reject(new Error('Could not load Supabase. Check your connection and refresh the page.'));
+    document.head.appendChild(script);
+  });
+  return window.__pusoaiSupabaseLoadPromise;
+}
 let cloudSession=null;
 let remotePhotoLoadError='';
 let sharedComments=[];
@@ -1822,7 +1857,8 @@ async function loadRemotePhotos(){
   }catch(error){
     console.error('Supabase photo load error:',error);
     remotePhotoLoadError=error?.message||'Could not connect to the cloud database.';
-    photos=[];
+    // Preserve the cached gallery during a temporary cloud/network failure.
+    data.photos=photos;
     return false;
   }
 }
@@ -3954,34 +3990,57 @@ function showGalleryLoading(){
   if(!grid)return;
   grid.innerHTML=Array.from({length:8},()=>'<article class="photo-card skeleton-card" aria-label="Loading photo"><div class="thumb"></div><div class="photo-info"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></article>').join('');
 }
-async function bootApp(){
-  if(CLOUD_ENABLED)showGalleryLoading();
-  if(CLOUD_ENABLED){
-    if(!sbClient){
-      remotePhotoLoadError='Supabase JavaScript library did not load. Check your internet connection and refresh the page.';
-      photos=[];
-    }else{
-      try{
-        const sessionResult=await sbClient.auth.getSession();
-        const session=sessionResult.data?.session||null;
-        const email=String(session?.user?.email||'').toLowerCase();
-        if(session&&email===OWNER_EMAIL)cloudSession=session;
-        else{
-          cloudSession=null;
-          if(session)await sbClient.auth.signOut();
-        }
-      }catch(e){
-        cloudSession=null;
-        console.error('Supabase session error:',e);
-      }
-      await loadRemotePhotos();
-      await loadSharedSettings();
-      subscribeToSharedSettings();
-    }
-  }else if(!photos.length){
-    seed();
+async function initializeCloudData(){
+  if(!CLOUD_ENABLED)return;
+  if(!sbClient){
+    remotePhotoLoadError=remotePhotoLoadError||'Supabase is unavailable. Showing the cached gallery where available.';
+    renderGallery();
+    return;
   }
-  photos.forEach(p=>{p.comments=Array.isArray(p.comments)?p.comments:[];p.mediaType=p.mediaType||'image';p.like=p.like!==false;p.download=p.download!==false});
+  const restoreOwnerSession=(async()=>{
+    try{
+      const sessionResult=await sbClient.auth.getSession();
+      const session=sessionResult.data?.session||null;
+      const email=String(session?.user?.email||'').toLowerCase();
+      if(session&&email===OWNER_EMAIL)cloudSession=session;
+      else{
+        cloudSession=null;
+        if(session)await sbClient.auth.signOut();
+      }
+    }catch(error){
+      cloudSession=null;
+      console.error('Supabase session restore error:',error);
+    }
+  })();
+  // Public photos, shared settings and owner-session restoration happen together.
+  await Promise.allSettled([loadRemotePhotos(),loadSharedSettings(),restoreOwnerSession]);
+  photos.forEach(photo=>{
+    photo.comments=Array.isArray(photo.comments)?photo.comments:[];
+    photo.mediaType=photo.mediaType||'image';
+    photo.like=photo.like!==false;
+    photo.download=photo.download!==false;
+  });
+  try{save()}catch(cacheError){console.warn('Cloud gallery cache save failed:',cacheError)}
+  subscribeToPublicPhotos();
+  subscribeToSharedSettings();
+  renderCategories();
+  renderGallery();
+  updateHeroFeatured();
+  if(location.hash.toLowerCase()==='#owner'&&isAdmin()){
+    document.getElementById('login')?.classList.remove('open');
+    openAdmin();
+  }
+}
+async function bootApp(){
+  // Render cached/static content and attach controls before waiting for cloud requests.
+  photos.forEach(photo=>{
+    photo.comments=Array.isArray(photo.comments)?photo.comments:[];
+    photo.mediaType=photo.mediaType||'image';
+    photo.like=photo.like!==false;
+    photo.download=photo.download!==false;
+  });
+  if(!CLOUD_ENABLED&&!photos.length)seed();
+  if(CLOUD_ENABLED)sharedSettingsLoadError='Shared settings are loading; AdSense is temporarily paused.';
   try{save()}catch(cacheError){console.warn('Local cache save failed:',cacheError)}
   ensureAnalytics();
   trackVisit();
@@ -3989,15 +4048,12 @@ async function bootApp(){
   setupUserUpload();
   setupFeaturedPhotoOpen();
   bootAdmin();
-  subscribeToPublicPhotos();
   applyTextAnimation();
   renderCategories();
   renderGallery();
   updateHeroFeatured();
   applySiteSettings();
   if(location.hash.toLowerCase()==='#owner'&&isAdmin()){
-    // On reload, the login overlay may have been opened before Supabase restored
-    // the owner session. Remove it before showing the admin panel (z-index is higher).
     document.getElementById('login')?.classList.remove('open');
     openAdmin();
   }
@@ -4006,9 +4062,22 @@ async function bootApp(){
     try{id=decodeURIComponent(location.hash.slice(7));}catch(_error){id=location.hash.slice(7);}
     if(id)setTimeout(()=>openPhoto(id),200);
   }
+  if(CLOUD_ENABLED)void initializeCloudData();
+}
+async function startPusoAI(){
+  if(CLOUD_ENABLED){
+    try{
+      await loadSupabaseLibrary();
+      initializeSupabaseClient();
+    }catch(error){
+      remotePhotoLoadError=error?.message||'Supabase could not be loaded.';
+      console.error('Supabase lazy-load failed:',error);
+    }
+  }
+  await bootApp();
 }
 window.editPhoto=editPhoto;window.deletePhoto=deletePhoto;window.removeCategory=removeCategory;window.editComment=editComment;window.deleteComment=deleteComment;window.replySharedComment=replySharedComment;
-bootApp();
+startPusoAI();
 </script>
 <script>
 // Bing-inspired gallery search; searches PusoAI content, not the whole web.
