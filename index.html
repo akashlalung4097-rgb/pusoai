@@ -3070,7 +3070,7 @@ async function uploadCommunitySubmissionFile(file,path,signal,onProgress){
   if(signal?.aborted)throw createCommunityUploadAbortError();
   const accessToken=authData?.session?.access_token||SUPABASE_PUBLISHABLE_KEY;
   const encodedPath=String(path).split('/').map(part=>encodeURIComponent(part)).join('/');
-  const url=SUPABASE_URL.replace(/\\/$/,'')+'/storage/v1/object/'+
+  const url=SUPABASE_URL.replace(/\/$/,'')+'/storage/v1/object/'+
     encodeURIComponent(SUBMISSIONS_BUCKET)+'/'+encodedPath;
   return await new Promise((resolve,reject)=>{
     const xhr=new XMLHttpRequest();
