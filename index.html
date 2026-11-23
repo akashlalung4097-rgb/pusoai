@@ -1451,6 +1451,7 @@ let generatedImageFile=null;
 let aiGenerationController=null;
 let uploadInProgress=false;
 let uploadCancelRequested=false;
+let communityUploadController=null;
 const CLOUD_ENABLED=!SUPABASE_URL.includes('YOUR_PROJECT') &&
                     !SUPABASE_PUBLISHABLE_KEY.includes('YOUR_SUPABASE_PUBLISHABLE_KEY');
 let sbClient=null;
@@ -1489,6 +1490,7 @@ const OWNER_EMAIL='pusoai001@gmail.com'.toLowerCase();
 const KEY='photogram_v6',VIS='photogram_visitor_v2',ADMIN_SESSION='photogram_admin_v2',ADMIN_LOGIN_AT='photogram_admin_login_at';
 const ADMIN_SESSION_TIMEOUT_MS=10*60*1000;
 let adminAutoLogoutTimer=null;
+let adminAuthListenerAttached=false;
 const DEFAULT_CATS=['Nature','Travel','Cars','Bikes','Technology','Gaming','Fashion','Animals','Wallpapers','Other'];
 const DEFAULT_ADSENSE_PUBLISHER='ca-pub-6380411063624039'; // Verify this publisher ID in the owner's AdSense account.
 const DEFAULT_ADSENSE_SLOT='4657030846'; // PusoAI responsive display ad unit created in AdSense.
@@ -2754,10 +2756,11 @@ function setupUserUpload(){
   });
   downloadBtn?.addEventListener('click',downloadGeneratedAiImage);
   cancelUploadBtn?.addEventListener('click',()=>{
-    if(!uploadInProgress)return;
+    if(!uploadInProgress||!communityUploadController)return;
     uploadCancelRequested=true;
     cancelUploadBtn.disabled=true;
-    status.textContent='Cancel requested. The current transfer must finish before the private upload can be stopped.';
+    status.textContent='Canceling upload…';
+    communityUploadController.abort();
   });
   form.addEventListener('submit',submitUserPhoto);
 }
@@ -3055,6 +3058,68 @@ async function generateAiImage(){
   }
 }
 
+function createCommunityUploadAbortError(){
+  const error=new Error('Community photo upload canceled.');
+  error.name='AbortError';
+  return error;
+}
+async function uploadCommunitySubmissionFile(file,path,signal,onProgress){
+  if(!sbClient)throw new Error('Supabase is unavailable. Refresh and try again.');
+  const {data:authData,error:authError}=await sbClient.auth.getSession();
+  if(authError)throw authError;
+  if(signal?.aborted)throw createCommunityUploadAbortError();
+  const accessToken=authData?.session?.access_token||SUPABASE_PUBLISHABLE_KEY;
+  const encodedPath=String(path).split('/').map(part=>encodeURIComponent(part)).join('/');
+  const url=SUPABASE_URL.replace(/\\/$/,'')+'/storage/v1/object/'+
+    encodeURIComponent(SUBMISSIONS_BUCKET)+'/'+encodedPath;
+  return await new Promise((resolve,reject)=>{
+    const xhr=new XMLHttpRequest();
+    let settled=false;
+    let abortHandler=null;
+    const cleanup=()=>{
+      if(signal&&abortHandler)signal.removeEventListener('abort',abortHandler);
+    };
+    const finish=(callback,value)=>{
+      if(settled)return;
+      settled=true;
+      cleanup();
+      callback(value);
+    };
+    xhr.open('POST',url,true);
+    xhr.setRequestHeader('apikey',SUPABASE_PUBLISHABLE_KEY);
+    xhr.setRequestHeader('Authorization','Bearer '+accessToken);
+    xhr.setRequestHeader('cache-control','max-age=3600');
+    xhr.setRequestHeader('Content-Type',file.type||'application/octet-stream');
+    xhr.setRequestHeader('x-upsert','false');
+    xhr.upload.addEventListener('progress',event=>{
+      if(event.lengthComputable&&typeof onProgress==='function'){
+        onProgress(Math.max(0,Math.min(100,Math.round(event.loaded/event.total*100))));
+      }
+    });
+    xhr.addEventListener('load',()=>{
+      let result={};
+      try{result=JSON.parse(xhr.responseText||'{}')}catch(_error){}
+      if(xhr.status>=200&&xhr.status<300){
+        finish(resolve,result);
+      }else{
+        const message=String(result?.message||result?.error||result?.statusText||'Storage upload failed with HTTP '+xhr.status+'.');
+        finish(reject,new Error(message));
+      }
+    });
+    xhr.addEventListener('error',()=>finish(reject,new Error('Network error while uploading your photo. Check your connection and try again.')));
+    xhr.addEventListener('abort',()=>finish(reject,createCommunityUploadAbortError()));
+    if(signal){
+      abortHandler=()=>xhr.abort();
+      signal.addEventListener('abort',abortHandler,{once:true});
+      if(signal.aborted){
+        finish(reject,createCommunityUploadAbortError());
+        return;
+      }
+    }
+    xhr.send(file);
+  });
+}
+
 async function submitUserPhoto(event){
   event.preventDefault();
   const file=generatedImageFile||document.getElementById('userPhotoFile')?.files?.[0];
@@ -3069,144 +3134,86 @@ async function submitUserPhoto(event){
   if(!file.type.startsWith('image/')){status.textContent='Only image files are accepted.';return;}
   if(file.size>10*1024*1024){status.textContent='Image must be 10 MB or smaller.';return;}
   if(promptText.length<5||promptText.length>1500){status.textContent='Please enter a prompt/description between 5 and 1,500 characters.';return;}
-  uploadInProgress=true;uploadCancelRequested=false;
-  btn.disabled=true;const oldLabel=btn.textContent;btn.textContent='Submitting…';
+
+  const controller=new AbortController();
+  communityUploadController=controller;
+  uploadInProgress=true;
+  uploadCancelRequested=false;
+  btn.disabled=true;
+  const oldLabel=btn.textContent;
+  btn.textContent='Submitting…';
   if(cancelBtn){cancelBtn.style.display='inline-flex';cancelBtn.disabled=false;}
   if(clearBtn)clearBtn.disabled=true;
   status.textContent='Uploading your photo securely…';
+
   const id=uid();
   const path='submissions/'+id+'.'+fileExtension(file);
   let fileUploaded=false;
   let rowCreated=false;
   try{
-    const {error:uploadError}=await sbClient.storage.from(SUBMISSIONS_BUCKET).upload(path,file,{cacheControl:'3600',contentType:file.type,upsert:false});
-    if(uploadError)throw new Error(uploadErrorMessage(uploadError,'community submission'));
+    await uploadCommunitySubmissionFile(file,path,controller.signal,percent=>{
+      if(!uploadCancelRequested)status.textContent='Uploading your photo securely… '+percent+'%';
+    });
     fileUploaded=true;
-    if(uploadCancelRequested){
-      // Anonymous users cannot DELETE private submission objects. Never claim cleanup succeeded.
-      status.textContent='Upload canceled before review submission. Owner can clean up the private file.';
+
+    if(uploadCancelRequested||controller.signal.aborted){
+      status.textContent='Upload canceled before review submission. Checking private-file cleanup…';
+      try{
+        const {error:cleanupError}=await sbClient.storage.from(SUBMISSIONS_BUCKET).remove([path]);
+        if(cleanupError)throw cleanupError;
+        status.textContent='Upload canceled. The private file was cleaned up; no review submission was created.';
+      }catch(cleanupError){
+        console.warn('Canceled community upload cleanup may need owner attention:',cleanupError);
+        status.textContent='Upload canceled. No review submission was created, but the owner may need to remove the completed private file.';
+      }
       return;
     }
+
+    // The file transfer is complete. Hide Cancel while the short review-row insert runs.
+    if(cancelBtn){cancelBtn.style.display='none';cancelBtn.disabled=true;}
+    status.textContent='Photo uploaded. Adding it to the owner review queue…';
     const payload={id,submitter_name:'Anonymous',prompt:promptText,storage_path:path,created:Date.now(),status:'pending',media_type:'image'};
     const {error:rowError}=await sbClient.from(SUBMISSIONS_TABLE).insert(payload);
     if(rowError)throw new Error(uploadErrorMessage(rowError,'community submission'));
     rowCreated=true;
-    if(uploadCancelRequested){
-      status.textContent='Cancel requested. Photo already reached the review queue. Contact the owner to remove it.';
-      return;
-    }
     document.getElementById('userPhotoForm').reset();
     setTimeout(()=>{if(!uploadInProgress)status.textContent='Thank you! Your photo and prompt were submitted for owner review. It will appear in the public gallery only if approved.';},0);
     toast('Photo submitted for review');
   }catch(error){
+    const canceled=uploadCancelRequested||controller.signal.aborted||error?.name==='AbortError';
     console.error('Public photo submission failed:',error);
-    if(rowCreated){try{await sbClient.from(SUBMISSIONS_TABLE).delete().eq('id',id);}catch(cleanupError){console.warn('Could not remove canceled submission row:',cleanupError)}}
-    if(fileUploaded){try{await sbClient.storage.from(SUBMISSIONS_BUCKET).remove([path]);}catch(cleanupError){console.warn('Could not remove incomplete submission file:',cleanupError)}}
-    status.textContent=uploadCancelRequested?'Upload canceled. Owner may need to remove any partially uploaded file.':'Submission failed: '+uploadErrorMessage(error,'community submission');
-  }finally{
-    uploadInProgress=false;uploadCancelRequested=false;
-    if(cancelBtn){cancelBtn.style.display='none';cancelBtn.disabled=false;}
-    if(clearBtn)clearBtn.disabled=false;
-    btn.disabled=false;btn.textContent=oldLabel;
-  }
-}
-async function renderUserSubmissions(){
-  const box=document.getElementById('userSubmissionList');
-  if(!box)return;
-  if(!isAdmin()||!sbClient){box.innerHTML='<div class="empty">Sign in as the configured owner to view submissions.</div>';return;}
-  box.innerHTML='<div class="empty">Loading submissions…</div>';
-  let rows=[];
-  try{
-    rows=await fetchAllSupabaseRows(
-      ()=>sbClient.from(SUBMISSIONS_TABLE).select('*').order('created',{ascending:false}).order('id',{ascending:true}),
-      200
-    );
-  }catch(error){
-    box.innerHTML='<div class="empty">Could not load submissions: '+esc(error?.message||'Network error')+'<br>Check the user upload table, owner permissions and connection, then refresh.</div>';
-    return;
-  }
-  userSubmissions=rows;
-  if(!userSubmissions.length){box.innerHTML='<div class="empty">No user photo submissions yet.</div>';return;}
-  const cards=await mapWithConcurrency(userSubmissions,8,async row=>{
-    let imageUrl='';
-    if(row.storage_path){
-      try{const result=await sbClient.storage.from(SUBMISSIONS_BUCKET).createSignedUrl(row.storage_path,300);if(!result.error)imageUrl=result.data?.signedUrl||'';}
-      catch(error){console.warn('Submission preview URL unavailable:',error);}
-    }
-    const statusText=String(row.status||'pending');
-    const actions=statusText==='pending'?'<div class="admin-actions" style="margin-top:12px"><button class="primary" data-submission-action="approve" data-submission-id="'+esc(row.id)+'">Approve & Publish</button><button class="danger" data-submission-action="reject" data-submission-id="'+esc(row.id)+'">Reject</button></div>':'';
-    return '<article class="report" style="margin-bottom:14px"><div style="display:grid;grid-template-columns:minmax(110px,220px) 1fr;gap:14px;align-items:start"><div>'+(imageUrl?'<button type="button" class="submission-preview-trigger" data-preview-src="'+esc(imageUrl)+'" data-preview-name="Submitted by '+esc(row.submitter_name||'Anonymous')+'" aria-label="View submitted photo full size"><img src="'+esc(imageUrl)+'" alt="Submitted photo" loading="lazy"><span>View full size ⤢</span></button>':'<div class="empty">Preview unavailable</div>')+'</div><div><b>'+esc(row.submitter_name||'Anonymous')+'</b><span style="float:right;color:var(--muted);font-size:12px">'+esc(statusText.toUpperCase())+'</span><p style="margin:8px 0;white-space:pre-wrap;overflow-wrap:anywhere">'+esc(row.prompt||'')+'</p><small>'+esc(new Date(Number(row.created||Date.now())).toLocaleString())+'</small>'+actions+'</div></div></article>';
-  });
-  box.innerHTML=cards.join('');
-  box.querySelectorAll('[data-preview-src]').forEach(button=>button.addEventListener('click',()=>{
-    const modal=document.getElementById('submissionPreviewModal');
-    const image=document.getElementById('submissionPreviewImage');
-    const title=document.getElementById('submissionPreviewTitle');
-    if(!modal||!image)return;
-    image.src=button.dataset.previewSrc||'';
-    image.alt=button.dataset.previewName||'Full-size submitted photo';
-    if(title)title.textContent=(button.dataset.previewName||'Submitted photo')+' · Full size';
-    modal.classList.remove('hidden');
-    document.getElementById('closeSubmissionPreview')?.focus();
-  }));
-  box.querySelectorAll('[data-submission-action]').forEach(button=>button.addEventListener('click',()=>{
-    const action=button.dataset.submissionAction,id=button.dataset.submissionId;
-    if(action==='approve')approveUserSubmission(id);
-    if(action==='reject')rejectUserSubmission(id);
-  }));
-}
-async function approveUserSubmission(id){
-  if(!isAdmin()||!sbClient)return toast('Only the signed-in owner can approve submissions.');
-  const row=userSubmissions.find(item=>item.id===id);
-  if(!row)return toast('Submission not found. Refresh and try again.');
-  if(row.status!=='pending')return toast('This submission was already reviewed.');
-  if(!confirm('Approve this photo and publish it to the public gallery?'))return;
-  try{
-    const {data:blob,error:downloadError}=await sbClient.storage.from(SUBMISSIONS_BUCKET).download(row.storage_path);
-    if(downloadError)throw downloadError;
-    const base=(row.storage_path||'submitted-image').split('/').pop()||'submitted-image.jpg';
-    const file=new File([blob],base,{type:blob.type||'image/jpeg'});
-    const photoId='community_'+row.id;
-    const uploaded=await uploadToCloud(file,photoId);
-    const photo={id:photoId,name:(row.submitter_name&&row.submitter_name!=='Anonymous'?row.submitter_name:'Community photo').slice(0,80),category:'Other',caption:'Prompt: '+row.prompt,tags:'#community #user-upload',src:uploaded.galleryUrl,storagePath:uploaded.path,created:Number(row.created||Date.now()),views:0,likes:0,downloads:0,featured:false,download:true,like:true,overlay:'',overlayColor:'#ffffff',mediaType:'image',comments:[]};
-    try{await syncRemotePhoto(photo);}catch(writeError){await deleteCloudPhotoFiles(uploaded.path,uploaded.galleryUrl);throw writeError;}
-    const {data:reviewedRow,error:updateError}=await sbClient.from(SUBMISSIONS_TABLE)
-      .update({status:'approved',reviewed_at:new Date().toISOString(),approved_photo_id:photoId})
-      .eq('id',id).select('id').maybeSingle();
-    if(updateError||!reviewedRow){
-      const rollback=await sbClient.from(PHOTOS_TABLE).delete().eq('id',photoId);
-      const fileRemoved=await deleteCloudPhotoFiles(uploaded.path,uploaded.galleryUrl);
-      if(rollback?.error||!fileRemoved)console.warn('Submission approval rollback was incomplete:',rollback?.error||'public Storage cleanup failed');
-      throw updateError||new Error('Submission row was not updated. Check owner permissions.');
+    if(rowCreated){
+      try{await sbClient.from(SUBMISSIONS_TABLE).delete().eq('id',id);}
+      catch(cleanupError){console.warn('Could not remove submission row after upload failure:',cleanupError);}
     }
     let privateFileCleanupFailed=false;
-    try{
-      const cleanup=await sbClient.storage.from(SUBMISSIONS_BUCKET).remove([row.storage_path]);
-      if(cleanup?.error)throw cleanup.error;
-    }catch(cleanupError){privateFileCleanupFailed=true;console.warn('Approved private upload cleanup warning:',cleanupError);}
-    photos=[photo,...photos.filter(item=>item.id!==photoId)];row.status='approved';row.approved_photo_id=photoId;
-    try{save()}catch(e){console.warn(e)}renderGallery();renderCategories();updateHeroFeatured();updateStats();await renderUserSubmissions();
-    toast(privateFileCleanupFailed?'Photo published, but the private submission file could not be removed. Check Storage permissions.':'Photo approved and published');
-  }catch(error){console.error('Approve submission failed:',error);toast('Could not publish photo: '+(error?.message||'check Supabase table/storage policies'));}
-}
-async function rejectUserSubmission(id){
-  if(!isAdmin()||!sbClient)return toast('Only the signed-in owner can reject submissions.');
-  const row=userSubmissions.find(item=>item.id===id);
-  if(!row||row.status!=='pending')return toast('Pending submission not found.');
-  if(!confirm('Reject this submission and remove its uploaded file?'))return;
-  try{
-    const {data:rejectedRow,error}=await sbClient.from(SUBMISSIONS_TABLE)
-      .update({status:'rejected',reviewed_at:new Date().toISOString()}).eq('id',id).select('id').maybeSingle();
-    if(error)throw error;
-    if(!rejectedRow)throw new Error('Submission row was not updated. Check owner permissions.');
-    let fileRemoved=true;
-    if(row.storage_path){
-      try{const result=await sbClient.storage.from(SUBMISSIONS_BUCKET).remove([row.storage_path]);if(result.error)throw result.error;}
-      catch(cleanupError){fileRemoved=false;console.warn('Rejected submission file cleanup warning:',cleanupError);}
+    // Try cleanup after cancellation too: the server may have completed the object
+    // just before the browser received the abort event. Anonymous DELETE may be denied.
+    if(fileUploaded||canceled){
+      try{
+        const {error:cleanupError}=await sbClient.storage.from(SUBMISSIONS_BUCKET).remove([path]);
+        if(cleanupError)throw cleanupError;
+      }catch(cleanupError){
+        privateFileCleanupFailed=true;
+        console.warn('Could not confirm private submission-file cleanup:',cleanupError);
+      }
     }
-    row.status='rejected';await renderUserSubmissions();
-    toast(fileRemoved?'Submission rejected':'Submission rejected, but its private Storage file could not be removed. Check Storage permissions.');
-  }catch(error){console.error('Submission rejection failed:',error);toast('Could not reject submission: '+(error?.message||'check Supabase connection and permissions.'));}
+    if(canceled){
+      status.textContent=privateFileCleanupFailed
+        ?'Upload canceled. No review submission was created; the owner may need to remove a completed private file.'
+        :'Upload canceled. The transfer was stopped and no review submission was created.';
+    }else{
+      status.textContent='Submission failed: '+uploadErrorMessage(error,'community submission');
+    }
+  }finally{
+    if(communityUploadController===controller)communityUploadController=null;
+    uploadInProgress=false;
+    uploadCancelRequested=false;
+    if(cancelBtn){cancelBtn.style.display='none';cancelBtn.disabled=false;}
+    if(clearBtn)clearBtn.disabled=false;
+    btn.disabled=false;
+    btn.textContent=oldLabel;
+  }
 }
 
 function setupPublic(){document.getElementById('searchBtn').onclick=()=>{const latest=document.querySelector('#filterChips .chip[data-mode="latest"]');if(latest)latest.click();else renderGallery('All',document.getElementById('searchInput').value,'latest')};document.getElementById('searchInput').oninput=e=>renderGallery(document.querySelector('.chip.active')?.dataset.cat||'All',e.target.value,document.querySelector('.chip.active')?.dataset.mode||'latest');document.getElementById('heroSearch').onclick=()=>{document.getElementById('searchInput').focus();location.hash='explore'};document.getElementById('mobileSearch').onclick=()=>{location.hash='explore';setTimeout(()=>document.getElementById('searchInput').focus(),100)};document.querySelectorAll('[data-nav]').forEach(b=>b.onclick=()=>location.hash=b.dataset.nav);const themeBtn=document.getElementById('themeBtn');const syncThemeButton=()=>{const isLight=document.body.classList.contains('light');themeBtn.textContent=isLight?'☾':'☀';themeBtn.title=isLight?'Switch to dark mode':'Switch to light mode';themeBtn.setAttribute('aria-label',themeBtn.title)};themeBtn.onclick=()=>{document.body.classList.toggle('light');storageSet('pg_theme',document.body.classList.contains('light')?'light':'dark');syncThemeButton()};// Keep PusoAI's dark-blue appearance as the first-visit default. Respect an explicit saved light preference.
@@ -3936,6 +3943,27 @@ async function saveSettings(){
   }
 }
 function tabs(){document.querySelectorAll('.menu button').forEach(b=>b.onclick=()=>{if(!requireAdmin())return;const tabName=b.dataset.tab;document.querySelectorAll('.menu button').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.tab').forEach(x=>x.classList.add('hidden'));const tab=document.getElementById('tab-'+tabName);if(!tab)return;tab.classList.remove('hidden');document.getElementById('adminTitle').textContent=b.textContent.trim();populateAdminTab(tabName)})}
+function subscribeToAdminAuth(){
+  if(!CLOUD_ENABLED||!sbClient||adminAuthListenerAttached)return;
+  // bootAdmin() runs before the Supabase SDK is lazy-loaded. Attach exactly once
+  // after initializeSupabaseClient() has created the client.
+  adminAuthListenerAttached=true;
+  sbClient.auth.onAuthStateChange((event,session)=>{
+    const email=String(session?.user?.email||'').toLowerCase();
+    cloudSession=(session&&email===OWNER_EMAIL)?session:null;
+    if(cloudSession){
+      // Keep the original 10-minute deadline across token refresh events.
+      if(event==='SIGNED_IN'&&!storageGet(ADMIN_LOGIN_AT,'session'))storageSet(ADMIN_LOGIN_AT,String(Date.now()),'session');
+      scheduleAdminAutoLogout();
+    }else{
+      clearAdminAutoLogoutTimer();
+      storageRemove(ADMIN_LOGIN_AT,'session');
+      closeAdmin();
+    }
+    // Also refresh the private owner route if another tab signs in or out.
+    window.dispatchEvent(new Event('hashchange'));
+  });
+}
 function bootAdmin(){
   document.getElementById('adminClose').onclick=closeAdmin;
   document.getElementById('adminLogoutMobile').onclick=()=>document.getElementById('adminLogout').click();
@@ -3973,22 +4001,7 @@ function bootAdmin(){
   const refreshSubsBtn=document.getElementById('refreshUserSubmissions');
   if(refreshSubsBtn)refreshSubsBtn.onclick=()=>renderUserSubmissions();
   tabs();
-  if(CLOUD_ENABLED&&sbClient){
-    sbClient.auth.onAuthStateChange((event,session)=>{
-      const email=String(session?.user?.email||'').toLowerCase();
-      cloudSession=(session&&email===OWNER_EMAIL)?session:null;
-      if(cloudSession){
-        // Keep the original 10-minute deadline across token refresh events.
-        if(event==='SIGNED_IN'&&!storageGet(ADMIN_LOGIN_AT,'session'))storageSet(ADMIN_LOGIN_AT,String(Date.now()),'session');
-        scheduleAdminAutoLogout();
-      }else{
-        clearAdminAutoLogoutTimer();
-        storageRemove(ADMIN_LOGIN_AT,'session');
-        closeAdmin();
-      }
-      window.dispatchEvent(new Event('hashchange'));
-    });
-  }
+  subscribeToAdminAuth();
 }
 function showGalleryLoading(){
   const grid=document.getElementById('photoGrid');
@@ -4007,8 +4020,10 @@ async function initializeCloudData(){
       const sessionResult=await sbClient.auth.getSession();
       const session=sessionResult.data?.session||null;
       const email=String(session?.user?.email||'').toLowerCase();
-      if(session&&email===OWNER_EMAIL)cloudSession=session;
-      else{
+      if(session&&email===OWNER_EMAIL){
+        cloudSession=session;
+        scheduleAdminAutoLogout();
+      }else{
         cloudSession=null;
         if(session)await sbClient.auth.signOut();
       }
@@ -4076,6 +4091,7 @@ async function startPusoAI(){
   try{
     await loadSupabaseLibrary();
     initializeSupabaseClient();
+    subscribeToAdminAuth();
     void initializeCloudData();
   }catch(error){
     remotePhotoLoadError=error?.message||'Supabase could not be loaded.';
