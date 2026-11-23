@@ -505,6 +505,20 @@ img,video,svg{max-width:100%}
   .admin .panel{overflow-wrap:anywhere}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* Live Preview quick actions: kept inside the generator preview, never on gallery uploads. */
+.pg-preview-stage{position:relative;overflow:hidden}
+.pg-live-preview-tools[hidden]{display:none!important}
+.pg-live-preview-tools{position:absolute;z-index:12;right:14px;bottom:14px;display:flex;align-items:center;gap:10px;max-width:calc(100% - 24px)}
+.pg-live-preview-tools button{width:56px;height:56px;flex:0 0 56px;display:grid;place-items:center;padding:0;border:1px solid rgba(255,255,255,.16);border-radius:50%;background:rgba(10,12,22,.82);color:#fff;font-size:32px;line-height:1;backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);box-shadow:0 5px 18px rgba(0,0,0,.25);cursor:pointer;transition:transform .18s ease,background .18s ease}
+.pg-live-preview-tools button:hover{background:rgba(45,49,70,.96);transform:translateY(-2px)}
+.pg-live-preview-tools button:active{transform:scale(.94)}
+.pg-live-preview-tools button svg{width:29px;height:29px;fill:none;stroke:currentColor;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round}
+.pg-live-preview-tools button:focus-visible{outline:3px solid #8b7cff;outline-offset:3px}
+#pgPreviewStage #userPhotoPreview.preview-zoomed{transform:scale(1.5);cursor:zoom-out}
+#pgPreviewStage #userPhotoPreview{transition:transform .2s ease}
+@media(max-width:700px){.pg-live-preview-tools{right:9px;bottom:9px;gap:7px}.pg-live-preview-tools button{width:43px;height:43px;flex-basis:43px;font-size:25px}.pg-live-preview-tools button svg{width:23px;height:23px}}
+@media(max-width:380px){.pg-live-preview-tools{gap:5px}.pg-live-preview-tools button{width:38px;height:38px;flex-basis:38px;font-size:22px}}
 </style>
 <style id="modern-ui-refresh">
 /* PusoAI modern UI refresh: light-first, calm contrast, responsive layout. */
@@ -1215,16 +1229,6 @@ body.light #downloadGeneratedAiImage:focus-visible{
   color:#fff!important;
 }
 
-/* Screenshot-style quick actions overlaid at the bottom-right of every gallery photo. */
-.photo-overlay-tools{position:absolute;z-index:5;right:12px;bottom:12px;display:flex;align-items:center;gap:9px;max-width:calc(100% - 20px)}
-.photo-overlay-tools button{width:58px;height:58px;flex:0 0 58px;display:grid;place-items:center;padding:0;border:1px solid rgba(255,255,255,.13);border-radius:50%;background:rgba(12,13,20,.78);color:#fff;font-size:34px;line-height:1;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:0 5px 18px rgba(0,0,0,.22);transition:transform .18s ease,background .18s ease,opacity .18s ease}
-.photo-overlay-tools button:hover{background:rgba(35,38,55,.94);transform:translateY(-2px)}
-.photo-overlay-tools button:active{transform:scale(.94)}
-.photo-overlay-tools button:disabled{opacity:.38;cursor:not-allowed}
-.photo-overlay-tools button svg{width:31px;height:31px;fill:none;stroke:currentColor;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round}
-.photo-overlay-tools button:focus-visible{outline:3px solid #8b7cff;outline-offset:3px}
-@media(max-width:700px){.photo-overlay-tools{right:8px;bottom:8px;gap:6px}.photo-overlay-tools button{width:42px;height:42px;flex-basis:42px;font-size:25px}.photo-overlay-tools button svg{width:23px;height:23px}}
-@media(max-width:380px){.photo-overlay-tools{gap:4px}.photo-overlay-tools button{width:37px;height:37px;flex-basis:37px;font-size:22px}.photo-overlay-tools button svg{width:20px;height:20px}}
 </style>
 </head>
 <body>
@@ -1270,7 +1274,7 @@ body.light #downloadGeneratedAiImage:focus-visible{
 <div id="aiGenerationError" class="ai-gen-error" role="alert" hidden><div class="ai-gen-error-copy"><strong>AI image generation failed</strong><span id="aiGenerationErrorText">Please try again.</span></div><button class="ai-gen-retry" id="retryAiGeneration" type="button">↻ Retry</button></div>
 </form></section>
 <section class="pg-glass-panel pg-preview-panel" aria-labelledby="pgPreviewTitle"><div class="pg-preview-header"><div><small>CANVAS PREVIEW</small><h2 id="pgPreviewTitle">Your creation</h2></div><span class="pg-preview-live"><i></i> LIVE PREVIEW</span></div>
-<div class="pg-preview-stage" id="pgPreviewStage"><img id="userPhotoPreview" class="user-upload-preview" alt="Reference or successfully generated AI image" style="display:none"><div class="pg-preview-empty" id="pgPreviewEmpty"><div class="pg-empty-orbit">✧</div><b>Your canvas is waiting</b><p>Your image appears here after the AI API responds successfully.</p><small>PNG · JPG · WEBP</small></div></div>
+<div class="pg-preview-stage" id="pgPreviewStage"><img id="userPhotoPreview" class="user-upload-preview" alt="Reference or successfully generated AI image" style="display:none"><div class="pg-live-preview-tools" id="pgLivePreviewTools" role="group" aria-label="Live preview actions" hidden><button type="button" id="pgPreviewZoom" aria-label="Zoom preview" title="Zoom">⌕</button><button type="button" id="pgPreviewFullscreen" aria-label="Fullscreen preview" title="Fullscreen">⛶</button><button type="button" id="pgPreviewDownload" aria-label="Download preview" title="Download">↓</button><button type="button" id="pgPreviewShare" aria-label="Share preview" title="Share"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.7 10.6 6.6-4.2M8.7 13.4l6.6 4.2"/></svg></button></div><div class="pg-preview-empty" id="pgPreviewEmpty"><div class="pg-empty-orbit">✧</div><b>Your canvas is waiting</b><p>Your image appears here after the AI API responds successfully.</p><small>PNG · JPG · WEBP</small></div></div>
 <div class="pg-preview-toolbar"><span><i></i> Generation preview</span><div><button type="button" id="pgPreviewFavorite" aria-pressed="false" title="Favorite this result">♡</button><button type="button" id="pgMore" title="Copy prompt">•••</button></div></div>
 <div class="pg-preview-actions"><button class="pg-preview-download" id="downloadGeneratedAiImage" type="button" style="display:none">↓ Download</button><button class="pg-preview-regenerate" id="pgRegenerate" type="button">↻ Regenerate</button><button class="pg-preview-undo" id="pgUndo" type="button" disabled>↶ Undo</button></div><div class="pg-preview-foot"><span>✦ Crafted with PusoAI</span><span>Private by default</span></div></section>
 <aside class="pg-glass-panel pg-history-panel" id="generationHistoryPanel" aria-labelledby="pgHistoryTitle"><div class="pg-history-heading"><div><small>YOUR WORKSPACE</small><h2 id="pgHistoryTitle">Recent history</h2></div><button id="pgViewAllHistory" type="button">View all</button></div><p class="pg-history-subtitle">Your latest creations in this session</p><div class="pg-history-list" id="pgGenerationHistoryList"><div class="pg-history-empty"><span>◷</span><b>No images yet</b><small>Your generated images will appear here.</small></div></div><div class="pg-history-note"><span>🔒</span><p>History stays in this browser session. Nothing is published unless you submit it for community review.</p></div></aside>
@@ -2138,7 +2142,7 @@ function renderGallery(cat='All',q='',mode='latest'){
     const media=p.mediaType==='video'
       ? `<video class="gallery-media" loading="lazy" ${mediaSrc?`src="${esc(mediaSrc)}"`:''} muted playsinline preload="metadata"></video><span class="badge" style="left:auto;right:10px">VIDEO</span>`
       : `<img class="gallery-media" loading="lazy" decoding="async" fetchpriority="low" ${mediaSrc?`src="${esc(mediaSrc)}"`:''} alt="${esc(photoAltText(p))}">`;
-    return `<article class="photo-card" style="--card-delay:${Math.min(i,12)*45}ms"><div class="thumb" data-photo-open="${esc(p.id)}" role="button" tabindex="0" aria-label="Open full-size photo: ${esc(p.name)}">${media}<span class="badge">${esc(p.category)}</span>${p.featured?'<span class="badge" style="left:auto;right:10px">Featured</span>':''}${p.overlay?`<span style="position:absolute;left:50%;bottom:12px;transform:translateX(-50%);color:${esc(p.overlayColor||'#fff')};font-weight:800;background:#0008;padding:6px 12px;border-radius:999px;white-space:nowrap;max-width:90%;overflow:hidden;text-overflow:ellipsis">${esc(p.overlay)}</span>`:''}<div class="photo-overlay-tools" role="group" aria-label="Photo viewing tools"><button type="button" data-photo-tool="zoom" data-id="${esc(p.id)}" aria-label="Zoom photo" title="Zoom">⌕</button><button type="button" data-photo-tool="fullscreen" data-id="${esc(p.id)}" aria-label="View photo fullscreen" title="Fullscreen">⛶</button><button type="button" data-photo-tool="download" data-id="${esc(p.id)}" aria-label="Download photo" title="Download" ${p.download?'':'disabled'}>↓</button><button type="button" data-photo-tool="share" data-id="${esc(p.id)}" aria-label="Share photo" title="Share"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.7 10.6 6.6-4.2M8.7 13.4l6.6 4.2"/></svg></button></div></div><div class="card-actions" role="group" aria-label="Photo actions"><button type="button" class="${liked?'liked':''}" data-act="like" data-id="${esc(p.id)}" aria-label="${liked?'Unlike':'Like'} photo" aria-pressed="${liked?'true':'false'}" title="${liked?'Unlike':'Like'}">${liked?'♥':'♡'}</button><button type="button" data-act="share" data-id="${esc(p.id)}" aria-label="Share photo" title="Share">↗</button><button type="button" data-act="comment" data-id="${esc(p.id)}" aria-label="Open photo comments" title="Comments">💬</button></div><div class="photo-info"><div class="photo-title"><a class="photo-seo-link" href="${esc(photoPublicUrl(p))}" title="Open ${esc(p.name)} on PusoAI">${esc(p.name)}</a></div><div class="photo-meta"><span>♥ ${p.likes||0}</span><span>👁 ${p.views||0}</span><span>${esc(p.category)}</span></div></div></article>`
+    return `<article class="photo-card" style="--card-delay:${Math.min(i,12)*45}ms"><div class="thumb" data-photo-open="${esc(p.id)}" role="button" tabindex="0" aria-label="Open full-size photo: ${esc(p.name)}">${media}<span class="badge">${esc(p.category)}</span>${p.featured?'<span class="badge" style="left:auto;right:10px">Featured</span>':''}${p.overlay?`<span style="position:absolute;left:50%;bottom:12px;transform:translateX(-50%);color:${esc(p.overlayColor||'#fff')};font-weight:800;background:#0008;padding:6px 12px;border-radius:999px;white-space:nowrap;max-width:90%;overflow:hidden;text-overflow:ellipsis">${esc(p.overlay)}</span>`:''}</div><div class="card-actions" role="group" aria-label="Photo actions"><button type="button" class="${liked?'liked':''}" data-act="like" data-id="${esc(p.id)}" aria-label="${liked?'Unlike':'Like'} photo" aria-pressed="${liked?'true':'false'}" title="${liked?'Unlike':'Like'}">${liked?'♥':'♡'}</button><button type="button" data-act="share" data-id="${esc(p.id)}" aria-label="Share photo" title="Share">↗</button><button type="button" data-act="comment" data-id="${esc(p.id)}" aria-label="Open photo comments" title="Comments">💬</button></div><div class="photo-info"><div class="photo-title"><a class="photo-seo-link" href="${esc(photoPublicUrl(p))}" title="Open ${esc(p.name)} on PusoAI">${esc(p.name)}</a></div><div class="photo-meta"><span>♥ ${p.likes||0}</span><span>👁 ${p.views||0}</span><span>${esc(p.category)}</span></div></div></article>`
   }).join(''):(CLOUD_ENABLED&&remotePhotoLoadError&&!photos.length
     ? `<div class="empty cloud-load-error" style="grid-column:1/-1"><b>Photos could not load from cloud.</b><p style="margin:8px 0">${esc(remotePhotoLoadError)}</p><button class="primary" id="retryCloudPhotos">Retry loading photos</button></div>`
     : `<div class="empty" style="grid-column:1/-1">${photos.length===0?'No photos have been published yet. Admin can upload the first photo.':'No photos match this search or category. Try another name, category or hashtag.'}</div>`);
@@ -2188,7 +2192,6 @@ function renderGallery(cat='All',q='',mode='latest'){
     thumb.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open();}};
     thumb.style.cursor='zoom-in';
   });
-  document.querySelectorAll('[data-photo-tool]').forEach(button=>button.onclick=event=>{event.preventDefault();event.stopPropagation();const photo=photos.find(item=>String(item.id)===String(button.dataset.id));if(!photo)return;const tool=button.dataset.photoTool;if(tool==='share'){void sharePhoto(photo);return;}const index=currentList.findIndex(item=>String(item.id)===String(photo.id));if(index>=0)currentIndex=index;else{currentList=photos.slice();currentIndex=currentList.findIndex(item=>String(item.id)===String(photo.id));}if(tool==='download'){void downloadPhoto();return;}openPhoto(photo.id);if(tool==='zoom'){zoom=1.5;applyZoom();}else if(tool==='fullscreen'){void togglePhotoFullscreen();}});
   document.querySelectorAll('[data-act]').forEach(b=>b.onclick=()=>{
     const p=photos.find(x=>x.id===b.dataset.id);if(!p)return;
     if(b.dataset.act==='like')toggleLike(p);
@@ -2717,13 +2720,24 @@ function setupUserUpload(){
   const downloadBtn=document.getElementById('downloadGeneratedAiImage');
   const cancelUploadBtn=document.getElementById('cancelPhotoUpload');
   const cancelSelectedBtn=document.getElementById('cancelSelectedPhoto');
+  const previewTools=document.getElementById('pgLivePreviewTools');
+  const syncPreviewTools=()=>{if(previewTools)previewTools.hidden=!(preview&&preview.style.display!=='none'&&preview.getAttribute('src'));};
+  const previewZoomBtn=document.getElementById('pgPreviewZoom');
+  const previewFullscreenBtn=document.getElementById('pgPreviewFullscreen');
+  const previewDownloadBtn=document.getElementById('pgPreviewDownload');
+  const previewShareBtn=document.getElementById('pgPreviewShare');
+  previewZoomBtn?.addEventListener('click',()=>{if(!preview)return;preview.classList.toggle('preview-zoomed');previewZoomBtn.textContent=preview.classList.contains('preview-zoomed')?'−':'⌕';previewZoomBtn.title=preview.classList.contains('preview-zoomed')?'Reset zoom':'Zoom';});
+  previewFullscreenBtn?.addEventListener('click',async()=>{const stage=document.getElementById('pgPreviewStage');if(!stage)return;try{if(document.fullscreenElement===stage){await document.exitFullscreen();}else if(stage.requestFullscreen){await stage.requestFullscreen();}else{stage.classList.toggle('preview-fullscreen-fallback');}}catch(error){stage.classList.toggle('preview-fullscreen-fallback');}});
+  previewDownloadBtn?.addEventListener('click',()=>{if(generatedImageFile){downloadGeneratedAiImage();return;}const file=fileInput.files?.[0];if(!file){status.textContent='No preview image is available to download yet.';return;}const url=URL.createObjectURL(file);const a=document.createElement('a');a.href=url;a.download=file.name||'pusoai-reference-image';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);status.textContent='Reference image download started.';});
+  previewShareBtn?.addEventListener('click',async()=>{const file=generatedImageFile||fileInput.files?.[0];try{if(file&&navigator.share&&(!navigator.canShare||navigator.canShare({files:[file]}))){await navigator.share({title:'PusoAI image',files:[file]});}else if(navigator.share){await navigator.share({title:'PusoAI Live Preview',text:'View my image on PusoAI',url:location.href});}else if(navigator.clipboard){await navigator.clipboard.writeText(location.href);status.textContent='PusoAI page link copied. To share the image file, download it first.';}else{status.textContent='Sharing is not supported by this browser. Download the image to share it.';}}catch(error){if(error?.name!=='AbortError')status.textContent='Could not share from this browser. Download the image and share it manually.';}});
+  document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement)document.getElementById('pgPreviewStage')?.classList.remove('preview-fullscreen-fallback');});
   const modeHint=document.getElementById('aiModeHint');
   if(!form||!fileInput)return;
   const clearSelectedPhoto=()=>{
     if(uploadInProgress){status.textContent='An upload is running. Use “Cancel Upload” to stop it safely.';return;}
     fileInput.value='';generatedImageFile=null;
     if(preview.src.startsWith('blob:'))URL.revokeObjectURL(preview.src);
-    preview.removeAttribute('src');preview.style.display='none';
+    preview.removeAttribute('src');preview.style.display='none';preview.classList.remove('preview-zoomed');syncPreviewTools();
     if(downloadBtn)downloadBtn.style.display='none';
     if(modeHint)modeHint.textContent='Text-only AI mode: no reference photo selected.';
     status.textContent='Selected photo canceled. You can choose another photo.';
@@ -2738,8 +2752,8 @@ function setupUserUpload(){
     if(!file.type.startsWith('image/')){fileInput.value='';preview.style.display='none';status.textContent='Please choose an image file.';return;}
     if(file.size>10*1024*1024){fileInput.value='';preview.style.display='none';status.textContent='Image is larger than 10 MB. Please choose a smaller file.';return;}
     const reader=new FileReader();
-    reader.onload=()=>{preview.src=String(reader.result||'');preview.style.display='block';};
-    reader.onerror=()=>{preview.style.display='none';status.textContent='Could not preview this image.';};
+    reader.onload=()=>{preview.src=String(reader.result||'');preview.style.display='block';syncPreviewTools();};
+    reader.onerror=()=>{preview.style.display='none';syncPreviewTools();status.textContent='Could not preview this image.';};
     reader.readAsDataURL(file);if(modeHint)modeHint.textContent='Reference photo selected: AI will edit this image using your prompt (FLUX.2 Klein).';status.textContent='Reference ready. Write an edit prompt and click Generate / Edit With AI.';
   });
   form.addEventListener('reset',()=>{
@@ -2750,7 +2764,7 @@ function setupUserUpload(){
     setTimeout(()=>{
       generatedImageFile=null;
       if(preview.src.startsWith('blob:'))URL.revokeObjectURL(preview.src);
-      preview.removeAttribute('src');preview.style.display='none';status.textContent='';
+      preview.removeAttribute('src');preview.style.display='none';preview.classList.remove('preview-zoomed');syncPreviewTools();status.textContent='';
       if(downloadBtn)downloadBtn.style.display='none';
       if(modeHint)modeHint.textContent='Text-only AI mode: no reference photo selected.';
       if(cancelGenerationBtn){cancelGenerationBtn.style.display='none';cancelGenerationBtn.disabled=false;}
@@ -2792,7 +2806,7 @@ function restorePusoAiHistory(file,prompt){
   const preview=document.getElementById('userPhotoPreview');if(!preview)return;
   if(preview.src.startsWith('blob:'))URL.revokeObjectURL(preview.src);
   const restoredFile=new File([file], 'pusoai-history-'+Date.now()+'.'+(file.type==='image/jpeg'?'jpg':file.type==='image/webp'?'webp':'png'), {type:file.type||'image/png'});
-  preview.src=URL.createObjectURL(restoredFile);preview.style.display='block';generatedImageFile=restoredFile;
+  preview.src=URL.createObjectURL(restoredFile);preview.style.display='block';preview.classList.remove('preview-zoomed');const tools=document.getElementById('pgLivePreviewTools');if(tools)tools.hidden=false;generatedImageFile=restoredFile;
   const download=document.getElementById('downloadGeneratedAiImage');if(download)download.style.display='inline-flex';
   const promptInput=document.getElementById('userPhotoPrompt');if(promptInput){promptInput.value=String(prompt||'');promptInput.dispatchEvent(new Event('input',{bubbles:true}));}
   const status=document.getElementById('userPhotoStatus');if(status)status.textContent='Restored a previous result from this browser session. You can download it or submit it for review.';
@@ -3015,7 +3029,7 @@ async function generateAiImage(){
     if(preview.src.startsWith('blob:'))URL.revokeObjectURL(preview.src);
     generatedObjectUrl=URL.createObjectURL(outputFile);
     preview.src=generatedObjectUrl;
-    preview.style.display='block';
+    preview.style.display='block';preview.classList.remove('preview-zoomed');const previewTools=document.getElementById('pgLivePreviewTools');if(previewTools)previewTools.hidden=false;
     try{
       if(typeof preview.decode==='function')await preview.decode();
       else await new Promise((resolve,reject)=>{
@@ -3042,7 +3056,7 @@ async function generateAiImage(){
     // A timed-out, canceled, or invalid image must never remain downloadable or submittable.
     generatedImageFile=null;
     if(generatedObjectUrl){
-      if(preview?.src===generatedObjectUrl){preview.removeAttribute('src');preview.style.display='none';}
+      if(preview?.src===generatedObjectUrl){preview.removeAttribute('src');preview.style.display='none';const previewTools=document.getElementById('pgLivePreviewTools');if(previewTools)previewTools.hidden=true;}
       URL.revokeObjectURL(generatedObjectUrl);
       generatedObjectUrl='';
     }
