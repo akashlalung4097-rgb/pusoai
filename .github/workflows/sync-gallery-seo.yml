@@ -114,7 +114,7 @@ jobs:
               'user-upload', 'user upload', 'pusoai photo',
               'photo', 'image', 'picture', 'untitled', 'upload'
             ];
-            return !name || placeholders.includes(name) ||
+            return !name || !/[a-z0-9]/i.test(name) || placeholders.includes(name) ||
               (name.includes('community') && ['user', 'upload', 'photo'].some(word => name.includes(word)));
           };
 
@@ -382,6 +382,20 @@ jobs:
             return '';
           }
 
+          const socialPreviewPath = path.join(process.cwd(), 'pusoai-social-preview.png');
+          if (!fs.existsSync(socialPreviewPath)) {
+            errors.push('Missing homepage social preview image: pusoai-social-preview.png');
+          } else {
+            const preview = fs.readFileSync(socialPreviewPath);
+            const isPng = preview.length >= 24 &&
+              preview.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]));
+            if (!isPng) {
+              errors.push('Homepage social preview must be a valid PNG image.');
+            } else if (preview.readUInt32BE(16) !== 1200 || preview.readUInt32BE(20) !== 630) {
+              errors.push('Homepage social preview must be exactly 1200 x 630 pixels.');
+            }
+          }
+
           walk(root);
           if (pages.length === 0) errors.push('No generated photo pages were found.');
 
@@ -416,6 +430,10 @@ jobs:
             }
 
             if (description.length > 160) errors.push(relative + ': meta description exceeds 160 characters');
+            const cleanTitle = title.replace(/<[^>]*>/g, '').replace(/\\s*\\|\\s*PusoAI\\s*$/i, '').trim();
+            if (cleanTitle.length < 4 || !/[a-z0-9]/i.test(cleanTitle)) {
+              errors.push(relative + ': non-descriptive photo title: ' + title);
+            }
             if (/^(?:Community photo|Community User-upload|Other Photo)/i.test(title)) {
               errors.push(relative + ': generic placeholder title: ' + title);
             }
