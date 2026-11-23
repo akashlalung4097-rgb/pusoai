@@ -1230,6 +1230,44 @@ body.light #downloadGeneratedAiImage:focus-visible{
 }
 
 </style>
+
+<style id="pusoai-live-preview-light-fix">
+/* Make the AI Live Preview a real, spacious canvas in both themes. */
+.pg-preview-panel{min-width:0;overflow:hidden}
+.pg-preview-stage{
+  position:relative!important;display:flex!important;align-items:center!important;justify-content:center!important;
+  width:100%!important;min-width:0!important;min-height:clamp(320px,48vw,620px)!important;
+  max-height:none!important;margin:0!important;padding:18px!important;overflow:hidden!important;
+  border:1px solid var(--line)!important;border-radius:18px!important;
+  background:linear-gradient(145deg,var(--panel2),var(--panel))!important;
+}
+#pgPreviewStage #userPhotoPreview.user-upload-preview{
+  display:block;position:relative!important;inset:auto!important;width:100%!important;height:100%!important;
+  max-width:100%!important;max-height:clamp(280px,44vw,580px)!important;min-width:0!important;
+  margin:0!important;object-fit:contain!important;object-position:center!important;
+  border:0!important;border-radius:12px!important;background:transparent!important;
+  box-shadow:0 10px 35px rgba(20,25,45,.10)!important;
+}
+#pgPreviewStage #userPhotoPreview[style*="display: none"]{display:none!important}
+#pgPreviewStage .pg-preview-empty{
+  position:relative!important;inset:auto!important;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  width:100%;min-height:280px;padding:30px 18px;text-align:center;color:var(--text);
+}
+body.light #pgPreviewStage{background:#eef1f8!important;border-color:#dce1ed!important}
+body.light #pgPreviewStage #userPhotoPreview{background:#fff!important;box-shadow:0 12px 36px rgba(35,45,75,.12)!important}
+body.light .pg-live-preview-tools button{
+  background:rgba(22,27,45,.88)!important;color:#fff!important;border:1px solid rgba(255,255,255,.28)!important;
+  box-shadow:0 4px 18px rgba(15,20,40,.24)!important
+}
+.pg-preview-panel .pg-preview-toolbar,.pg-preview-panel .pg-preview-actions,.pg-preview-panel .pg-preview-foot{min-width:0}
+#pgPreviewStage.preview-fullscreen-fallback{position:fixed!important;inset:0!important;z-index:99999!important;width:100vw!important;height:100vh!important;max-height:none!important;border-radius:0!important}
+#pgPreviewStage.preview-fullscreen-fallback #userPhotoPreview{max-height:calc(100vh - 36px)!important}
+@media(max-width:700px){
+ .pg-preview-stage{min-height:clamp(280px,78vw,430px)!important;padding:10px!important}
+ #pgPreviewStage #userPhotoPreview.user-upload-preview{max-height:72vw!important}
+ #pgPreviewStage .pg-preview-empty{min-height:250px}
+}
+</style>
 </head>
 <body>
 <div id="aiGenerationOverlay" class="ai-generation-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="aiGenTitle" aria-describedby="aiGenDetail" aria-live="polite">
