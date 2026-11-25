@@ -1507,6 +1507,30 @@ body.pg-preview-modal-open{overflow:hidden!important;touch-action:none!important
   footer .footer-grid>div:first-child>#footerInstagramLink{display:none!important}
 }
 </style>
+
+<style id="pusoai-notification-center">
+.pg-notification-wrap{position:relative;display:inline-flex;align-items:center}
+#pgNotifications{position:relative;display:grid;place-items:center;font-size:20px;line-height:1}
+#pgNotifications svg{width:20px;height:20px;display:block}
+.pg-notification-count{position:absolute;top:-5px;right:-5px;min-width:17px;height:17px;padding:0 4px;border-radius:99px;background:#ef476f;color:#fff;font:700 10px/17px Inter,system-ui,sans-serif;text-align:center;border:2px solid var(--panel);display:none}
+.pg-notification-count.visible{display:block}
+.pg-notification-popover{position:absolute;z-index:12000;top:calc(100% + 14px);right:0;width:min(390px,calc(100vw - 24px));max-height:min( min(580px,75vh),580px);overflow:hidden;border:1px solid var(--line);border-radius:18px;background:var(--panel);box-shadow:0 22px 70px #0005;color:var(--text);display:flex;flex-direction:column}
+.pg-notification-popover[hidden]{display:none!important}
+.pg-notification-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 17px;border-bottom:1px solid var(--line)}
+.pg-notification-head b{font-size:15px}.pg-notification-head-actions{display:flex;gap:8px;align-items:center}
+.pg-notification-head button,.pg-notification-empty button{border:0;background:transparent;color:var(--accent);font-size:12px;font-weight:700;padding:5px}
+.pg-notification-list{overflow:auto;padding:7px;overscroll-behavior:contain}
+.pg-notification-item{display:flex;align-items:flex-start;gap:11px;padding:12px 10px;border-radius:12px;cursor:pointer}
+.pg-notification-item:hover{background:var(--panel2)}
+.pg-notification-item.unread{background:color-mix(in srgb,var(--accent) 9%,transparent)}
+.pg-notification-symbol{flex:0 0 35px;width:35px;height:35px;border-radius:12px;display:grid;place-items:center;background:color-mix(in srgb,var(--accent) 16%,transparent);font-size:17px}
+.pg-notification-copy{min-width:0;flex:1}.pg-notification-copy b{display:block;font-size:12px;margin:0 0 3px}.pg-notification-copy span{display:block;color:var(--muted);font-size:12px;line-height:1.45;overflow-wrap:anywhere}.pg-notification-copy time{display:block;color:var(--muted);font-size:10px;margin-top:5px}
+.pg-notification-empty{padding:35px 18px;text-align:center;color:var(--muted);font-size:13px}
+.pg-notification-foot{padding:10px 15px;border-top:1px solid var(--line);font-size:11px;color:var(--muted)}
+@media(max-width:700px){.pg-notification-popover{position:fixed;top:68px;right:10px;left:10px;width:auto;max-height:72vh}.pg-notification-wrap{position:static}}
+@media(prefers-reduced-motion:no-preference){.pg-notification-popover{animation:pgNoticeIn .16s ease-out}@keyframes pgNoticeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}}
+</style>
+
 </head>
 <body>
 <div id="aiGenerationOverlay" class="ai-generation-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="aiGenTitle" aria-describedby="aiGenDetail" aria-live="polite">
@@ -1529,7 +1553,7 @@ body.pg-preview-modal-open{overflow:hidden!important;touch-action:none!important
 <header class="pg-top-header"><div class="container nav">
 <a class="brand pg-top-brand" href="#home" aria-label="PusoAI Home"><span class="pg-logo-mark" aria-hidden="true"><svg viewBox="0 0 64 64" role="img" focusable="false"><defs><linearGradient id="pusoLogoBg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#168cff"/><stop offset="1" stop-color="#1027bd"/></linearGradient><linearGradient id="pusoLogoEdge" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#42f4ff"/><stop offset="1" stop-color="#3977ff"/></linearGradient></defs><rect x="3" y="3" width="58" height="58" rx="15" fill="url(#pusoLogoBg)" stroke="url(#pusoLogoEdge)" stroke-width="2.5"/><path d="M19 48V17h17c9 0 14 5 14 13S45 43 36 43h-7v5zM29 34h7c3 0 5-1 5-4s-2-4-5-4h-7z" fill="#fff"/><rect x="43" y="9" width="9" height="9" rx="2" fill="#fff"/></svg></span><span>Puso<b>AI</b></span></a>
 <nav class="navlinks" aria-label="Studio modes"><a href="#studio" class="pg-active-link">Image mode</a><a href="#video-mode" class="pg-mode-disabled" aria-disabled="true" title="Video generation is not connected yet">Video mode <small>SOON</small></a><a href="#prompt-guide">AI Tools</a></nav>
-<div class="navactions"><label class="pg-global-search" aria-label="Search gallery"><span>⌕</span><input id="pgGlobalSearch" type="search" placeholder="Search gallery…"><kbd>↵</kbd></label><button class="iconbtn pg-top-icon" id="pgNotifications" type="button" aria-label="Notifications" aria-expanded="false">♧</button><a class="iconbtn pg-top-icon pg-message-link" href="#contact" aria-label="Messages and contact">✉</a><button class="iconbtn" id="themeBtn" title="Theme" aria-label="Toggle theme">☾</button><button class="admin-nav-btn primary" id="adminOpen" style="display:none">Admin</button></div>
+<div class="navactions"><label class="pg-global-search" aria-label="Search gallery"><span>⌕</span><input id="pgGlobalSearch" type="search" placeholder="Search gallery…"><kbd>↵</kbd></label><div class="pg-notification-wrap"><button class="iconbtn pg-top-icon" id="pgNotifications" type="button" aria-label="Notifications" aria-expanded="false" aria-controls="pgNotificationPanel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg><span class="pg-notification-count" id="pgNotificationCount" aria-live="polite">0</span></button><section class="pg-notification-popover" id="pgNotificationPanel" hidden aria-label="Notifications"><div class="pg-notification-head"><b>Notifications</b><div class="pg-notification-head-actions"><button type="button" id="pgNotificationReadAll">Mark all read</button><button type="button" id="pgNotificationClose" aria-label="Close notifications">✕</button></div></div><div class="pg-notification-list" id="pgNotificationList"><div class="pg-notification-empty">You’re all caught up.</div></div><div class="pg-notification-foot">Updates for this browser · AI activity · Gallery · Likes · Comments</div></section></div><a class="iconbtn pg-top-icon pg-message-link" href="#contact" aria-label="Messages and contact">✉</a><button class="iconbtn" id="themeBtn" title="Theme" aria-label="Toggle theme">☾</button><button class="admin-nav-btn primary" id="adminOpen" style="display:none">Admin</button></div>
 <div class="pg-notification-popover" id="pgNotificationPanel" hidden><b>Notifications are not enabled yet</b><span>This panel will show PusoAI studio alerts when the notification service is connected.</span></div></div></header>
 <aside class="pg-sidebar" aria-label="Main navigation"><a class="pg-sidebar-logo" href="#home"><span class="pg-sidebar-mark"><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="3" y="3" width="58" height="58" rx="15" fill="url(#pusoLogoBg)" stroke="url(#pusoLogoEdge)" stroke-width="2.5"/><path d="M19 48V17h17c9 0 14 5 14 13S45 43 36 43h-7v5zM29 34h7c3 0 5-1 5-4s-2-4-5-4h-7z" fill="#fff"/><rect x="43" y="9" width="9" height="9" rx="2" fill="#fff"/></svg></span><span>Puso<b>AI</b><small>CREATIVE STUDIO</small></span></a><div class="pg-sidebar-label">WORKSPACE</div><nav class="pg-sidebar-nav"><a class="active" href="#home"><span>⌂</span>Home</a><a href="#studio"><span>✦</span>AI Image Generator</a><a href="#explore"><span>▦</span>Gallery</a><a href="#generationHistoryPanel"><span>◷</span>History</a></nav><div class="pg-sidebar-bottom"><div class="pg-profile-avatar">G</div><div class="pg-profile-copy"><b>Guest Creator</b><small>No account needed</small></div><span class="pg-profile-dot"></span></div></aside>
 <nav class="pg-mobile-nav" aria-label="Mobile navigation"><a href="#home"><span>⌂</span>Home</a><a href="#studio"><span>✦</span>Create</a><a href="#explore"><span>▦</span>Gallery</a><a href="#generationHistoryPanel"><span>◷</span>History</a></nav>
@@ -1894,7 +1918,7 @@ function subscribeToPublicPhotos(){
         if(typeof updated.src==='string'&&updated.src.trim()){
           const existingIndex=photos.findIndex(photo=>String(photo.id)===String(updated.id));
           if(existingIndex>=0)photos[existingIndex]=updated;
-          else photos.push(updated);
+          else{photos.push(updated);addPusoaiNotification('photo','New photo in the gallery','“'+(updated.name||'A new photo')+'” is now available in PusoAI.');}
           photos.sort((a,b)=>(Number(b.created)||0)-(Number(a.created)||0));
         }else{
           photos=photos.filter(photo=>String(photo.id)!==String(updated.id));
@@ -2400,7 +2424,7 @@ async function toggleLike(p){
     if(!sbClient)return toast('Cloud service is unavailable. Refresh and try again.');
     try{
       const result=await syncPhotoInteraction(p,willLike?'like':'unlike');
-      if(willLike){if(!visitor.likes.includes(p.id))visitor.likes.push(p.id);trackLike(p.id);}
+      if(willLike){if(!visitor.likes.includes(p.id))visitor.likes.push(p.id);trackLike(p.id);addPusoaiNotification('like','Photo liked','You liked “'+(p.name||'this photo')+'”.');}
       else visitor.likes=visitor.likes.filter(id=>id!==p.id);
       if(typeof result?.likes==='number')p.likes=result.likes;
       saveVisitor();save();
@@ -2411,7 +2435,7 @@ async function toggleLike(p){
       return;
     }
   }else{
-    if(willLike){visitor.likes.push(p.id);p.likes=(p.likes||0)+1;trackLike(p.id);}
+    if(willLike){visitor.likes.push(p.id);p.likes=(p.likes||0)+1;trackLike(p.id);addPusoaiNotification('like','Photo liked','You liked “'+(p.name||'this photo')+'”.');}
     else{visitor.likes=visitor.likes.filter(id=>id!==p.id);p.likes=Math.max(0,(p.likes||0)-1);}
     saveVisitor();save();
   }
@@ -2514,6 +2538,7 @@ async function addComment(){
     }
     input.value='';visitor.userName=name;document.getElementById('commentName').value=name;
     saveVisitor();save();renderComments(p);renderAdminComments();
+    addPusoaiNotification('comment','Comment posted','Your comment on “'+(p.name||'a photo')+'” was posted.');
     toast(CLOUD_ENABLED?'Comment sent to PusoAI Admin':'Comment posted');
   }catch(error){
     console.error('Comment submission failed:',error);
@@ -3247,6 +3272,7 @@ async function generateAiImage(){
     if(modeHint)modeHint.textContent='AI result ready. You can download it or submit it for owner review.';
     status.textContent=reference?'Your uploaded photo was used as an AI reference (FLUX.2 Klein). Download the edited image or submit it for review.':'AI image generated from text (FLUX.1 Schnell). Download it or submit it for review.';
     succeeded=true;
+    addPusoaiNotification('ai','AI image ready','Your generated image is ready to view and download.');
     updateAiGenerationOverlay({title:'Your image is ready!',detail:'The AI API returned an image successfully. Your generated image is displayed below.',progress:100,success:true});
     aiGenerationOverlayHideTimer=setTimeout(hideAiGenerationOverlay,1050);
   }catch(error){
@@ -3264,10 +3290,12 @@ async function generateAiImage(){
       status.textContent='AI image generation failed: '+message;
       showAiGenerationError(message);
     }else if(error?.name==='AbortError'){
+      addPusoaiNotification('error','AI generation canceled','Your image generation request was canceled.');
       status.textContent='AI image generation canceled.';
       if(errorPanel)errorPanel.hidden=true;
     }else{
       const message=error?.message||'Please check the AI service setup and try again.';
+      addPusoaiNotification('error','AI generation failed',message);
       console.error('AI image generation failed:',error);
       status.textContent='AI image generation failed: '+message;
       showAiGenerationError(message);
@@ -3440,7 +3468,43 @@ async function submitUserPhoto(event){
   }
 }
 
-function setupPublic(){document.getElementById('searchBtn').onclick=()=>{const latest=document.querySelector('#filterChips .chip[data-mode="latest"]');if(latest)latest.click();else renderGallery('All',document.getElementById('searchInput').value,'latest')};document.getElementById('searchInput').oninput=e=>renderGallery(document.querySelector('.chip.active')?.dataset.cat||'All',e.target.value,document.querySelector('.chip.active')?.dataset.mode||'latest');document.getElementById('heroSearch').onclick=()=>{document.getElementById('searchInput').focus();location.hash='explore'};document.getElementById('mobileSearch').onclick=()=>{location.hash='explore';setTimeout(()=>document.getElementById('searchInput').focus(),100)};document.querySelectorAll('[data-nav]').forEach(b=>b.onclick=()=>location.hash=b.dataset.nav);const themeBtn=document.getElementById('themeBtn');const syncThemeButton=()=>{const isLight=document.body.classList.contains('light');themeBtn.textContent=isLight?'☾':'☀';themeBtn.title=isLight?'Switch to dark mode':'Switch to light mode';themeBtn.setAttribute('aria-label',themeBtn.title)};themeBtn.onclick=()=>{document.body.classList.toggle('light');storageSet('pg_theme',document.body.classList.contains('light')?'light':'dark');syncThemeButton()};// Keep PusoAI's dark-blue appearance as the first-visit default. Respect an explicit saved light preference.
+
+const PUSOAI_NOTIFICATIONS_KEY='pusoai_notifications_v1';
+let pusoaiNotifications=[];
+function loadPusoaiNotifications(){
+  try{const saved=JSON.parse(storageGet(PUSOAI_NOTIFICATIONS_KEY)||'[]');pusoaiNotifications=Array.isArray(saved)?saved.slice(0,60):[];}catch(_error){pusoaiNotifications=[];}
+}
+function savePusoaiNotifications(){try{storageSet(PUSOAI_NOTIFICATIONS_KEY,JSON.stringify(pusoaiNotifications.slice(0,60)));}catch(error){console.warn('Notification storage unavailable:',error);}}
+function renderPusoaiNotifications(){
+  const list=document.getElementById('pgNotificationList'),badge=document.getElementById('pgNotificationCount');
+  if(!list||!badge)return;
+  const unread=pusoaiNotifications.filter(item=>!item.read).length;
+  badge.textContent=unread>99?'99+':String(unread);badge.classList.toggle('visible',unread>0);
+  badge.setAttribute('aria-label',unread+' unread notifications');
+  if(!pusoaiNotifications.length){list.innerHTML='<div class="pg-notification-empty">🔔<br><br>You’re all caught up.<br>New activity will appear here.</div>';return;}
+  const icons={ai:'✨',error:'⚠️',photo:'🖼️',like:'❤️',comment:'💬',update:'📢'};
+  list.innerHTML=pusoaiNotifications.map(item=>'<article class="pg-notification-item '+(item.read?'':'unread')+'" data-notice-id="'+esc(item.id)+'" role="button" tabindex="0"><span class="pg-notification-symbol">'+(icons[item.type]||'🔔')+'</span><div class="pg-notification-copy"><b>'+esc(item.title)+'</b><span>'+esc(item.message)+'</span><time>'+esc(new Date(item.createdAt).toLocaleString())+'</time></div></article>').join('');
+  list.querySelectorAll('[data-notice-id]').forEach(el=>{const open=()=>{const item=pusoaiNotifications.find(x=>x.id===el.dataset.noticeId);if(item&&!item.read){item.read=true;savePusoaiNotifications();renderPusoaiNotifications();}};el.addEventListener('click',open);el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open();}});});
+}
+function addPusoaiNotification(type,title,message,options={}){
+  const item={id:'notice_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7),type,title,message:String(message||'').slice(0,220),createdAt:Date.now(),read:false};
+  pusoaiNotifications.unshift(item);pusoaiNotifications=pusoaiNotifications.slice(0,60);savePusoaiNotifications();renderPusoaiNotifications();
+  if(options.browserAlert&&'Notification'in window&&Notification.permission==='granted'){try{new Notification(title,{body:item.message,icon:'/favicon.ico'});}catch(_error){}}
+}
+function setupPusoaiNotificationCenter(){
+  loadPusoaiNotifications();renderPusoaiNotifications();
+  const bell=document.getElementById('pgNotifications'),panel=document.getElementById('pgNotificationPanel');
+  if(!bell||!panel||bell.dataset.bound==='true')return;
+  bell.dataset.bound='true';
+  const close=()=>{panel.hidden=true;bell.setAttribute('aria-expanded','false');};
+  bell.addEventListener('click',e=>{e.stopPropagation();panel.hidden=!panel.hidden;bell.setAttribute('aria-expanded',String(!panel.hidden));if(!panel.hidden)renderPusoaiNotifications();});
+  document.getElementById('pgNotificationClose')?.addEventListener('click',close);
+  document.getElementById('pgNotificationReadAll')?.addEventListener('click',()=>{pusoaiNotifications.forEach(item=>item.read=true);savePusoaiNotifications();renderPusoaiNotifications();});
+  document.addEventListener('click',e=>{if(!panel.hidden&&!panel.contains(e.target)&&!bell.contains(e.target))close();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')close();});
+}
+
+function setupPublic(){setupPusoaiNotificationCenter();document.getElementById('searchBtn').onclick=()=>{const latest=document.querySelector('#filterChips .chip[data-mode="latest"]');if(latest)latest.click();else renderGallery('All',document.getElementById('searchInput').value,'latest')};document.getElementById('searchInput').oninput=e=>renderGallery(document.querySelector('.chip.active')?.dataset.cat||'All',e.target.value,document.querySelector('.chip.active')?.dataset.mode||'latest');document.getElementById('heroSearch').onclick=()=>{document.getElementById('searchInput').focus();location.hash='explore'};document.getElementById('mobileSearch').onclick=()=>{location.hash='explore';setTimeout(()=>document.getElementById('searchInput').focus(),100)};document.querySelectorAll('[data-nav]').forEach(b=>b.onclick=()=>location.hash=b.dataset.nav);const themeBtn=document.getElementById('themeBtn');const syncThemeButton=()=>{const isLight=document.body.classList.contains('light');themeBtn.textContent=isLight?'☾':'☀';themeBtn.title=isLight?'Switch to dark mode':'Switch to light mode';themeBtn.setAttribute('aria-label',themeBtn.title)};themeBtn.onclick=()=>{document.body.classList.toggle('light');storageSet('pg_theme',document.body.classList.contains('light')?'light':'dark');syncThemeButton()};// Keep PusoAI's dark-blue appearance as the first-visit default. Respect an explicit saved light preference.
 if(storageGet('pg_theme')==='light')document.body.classList.add('light');else document.body.classList.remove('light');syncThemeButton();document.getElementById('closePhoto').onclick=closePhoto;document.getElementById('photoModal').onclick=e=>{if(e.target.id==='photoModal')closePhoto()};
 const submissionPreviewModal=document.getElementById('submissionPreviewModal');
 const closeSubmissionPreview=()=>{submissionPreviewModal?.classList.add('hidden');const image=document.getElementById('submissionPreviewImage');if(image)image.removeAttribute('src')};
