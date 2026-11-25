@@ -1624,6 +1624,16 @@ body.pg-preview-modal-open{overflow:hidden!important;touch-action:none!important
   </div>
 <div id="tab-users" class="tab hidden"><div class="panel"><div class="admin-dashboard-head"><div><h3>Visitors & Traffic</h3><p>Cross-device analytics are fetched from Supabase when setup is complete.</p></div><div class="analytic-status" id="usersTrafficStatus" role="status">Checking…</div></div><div class="stats" style="grid-template-columns:repeat(4,minmax(0,1fr))"><div class="stat"><span>Unique visitors</span><b id="uVisitors">—</b></div><div class="stat"><span>Page views</span><b id="uPageViews">—</b></div><div class="stat"><span>Photo views</span><b id="uPhotoViews">—</b></div><div class="stat"><span>Sessions</span><b id="uSessions">—</b></div></div><div id="usersTrafficChart" style="margin-top:18px"></div><div class="tablewrap" style="margin-top:18px"><table class="table"><thead><tr><th>Date (UTC)</th><th>Page views</th><th>Photo views</th><th>Downloads</th><th>Likes</th></tr></thead><tbody id="trafficTable"></tbody></table></div></div><div class="panel"><h3>Recent activity</h3><p class="section-note">Anonymous usage events only. Visitor names, IP addresses and passwords are not collected by this feature.</p><div id="userActivityList"></div></div></div>
 <div id="tab-settings" class="tab hidden"><div class="panel"><h3>Website Settings</h3><div class="admin-grid"><div class="field"><label>Site name</label><input id="siteName" value="PusoAI"></div><div class="field"><label>Contact email</label><input id="siteEmail" value="pusoai001@gmail.com"></div><div class="field"><label>Instagram</label><input id="siteInstagram" value="@akashlost47"></div><div class="field"><label>Hero title</label><input id="siteHero" value="Every image starts with inspiration."></div><div class="field full"><label class="toggle"><span class="switch"><input id="adsenseEnabled" type="checkbox"><span class="slider"></span></span>Enable Google AdSense</label></div><div class="field"><label for="adsensePublisher">AdSense Publisher ID</label><input id="adsensePublisher" inputmode="text" autocomplete="off" spellcheck="false" placeholder="ca-pub-1234567890123456"></div><div class="field"><label for="adsenseSlot">Responsive display ad slot ID (optional)</label><input id="adsenseSlot" inputmode="numeric" autocomplete="off" spellcheck="false" placeholder="1234567890"></div><div class="field full"><p class="community-note">Enter the Publisher ID shown in your own AdSense account and verify it before enabling ads. Ads are OFF by default. For Auto ads, enable Auto ads in AdSense and leave the slot empty. For a manual responsive display ad, create an ad unit in AdSense → Ads → By ad unit → Display ads, then paste its slot ID here. Turning this on only configures the ad code. Ads and earnings require Google AdSense site approval, valid account setup, and available ad inventory.</p><p id="adsenseStatus" class="community-note" role="status" aria-live="polite">AdSense is not yet checked.</p></div><div class="field full"><label>Custom CSS</label><textarea id="customCss" placeholder="Optional CSS"></textarea></div><div class="field full"><label>Text Animation</label><label class="toggle"><span class="switch"><input id="textAnimation" type="checkbox" checked><span class="slider"></span></span>Animate website text</label><p class="community-note">Turn this switch off to disable text entrance and glow animations across the website. Your preference is saved with Website Settings.</p></div></div><div class="panel" style="margin-top:14px;border-color:#6c63ff88"><h3>🔐 AI Image Generation API Key</h3><p style="color:var(--muted);line-height:1.6">Add or replace the OpenAI API key here as the signed-in website owner. The key is sent to a protected Supabase function and encrypted before server-side storage. It is not saved in this HTML file or browser storage.</p><div class="field"><label for="ownerOpenAiApiKey">OpenAI API Key</label><input id="ownerOpenAiApiKey" type="password" autocomplete="new-password" spellcheck="false" placeholder="Paste OpenAI API key (sk-...)"></div><div class="admin-actions"><button class="primary" id="saveOpenAiApiKey" type="button">Save API Key Securely</button><button class="secondary" id="checkOpenAiApiKeyStatus" type="button">Check Key Status</button><button class="danger" id="removeOpenAiApiKey" type="button">Remove Saved Key</button></div><p id="aiApiKeyStatus" role="status" aria-live="polite" style="color:var(--muted);font-size:13px;margin-top:12px">API key status has not been checked yet.</p><p style="color:var(--muted);font-size:12px">One-time setup: add <code>AI_KEY_ENCRYPTION_SECRET</code> to Supabase Edge Function Secrets before saving a key here. Keep this separate from your OpenAI API key.</p></div>
+<div class="panel" id="apiStatusMonitor" style="margin-top:14px;border-color:#14b8ff66">
+<h3>📡 AI API Status Monitor</h3>
+<p style="color:var(--muted);line-height:1.6">100 API slots are listed below. Status is checked securely from the owner-only Supabase functions. A configured key does not guarantee provider uptime; actual availability is confirmed when a generation request succeeds.</p>
+<div class="admin-actions" style="align-items:center;margin:12px 0">
+<button class="primary" id="refreshApiStatusMonitor" type="button" onclick="refreshApiStatusMonitor()">↻ Refresh API Status</button>
+<span id="apiStatusSummary" role="status" aria-live="polite" style="color:var(--muted);font-size:13px">Status not checked yet</span>
+</div>
+<div id="apiStatusRows" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px;max-height:360px;overflow:auto;padding:2px" aria-live="polite"></div>
+<p style="color:var(--muted);font-size:12px;margin-top:12px">API 1 uses the saved OpenAI key status. API 2 uses the saved Cloudflare credentials status. API 3–100 are reserved slots and will remain Not configured until additional providers are connected. Secret keys are never displayed here.</p>
+</div>
 <div class="panel" style="margin-top:14px;border-color:#6c63ff55"><h3>☁ Public Cloud Storage</h3><p style="color:var(--muted);line-height:1.6">Cloud mode stores uploaded media in Supabase Storage and photo records in Supabase Database, so public visitors on other devices can see the same published photos. Configure the Supabase values at the top of this HTML file first.</p><div class="admin-actions"><button class="secondary" id="migrateLocalPhotos">Migrate Browser Photos to Cloud</button></div></div><button class="primary" id="saveSettings">Save Settings</button><p id="siteSettingsStatus" role="status" aria-live="polite" style="color:var(--muted);font-size:12px;margin-top:12px">Checking shared Supabase settings…</p></div></div>
 <div id="tab-cloudflare-ai" class="tab hidden"><div class="panel"><h3>Cloudflare Workers AI Settings</h3><p style="color:var(--muted);line-height:1.6">Configure Cloudflare Workers AI for text-to-image generation and reference-photo editing. Your Account ID and API token are sent to an owner-only Supabase Edge Function and encrypted before storage; they are not saved in this HTML file or browser storage. When configured, Cloudflare Workers AI will be used for image generation once the generate-image Edge Function is deployed.</p></div><div class="panel" style="margin-top:14px;border-color:#f3802088"><h3>☁ Cloudflare Workers AI</h3><p style="color:var(--muted);line-height:1.6">Configure Cloudflare Workers AI for text-to-image generation and reference-photo editing. Your Account ID and API token are sent to an owner-only Supabase Edge Function and encrypted before storage; they are not saved in this HTML file or browser storage. When configured, Cloudflare Workers AI will be used for image generation once the generate-image Edge Function is deployed.</p><div class="field"><label for="cloudflareAccountId">Cloudflare Account ID</label><input id="cloudflareAccountId" type="text" autocomplete="off" spellcheck="false" placeholder="32-character Cloudflare Account ID"></div><div class="field" style="margin-top:10px"><label for="cloudflareApiToken">Cloudflare Workers AI API Token</label><input id="cloudflareApiToken" type="password" autocomplete="new-password" spellcheck="false" placeholder="Paste Cloudflare Workers AI API token"></div><div class="admin-actions" style="margin-top:12px"><button class="primary" id="saveCloudflareWorkersAiKey" type="button">Save Cloudflare Settings Securely</button><button class="secondary" id="checkCloudflareWorkersAiStatus" type="button">Check Status</button><button class="danger" id="removeCloudflareWorkersAiKey" type="button">Remove Cloudflare Settings</button></div><p id="cloudflareWorkersAiStatus" role="status" aria-live="polite" style="color:var(--muted);font-size:13px;margin-top:12px">Cloudflare Workers AI status has not been checked yet.</p><p style="color:var(--muted);font-size:12px">One-time setup: add <code>AI_KEY_ENCRYPTION_SECRET</code> to Supabase Edge Function Secrets (at least 32 characters) before saving. Create a token with Workers AI permissions. Keep both the token and encryption secret private.</p></div>
 </div>
@@ -3519,7 +3529,7 @@ function isAdmin(){
 function requireAdmin(){return isAdmin()}
 function populateAdmin(){updateStats();renderAnalyticsDashboard()}
 function populateAdminSettingsForm(){const s=normalizeSiteSettings(data.settings);document.getElementById('siteName').value=s.siteName;document.getElementById('siteEmail').value=s.email;document.getElementById('siteInstagram').value=s.instagram;document.getElementById('siteHero').value=s.hero;document.getElementById('adsenseEnabled').checked=s.adsenseEnabled;document.getElementById('adsensePublisher').value=s.adsensePublisher;document.getElementById('adsenseSlot').value=s.adsenseSlot;document.getElementById('customCss').value=s.customCss;document.getElementById('textAnimation').checked=s.textAnimation;if(sharedSettingsLoadError)setSharedSettingsStatus(sharedSettingsLoadError,true);else setSharedSettingsStatus('Settings are synchronized with Supabase. Changes are shared with visitors.')}
-function populateAdminTab(tab){if(!requireAdmin())return;switch(tab){case'dashboard':updateStats();renderAnalyticsDashboard();void fetchTrafficAnalytics(true);break;case'upload':fillCatSelect();break;case'photos':renderAdminPhotos();break;case'categories':renderAdminCats();break;case'reports':void renderReports();break;case'comments':void renderAdminComments();break;case'submissions':void renderUserSubmissions();break;case'users':renderUsersTraffic();void fetchTrafficAnalytics(true);break;case'settings':populateAdminSettingsForm();break;case'cloudflare-ai':break;}}
+function populateAdminTab(tab){if(!requireAdmin())return;switch(tab){case'dashboard':updateStats();renderAnalyticsDashboard();void fetchTrafficAnalytics(true);break;case'upload':fillCatSelect();break;case'photos':renderAdminPhotos();break;case'categories':renderAdminCats();break;case'reports':void renderReports();break;case'comments':void renderAdminComments();break;case'submissions':void renderUserSubmissions();break;case'users':renderUsersTraffic();void fetchTrafficAnalytics(true);break;case'settings':populateAdminSettingsForm();void refreshApiStatusMonitor();break;case'cloudflare-ai':break;}}
 function fillCatSelect(){document.getElementById('photoCategory').innerHTML=categories.map(c=>`<option>${esc(c)}</option>`).join('')}
 function clearForm(){['photoName','photoCaption','photoTags','photoOverlayText','editingId'].forEach(id=>document.getElementById(id).value='');document.getElementById('photoFile').value='';document.getElementById('photoDownload').checked=true;document.getElementById('photoLikes').checked=true;document.getElementById('photoFeatured').checked=false;document.getElementById('savePhoto').textContent='Upload Photo'}
 function readFile(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file)})}
@@ -3971,6 +3981,52 @@ async function removeOpenAiApiKey(){
     toast('AI API key removed');
   }catch(error){status.textContent='Could not remove API key: '+(error?.message||'check Supabase Edge Function setup.');}
   finally{button.disabled=false;}
+}
+
+async function refreshApiStatusMonitor(){
+  if(!requireAdmin())return;
+  const button=document.getElementById('refreshApiStatusMonitor');
+  const rows=document.getElementById('apiStatusRows');
+  const summary=document.getElementById('apiStatusSummary');
+  if(!rows||!summary)return;
+  if(button){button.disabled=true;button.textContent='Checking…';}
+  summary.textContent='Checking secure provider configuration…';
+  rows.replaceChildren();
+  for(let i=1;i<=100;i++){
+    const name=i===1?'OpenAI':i===2?'Cloudflare Workers AI':'Reserved API slot';
+    const card=document.createElement('div');
+    card.id='apiStatusRow'+i;
+    card.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:11px;background:var(--panel2);min-width:0';
+    const label=document.createElement('span');
+    label.style.cssText='font-size:13px;font-weight:650;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap';
+    label.textContent='API '+i+' · '+name;
+    const badge=document.createElement('span');
+    badge.id='apiStatusBadge'+i;
+    badge.style.cssText='font-size:11px;padding:5px 8px;border-radius:999px;background:#64748b22;color:var(--muted);white-space:nowrap';
+    badge.textContent=i<=2?'Checking…':'Not configured';
+    card.append(label,badge);rows.append(card);
+  }
+  const results=await Promise.allSettled([invokeAiKeyManager('status'),invokeCloudflareWorkersAiKeyManager('status')]);
+  if(!requireAdmin()){summary.textContent='Owner session expired. Sign in again.';if(button){button.disabled=false;button.textContent='↻ Refresh API Status';}return;}
+  const apply=(number,result)=>{
+    const badge=document.getElementById('apiStatusBadge'+number);
+    if(!badge)return;
+    if(result.status==='fulfilled'){
+      const configured=!!result.value?.configured;
+      badge.textContent=configured?'Configured':'Not configured';
+      badge.style.background=configured?'#16a34a22':'#64748b22';
+      badge.style.color=configured?'#22c55e':'var(--muted)';
+      badge.title=number===1?'OpenAI key presence checked securely':'Cloudflare credentials presence checked securely';
+    }else{
+      badge.textContent='Check failed';badge.style.background='#ef444422';badge.style.color='#ef7777';
+      badge.title=result.reason?.message||'Secure status check failed';
+    }
+  };
+  apply(1,results[0]);apply(2,results[1]);
+  const configured=results.filter(x=>x.status==='fulfilled'&&x.value?.configured).length;
+  const failed=results.filter(x=>x.status==='rejected').length;
+  summary.textContent=failed?configured+' configured · '+failed+' status check failed · 98 reserved':configured+' configured · '+(2-configured)+' not configured · 98 reserved';
+  if(button){button.disabled=false;button.textContent='↻ Refresh API Status';}
 }
 
 const ADSENSE_PUBLISHER_PATTERN=/^ca-pub-\d{16}$/;
