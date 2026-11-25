@@ -519,6 +519,34 @@ img,video,svg{max-width:100%}
 #pgPreviewStage #userPhotoPreview{transition:transform .2s ease}
 @media(max-width:700px){.pg-live-preview-tools{right:9px;bottom:9px;gap:7px}.pg-live-preview-tools button{width:43px;height:43px;flex-basis:43px;font-size:25px}.pg-live-preview-tools button svg{width:23px;height:23px}}
 @media(max-width:380px){.pg-live-preview-tools{gap:5px}.pg-live-preview-tools button{width:38px;height:38px;flex-basis:38px;font-size:22px}}
+
+/* PusoAI logo and accessible light-theme contrast */
+.pg-logo-mark,.pg-sidebar-mark{display:inline-flex!important;align-items:center;justify-content:center;flex:0 0 auto;width:42px;height:42px}
+.pg-logo-mark svg,.pg-sidebar-mark svg{display:block;width:100%;height:100%;filter:drop-shadow(0 0 9px rgba(26,145,255,.38))}
+.pg-sidebar-mark{width:38px;height:38px}
+.pg-top-brand{gap:10px}
+body.light{background:#f6f8ff!important;color:#171b2b!important}
+body.light .pg-top-header,body.light header{background:rgba(255,255,255,.96)!important;border-bottom:1px solid #dfe5f2!important}
+body.light .pg-sidebar{background:#fff!important;border-color:#e0e5f0!important;box-shadow:8px 0 32px rgba(30,45,85,.06)!important}
+body.light .pg-sidebar-nav a,body.light .pg-sidebar-label,body.light .pg-profile-copy,body.light .pg-profile-copy small{color:#34405a!important}
+body.light .pg-main,body.light main{color:#1b2340!important}
+body.light .pg-studio-heading h1,body.light .pg-studio-heading h2,body.light .pg-studio-heading h3,body.light .pg-section-tag,body.light .section-head h2,body.light .pg-generator-heading h2{color:#17213c!important}
+body.light .pg-studio-heading p,body.light .pg-generator-heading p,body.light .section-head p,body.light .pg-studio-eyebrow{color:#596783!important}
+body.light .pg-glass-panel,body.light .pg-control-field,body.light .pg-studio-status,body.light .pg-preview-panel,body.light .pg-card,body.light .panel,body.light .section.container .panel{background:#fff!important;color:#202943!important;border-color:#dfe5f1!important;box-shadow:0 12px 34px rgba(32,48,85,.07)!important}
+body.light .pg-glass-panel h1,body.light .pg-glass-panel h2,body.light .pg-glass-panel h3,body.light .panel h2,body.light .panel h3,body.light .pg-card h3{color:#1c2743!important}
+body.light .pg-glass-panel p,body.light .panel p,body.light .pg-card p,body.light label,body.light .muted{color:#5b6680}
+body.light input,body.light textarea,body.light select{background:#fff!important;color:#1b2440!important;border-color:#d7deed!important}
+body.light input::placeholder,body.light textarea::placeholder{color:#7d879d!important;opacity:1}
+body.light .pg-top-header .navlinks a,body.light .pg-top-header .navlinks a:not(.pg-active-link){color:#4d5872!important}
+body.light .pg-global-search{background:#f1f4fb!important;border-color:#dce3f1!important;color:#29344e!important}
+body.light .pg-global-search input{background:transparent!important;color:#1b2440!important}
+body.light .pg-mobile-nav{background:rgba(255,255,255,.97)!important;border-color:#dce3f1!important}
+body.light .pg-mobile-nav a{color:#46516b!important}
+body.light .pg-sidebar-nav a.active,body.light .pg-sidebar-nav a:hover{background:#edf0ff!important;color:#3430a8!important}
+body.light .pg-profile-avatar{background:#edf0ff!important;color:#3935a8!important}
+body.light .pg-top-icon,body.light .iconbtn,body.light .secondary{background:#fff!important;color:#29344e!important;border-color:#dce3f1!important}
+body.light .section.container>.panel,body.light .section.container .panel{background:#fff!important;color:#202943!important}
+
 </style>
 <style id="modern-ui-refresh">
 /* PusoAI modern UI refresh: light-first, calm contrast, responsive layout. */
@@ -1290,11 +1318,11 @@ body.light .pg-live-preview-tools button{
   </div>
 </div>
 <header class="pg-top-header"><div class="container nav">
-<a class="brand pg-top-brand" href="#home" aria-label="PusoAI Home"><span class="pg-logo-mark" aria-hidden="true">✧</span><span>Puso<b>AI</b></span></a>
+<a class="brand pg-top-brand" href="#home" aria-label="PusoAI Home"><span class="pg-logo-mark" aria-hidden="true"><svg viewBox="0 0 64 64" role="img" focusable="false"><defs><linearGradient id="pusoLogoBg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#168cff"/><stop offset="1" stop-color="#1027bd"/></linearGradient><linearGradient id="pusoLogoEdge" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#42f4ff"/><stop offset="1" stop-color="#3977ff"/></linearGradient></defs><rect x="3" y="3" width="58" height="58" rx="15" fill="url(#pusoLogoBg)" stroke="url(#pusoLogoEdge)" stroke-width="2.5"/><path d="M19 48V17h17c9 0 14 5 14 13S45 43 36 43h-7v5zM29 34h7c3 0 5-1 5-4s-2-4-5-4h-7z" fill="#fff"/><rect x="43" y="9" width="9" height="9" rx="2" fill="#fff"/></svg></span><span>Puso<b>AI</b></span></a>
 <nav class="navlinks" aria-label="Studio modes"><a href="#studio" class="pg-active-link">Image mode</a><a href="#video-mode" class="pg-mode-disabled" aria-disabled="true" title="Video generation is not connected yet">Video mode <small>SOON</small></a><a href="#prompt-guide">AI Tools</a></nav>
 <div class="navactions"><label class="pg-global-search" aria-label="Search gallery"><span>⌕</span><input id="pgGlobalSearch" type="search" placeholder="Search gallery…"><kbd>↵</kbd></label><button class="iconbtn pg-top-icon" id="pgNotifications" type="button" aria-label="Notifications" aria-expanded="false">♧</button><a class="iconbtn pg-top-icon pg-message-link" href="#contact" aria-label="Messages and contact">✉</a><button class="iconbtn" id="themeBtn" title="Theme" aria-label="Toggle theme">☾</button><button class="admin-nav-btn primary" id="adminOpen" style="display:none">Admin</button></div>
 <div class="pg-notification-popover" id="pgNotificationPanel" hidden><b>Notifications are not enabled yet</b><span>This panel will show PusoAI studio alerts when the notification service is connected.</span></div></div></header>
-<aside class="pg-sidebar" aria-label="Main navigation"><a class="pg-sidebar-logo" href="#home"><span class="pg-sidebar-mark">✧</span><span>Puso<b>AI</b><small>CREATIVE STUDIO</small></span></a><div class="pg-sidebar-label">WORKSPACE</div><nav class="pg-sidebar-nav"><a class="active" href="#home"><span>⌂</span>Home</a><a href="#studio"><span>✦</span>AI Image Generator</a><a href="#explore"><span>▦</span>Gallery</a><a href="#generationHistoryPanel"><span>◷</span>History</a></nav><div class="pg-sidebar-bottom"><div class="pg-profile-avatar">G</div><div class="pg-profile-copy"><b>Guest Creator</b><small>No account needed</small></div><span class="pg-profile-dot"></span></div></aside>
+<aside class="pg-sidebar" aria-label="Main navigation"><a class="pg-sidebar-logo" href="#home"><span class="pg-sidebar-mark"><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="3" y="3" width="58" height="58" rx="15" fill="url(#pusoLogoBg)" stroke="url(#pusoLogoEdge)" stroke-width="2.5"/><path d="M19 48V17h17c9 0 14 5 14 13S45 43 36 43h-7v5zM29 34h7c3 0 5-1 5-4s-2-4-5-4h-7z" fill="#fff"/><rect x="43" y="9" width="9" height="9" rx="2" fill="#fff"/></svg></span><span>Puso<b>AI</b><small>CREATIVE STUDIO</small></span></a><div class="pg-sidebar-label">WORKSPACE</div><nav class="pg-sidebar-nav"><a class="active" href="#home"><span>⌂</span>Home</a><a href="#studio"><span>✦</span>AI Image Generator</a><a href="#explore"><span>▦</span>Gallery</a><a href="#generationHistoryPanel"><span>◷</span>History</a></nav><div class="pg-sidebar-bottom"><div class="pg-profile-avatar">G</div><div class="pg-profile-copy"><b>Guest Creator</b><small>No account needed</small></div><span class="pg-profile-dot"></span></div></aside>
 <nav class="pg-mobile-nav" aria-label="Mobile navigation"><a href="#home"><span>⌂</span>Home</a><a href="#studio"><span>✦</span>Create</a><a href="#explore"><span>▦</span>Gallery</a><a href="#generationHistoryPanel"><span>◷</span>History</a></nav>
 <main id="home" class="pg-main">
 <section class="pg-studio-dashboard" id="studio" aria-labelledby="pgStudioTitle">
