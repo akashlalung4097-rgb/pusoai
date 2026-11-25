@@ -1401,17 +1401,17 @@ body.light .pg-live-preview-tools button{
 </style>
 
 <style id="pusoai-desktop-preview-match-image">
-/* Desktop/laptop: make the Live Preview frame follow the actual image ratio. */
+/* Laptop/desktop: image fills the full preview canvas; frame follows image ratio. */
 @media (min-width:1024px){
   #pgPreviewStage.pg-has-image{
-    height:auto!important;min-height:0!important;max-height:none!important;
-    flex:0 0 auto!important;padding:0!important;
-    aspect-ratio:var(--pg-preview-ratio)!important;
+    position:relative!important;display:block!important;box-sizing:border-box!important;
+    width:100%!important;height:auto!important;min-height:0!important;max-height:none!important;
+    aspect-ratio:var(--pg-preview-ratio)!important;padding:0!important;overflow:hidden!important;
   }
   #pgPreviewStage.pg-has-image #userPhotoPreview.user-upload-preview{
     position:absolute!important;inset:0!important;display:block!important;
-    width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;
-    object-fit:contain!important;object-position:center!important;margin:0!important;
+    width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;
+    object-fit:cover!important;object-position:center!important;margin:0!important;
   }
 }
 </style>
