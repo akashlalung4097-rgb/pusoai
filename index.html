@@ -4008,24 +4008,36 @@ async function refreshApiStatusMonitor(){
   }
   const results=await Promise.allSettled([invokeAiKeyManager('status'),invokeCloudflareWorkersAiKeyManager('status')]);
   if(!requireAdmin()){summary.textContent='Owner session expired. Sign in again.';if(button){button.disabled=false;button.textContent='↻ Refresh API Status';}return;}
+  const getStatus=(number,result)=>{
+    if(result.status==='fulfilled'){
+      return {state:result.value?.configured?'configured':'not-configured',detail:number===1?'OpenAI key presence checked securely':'Cloudflare credentials presence checked securely'};
+    }
+    const message=String(result.reason?.message||'Secure status check failed');
+    // Some deployed key managers report an empty secret as an error instead of
+    // returning { configured:false }. Treat only explicit missing-key responses
+    // as Not configured; keep network/auth/function failures visible as failures.
+    const missingKey=/(not configured|no (?:saved )?(?:api )?key|missing (?:api )?key|secret.*not found|key.*not found|empty (?:api )?key)/i.test(message);
+    return {state:missingKey?'not-configured':'failed',detail:message};
+  };
   const apply=(number,result)=>{
     const badge=document.getElementById('apiStatusBadge'+number);
     if(!badge)return;
-    if(result.status==='fulfilled'){
-      const configured=!!result.value?.configured;
-      badge.textContent=configured?'Configured':'Not configured';
-      badge.style.background=configured?'#16a34a22':'#64748b22';
-      badge.style.color=configured?'#22c55e':'var(--muted)';
-      badge.title=number===1?'OpenAI key presence checked securely':'Cloudflare credentials presence checked securely';
+    const status=getStatus(number,result);
+    if(status.state==='configured'){
+      badge.textContent='Configured';badge.style.background='#16a34a22';badge.style.color='#22c55e';
+    }else if(status.state==='not-configured'){
+      badge.textContent='Not configured';badge.style.background='#64748b22';badge.style.color='var(--muted)';
     }else{
       badge.textContent='Check failed';badge.style.background='#ef444422';badge.style.color='#ef7777';
-      badge.title=result.reason?.message||'Secure status check failed';
     }
+    badge.title=status.detail;
   };
+  const statuses=[getStatus(1,results[0]),getStatus(2,results[1])];
   apply(1,results[0]);apply(2,results[1]);
-  const configured=results.filter(x=>x.status==='fulfilled'&&x.value?.configured).length;
-  const failed=results.filter(x=>x.status==='rejected').length;
-  summary.textContent=failed?configured+' configured · '+failed+' status check failed · 98 reserved':configured+' configured · '+(2-configured)+' not configured · 98 reserved';
+  const configured=statuses.filter(x=>x.state==='configured').length;
+  const notConfigured=statuses.filter(x=>x.state==='not-configured').length;
+  const failed=statuses.filter(x=>x.state==='failed').length;
+  summary.textContent=configured+' configured · '+notConfigured+' not configured · '+failed+' check failed · 98 reserved';
   if(button){button.disabled=false;button.textContent='↻ Refresh API Status';}
 }
 
