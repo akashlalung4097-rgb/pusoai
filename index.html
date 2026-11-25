@@ -1428,6 +1428,12 @@ body.light .pg-live-preview-tools button{
 #pgPreviewStage .pg-live-preview-tools button:focus-visible{outline:3px solid #a9a1ff!important;outline-offset:3px!important}
 @media(max-width:700px){#pgPreviewStage .pg-live-preview-tools{right:10px!important;bottom:10px!important;gap:7px!important}#pgPreviewStage .pg-live-preview-tools button{width:42px!important;height:42px!important;min-width:42px!important;flex-basis:42px!important}#pgPreviewStage .pg-live-preview-tools button svg{width:19px!important;height:19px!important}}
 </style>
+
+<style id="pusoai-click-image-zoom">
+#pgPreviewStage #userPhotoPreview{cursor:zoom-in!important;transform-origin:center center!important}
+#pgPreviewStage #userPhotoPreview.preview-zoomed{cursor:zoom-out!important;transform:scale(1.5)!important;position:relative!important;z-index:5!important}
+#pgPreviewStage #userPhotoPreview.preview-zoomed{touch-action:pan-y}
+</style>
 </head>
 <body>
 <div id="aiGenerationOverlay" class="ai-generation-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="aiGenTitle" aria-describedby="aiGenDetail" aria-live="polite">
@@ -2826,7 +2832,7 @@ function setupUserUpload(){
   const previewFullscreenBtn=document.getElementById('pgPreviewFullscreen');
   const previewDownloadBtn=document.getElementById('pgPreviewDownload');
   const previewShareBtn=document.getElementById('pgPreviewShare');
-  previewZoomBtn?.addEventListener('click',()=>{if(!preview)return;preview.classList.toggle('preview-zoomed');previewZoomBtn.textContent=preview.classList.contains('preview-zoomed')?'−':'⌕';previewZoomBtn.title=preview.classList.contains('preview-zoomed')?'Reset zoom':'Zoom';});
+  const togglePreviewZoom=()=>{if(!preview||!preview.getAttribute('src'))return;const zoomed=preview.classList.toggle('preview-zoomed');if(previewZoomBtn){previewZoomBtn.setAttribute('aria-pressed',String(zoomed));previewZoomBtn.title=zoomed?'Reset zoom':'Zoom';previewZoomBtn.setAttribute('aria-label',zoomed?'Reset preview zoom':'Zoom preview');}};previewZoomBtn?.addEventListener('click',togglePreviewZoom);preview?.addEventListener('click',togglePreviewZoom);preview?.setAttribute('title','Click image to zoom in or out');
   previewFullscreenBtn?.addEventListener('click',async()=>{const stage=document.getElementById('pgPreviewStage');if(!stage)return;try{if(document.fullscreenElement===stage){await document.exitFullscreen();}else if(stage.requestFullscreen){await stage.requestFullscreen();}else{stage.classList.toggle('preview-fullscreen-fallback');}}catch(error){stage.classList.toggle('preview-fullscreen-fallback');}});
   previewDownloadBtn?.addEventListener('click',()=>{if(generatedImageFile){downloadGeneratedAiImage();return;}const file=fileInput.files?.[0];if(!file){status.textContent='No preview image is available to download yet.';return;}const url=URL.createObjectURL(file);const a=document.createElement('a');a.href=url;a.download=file.name||'pusoai-reference-image';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);status.textContent='Reference image download started.';});
   previewShareBtn?.addEventListener('click',async()=>{const file=generatedImageFile||fileInput.files?.[0];try{if(file&&navigator.share&&(!navigator.canShare||navigator.canShare({files:[file]}))){await navigator.share({title:'PusoAI image',files:[file]});}else if(navigator.share){await navigator.share({title:'PusoAI Live Preview',text:'View my image on PusoAI',url:location.href});}else if(navigator.clipboard){await navigator.clipboard.writeText(location.href);status.textContent='PusoAI page link copied. To share the image file, download it first.';}else{status.textContent='Sharing is not supported by this browser. Download the image to share it.';}}catch(error){if(error?.name!=='AbortError')status.textContent='Could not share from this browser. Download the image and share it manually.';}});
