@@ -20,8 +20,6 @@
  file?.addEventListener('change',()=>{const m=$('pgActiveModel');if(m)m.textContent=file.files?.[0]?'FLUX.2 Klein':'FLUX.1 Schnell';updatePreview()});
  if(preview){new MutationObserver(updatePreview).observe(preview,{attributes:true,attributeFilter:['src','style']});preview.addEventListener('load',updatePreview);updatePreview()}
  $('pgRegenerate')?.addEventListener('click',()=>window.generateAiImage?.());$('pgUndo')?.addEventListener('click',()=>window.PusoAIStudioHistory?.restorePrevious());
- $('pgPreviewFavorite')?.addEventListener('click',e=>{const b=e.currentTarget,on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',String(on));b.textContent=on?'♥':'♡'});
- $('pgMore')?.addEventListener('click',async()=>{const txt=prompt?.value?.trim()||'';if(!txt)return;try{await navigator.clipboard.writeText(txt);if($('userPhotoStatus'))$('userPhotoStatus').textContent='Prompt copied to clipboard.'}catch(_){if($('userPhotoStatus'))$('userPhotoStatus').textContent='Select and copy the prompt from the prompt field.'}});
  $('pgViewAllHistory')?.addEventListener('click',()=>{if(history.length<=5&&!expanded)return;expanded=!expanded;list?.classList.toggle('expanded',expanded);render()});
  const notify=$('pgNotifications'),panel=$('pgNotificationPanel');notify?.addEventListener('click',()=>{const open=notify.getAttribute('aria-expanded')!=='true';notify.setAttribute('aria-expanded',String(open));if(panel)panel.hidden=!open});
  document.addEventListener('click',e=>{if(panel&&!panel.hidden&&!e.target.closest('#pgNotifications')&&!e.target.closest('#pgNotificationPanel')){panel.hidden=true;notify?.setAttribute('aria-expanded','false')}});
