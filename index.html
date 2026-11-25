@@ -1461,28 +1461,23 @@ body.pg-preview-modal-open{overflow:hidden!important;touch-action:none!important
 </style>
 
 <style id="pusoai-mobile-live-preview-larger">
-/* Mobile: enlarge the actual image area while preserving the complete image. */
+/* Mobile: let the preview stage follow the uploaded image's natural ratio.
+   This makes the photo fill the full available width without cropping or distortion. */
 @media (max-width:700px){
   .pg-preview-panel{width:100%!important;max-width:none!important;min-width:0!important}
   #pgPreviewStage.pg-has-image{
-    display:flex!important;align-items:center!important;justify-content:center!important;
-    box-sizing:border-box!important;width:100%!important;
-    height:clamp(440px,68svh,620px)!important;
-    min-height:440px!important;max-height:620px!important;
-    padding:6px!important;overflow:hidden!important;
+    display:block!important;box-sizing:border-box!important;width:100%!important;
+    height:auto!important;min-height:0!important;max-height:none!important;
+    aspect-ratio:auto!important;padding:0!important;overflow:visible!important;
   }
   #pgPreviewStage.pg-has-image #userPhotoPreview.user-upload-preview{
     display:block!important;position:static!important;
-    width:100%!important;height:100%!important;
-    max-width:100%!important;max-height:100%!important;
+    width:100%!important;height:auto!important;
+    max-width:100%!important;max-height:none!important;
     object-fit:contain!important;object-position:center!important;
-    margin:0!important;flex:1 1 auto!important;
+    margin:0!important;flex:none!important;
   }
 }
-@media (max-width:380px){
-  #pgPreviewStage.pg-has-image{height:clamp(420px,66svh,560px)!important;min-height:420px!important}
-}
-</style>
 </head>
 <body>
 <div id="aiGenerationOverlay" class="ai-generation-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="aiGenTitle" aria-describedby="aiGenDetail" aria-live="polite">
