@@ -3202,10 +3202,11 @@ async function generateAiImage(){
     if(!response.ok){
       const errorData=await response.json().catch(()=>({}));
       const hint=response.status===404?' Deploy the Supabase Edge Function named generate-image.':
-        response.status===401?' Check Edge Function verify_jwt=false and publishable key.':
-        response.status===429?' Your daily generation limit was reached.':
-        response.status===503?' Check the Supabase Edge Function secrets and deployment.':'';
-      throw new Error((errorData?.error||`AI service HTTP ${response.status}.`)+hint);
+        response.status===401?' Check the Edge Function authorization and publishable key.':
+        response.status===503&&!errorData?.error?' Check the Supabase Edge Function secrets and deployment.':'';
+      const resetHint=response.status===429&&errorData?.reset_at
+        ? ' Reset: '+new Date(errorData.reset_at).toLocaleString()+'.':'';
+      throw new Error((errorData?.error||`AI service HTTP ${response.status}.`)+resetHint+hint);
     }
     const data=await readAiGenerationResponse(response,progress=>{
       if(controller.signal.aborted){if(timedOut)throw new Error('AI image generation timed out after 120 seconds. Please retry.');throw new DOMException('AI image generation canceled.','AbortError');}
