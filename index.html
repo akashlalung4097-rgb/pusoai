@@ -615,6 +615,27 @@ body.light .admin hr{border-color:#d8dfec!important}
   .pg-preview-stage{min-height:clamp(560px,72vh,820px)!important;height:clamp(560px,72vh,820px)!important}
 }
 
+
+/* Laptop-friendly Live Preview sizing: compact canvas with comfortable controls. */
+@media(min-width:1024px) and (max-width:1439px){
+  .pg-preview-panel{width:100%!important;max-width:560px!important;min-width:0!important}
+  .pg-preview-stage{
+    width:100%!important;height:clamp(380px,52vh,500px)!important;
+    min-height:380px!important;max-height:58vh!important;padding:16px!important;
+  }
+  #pgPreviewStage #userPhotoPreview.user-upload-preview{
+    max-width:100%!important;max-height:48vh!important;
+    width:auto!important;height:auto!important;object-fit:contain!important;
+  }
+  #pgPreviewStage .pg-preview-empty{min-height:340px!important}
+  .pg-preview-panel .pg-preview-toolbar,.pg-preview-panel .pg-preview-actions{gap:8px!important}
+}
+@media(min-width:1440px){
+  .pg-preview-panel{max-width:680px!important}
+  .pg-preview-stage{height:clamp(460px,62vh,620px)!important;min-height:460px!important;max-height:68vh!important}
+  #pgPreviewStage #userPhotoPreview.user-upload-preview{max-height:58vh!important;object-fit:contain!important}
+}
+
 </style>
 <style id="modern-ui-refresh">
 /* PusoAI modern UI refresh: light-first, calm contrast, responsive layout. */
