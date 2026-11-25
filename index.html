@@ -547,6 +547,54 @@ body.light .pg-profile-avatar{background:#edf0ff!important;color:#3935a8!importa
 body.light .pg-top-icon,body.light .iconbtn,body.light .secondary{background:#fff!important;color:#29344e!important;border-color:#dce3f1!important}
 body.light .section.container>.panel,body.light .section.container .panel{background:#fff!important;color:#202943!important}
 
+
+/* Admin panel: readable light theme, scoped to owner workspace only */
+body.light .admin{
+  --text:#172033!important;--muted:#59677f!important;--bg:#f4f6fc!important;
+  --panel:#ffffff!important;--panel2:#eef2f9!important;--line:#d8dfec!important;
+  --adm-bg:#f4f6fc!important;--adm-panel:#ffffff!important;--adm-line:#d8dfec!important;
+  --adm-ink:#172033!important;--adm-sub:#59677f!important;
+  background:#f4f6fc!important;color:#172033!important;color-scheme:light;
+}
+body.light .admin .aside{background:#fff!important;border-color:#d8dfec!important;color:#172033!important}
+body.light .admin .brandmark,body.light .admin .brandmark span:not(.brand-icon){color:#172033!important}
+body.light .admin .aside .brandmark small{color:#59677f!important}
+body.light .admin .menu button{color:#46536c!important}
+body.light .admin .menu button.active{background:#e9eaff!important;color:#4035b5!important;box-shadow:inset 0 0 0 1px #c9c8ff!important}
+body.light .admin .menu button:not(.active):hover{background:#f0f2fb!important;color:#1d2a45!important}
+body.light .admin .aside-bottom .signed-in{color:#59677f!important}
+body.light .admin .aside-bottom .signed-in b{color:#202b43!important}
+body.light .admin .adminmain{background:radial-gradient(circle at 100% 0,#e8eaff 0,transparent 38%),#f4f6fc!important;color:#172033!important}
+body.light .admin .admintop{background:#f4f6fc!important;border-color:#d8dfec!important}
+body.light .admin .admintop h1,body.light .admin .admin-dashboard-head h2,body.light .admin h2,body.light .admin h3,body.light .admin h4{color:#172033!important}
+body.light .admin .admintop .top-sub,body.light .admin .admin-dashboard-head p,body.light .admin .stat span{color:#59677f!important}
+body.light .admin .panel,body.light .admin .stat,body.light .admin .report,body.light .admin .admin-photo,body.light .admin .empty,body.light .admin .analytics-card{background:#fff!important;border-color:#d8dfec!important;color:#26334c!important;box-shadow:0 5px 18px rgba(26,42,78,.055)!important}
+body.light .admin .panel p,body.light .admin .panel small,body.light .admin .panel label,body.light .admin .stat,body.light .admin .report,body.light .admin .empty{color:#46536c!important}
+body.light .admin .stat b,body.light .admin .admin-photo b,body.light .admin strong{color:#172033!important}
+body.light .admin .table{color:#26334c!important;background:#fff!important}
+body.light .admin .table th{background:#eef2f9!important;color:#394761!important;border-color:#d8dfec!important}
+body.light .admin .table td{color:#34415a!important;border-color:#e1e6f0!important}
+body.light .admin input,body.light .admin textarea,body.light .admin select,
+body.light .admin .analytics-controls select,body.light .admin .analytics-controls button{
+  background:#fff!important;color:#172033!important;border:1px solid #cbd5e5!important;
+}
+body.light .admin input::placeholder,body.light .admin textarea::placeholder{color:#7b879c!important;opacity:1}
+body.light .admin input:focus,body.light .admin textarea:focus,body.light .admin select:focus{border-color:#6658dc!important;box-shadow:0 0 0 3px rgba(102,88,220,.13)!important;outline:none}
+body.light .admin input[type="checkbox"],body.light .admin input[type="radio"]{accent-color:#5b50d6}
+body.light .admin button.secondary{background:#fff!important;color:#34415a!important;border:1px solid #cbd5e5!important}
+body.light .admin button.secondary:hover{background:#eef2fb!important;color:#172033!important}
+body.light .admin button.primary{background:#5548d5!important;color:#fff!important;border:1px solid #493dc4!important}
+body.light .admin button.danger,body.light .admin #adminLogout{background:#fff0f1!important;color:#a52b42!important;border:1px solid #f0c5cc!important}
+body.light .admin .analytic-status{color:#46536c!important}
+body.light .admin .admin-actions,body.light .admin .field,body.light .admin .toggle{color:#34415a!important}
+body.light .admin a{color:#5146c8!important}
+body.light .admin hr{border-color:#d8dfec!important}
+@media(max-width:760px){
+ body.light .admin .aside{background:#fff!important}
+ body.light .admin .menu{background:#fff!important}
+ body.light .admin .admintop{background:#f4f6fc!important}
+}
+
 </style>
 <style id="modern-ui-refresh">
 /* PusoAI modern UI refresh: light-first, calm contrast, responsive layout. */
