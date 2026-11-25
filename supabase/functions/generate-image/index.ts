@@ -14,6 +14,24 @@ const EDIT_MODEL = "@cf/black-forest-labs/flux-2-klein-9b";
 const MAX_PROMPT_LENGTH = 1500;
 const MAX_IMAGE_BYTES = 2 * 1024 * 1024;
 
+// Server-enforced daily caps (Asia/Kolkata calendar day).
+const VISITOR_DAILY_LIMIT = 10;
+const IP_DAILY_LIMIT = 20;
+const GLOBAL_DAILY_LIMIT = 100;
+
+async function sha256Hex(value: string): Promise<string> {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
+  return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+function getClientIp(request: Request): string {
+  // Supabase's hosted Edge Functions sit behind Cloudflare. Prefer the client
+  // address Cloudflare supplies; do not trust the client-controlled first XFF item.
+  const value = request.headers.get("cf-connecting-ip") ||
+    request.headers.get("x-real-ip") || "";
+  return value.trim().slice(0, 100);
+}
+
 function corsHeaders(origin: string | null): Record<string, string> {
   return {
     "Access-Control-Allow-Origin": origin && ALLOWED_ORIGINS.has(origin) ? origin : "null",
@@ -146,6 +164,64 @@ Deno.serve(async (request: Request) => {
   } catch (error) {
     console.error("Cloudflare credential decryption failed:", error instanceof Error ? error.message : "unknown error");
     return json({ error: "Could not unlock saved Cloudflare credentials. The encryption secret may have changed." }, 503, origin);
+  }
+
+  // Consume quota in PostgreSQL before making any paid Cloudflare request.
+  // Raw IP/visitor IDs are never stored: only keyed hashes are written to the quota table.
+  const encryptionSecret = Deno.env.get("AI_KEY_ENCRYPTION_SECRET") || "";
+  if (encryptionSecret.length < 32) {
+    return json({ error: "Server quota protection is not configured. Ask the owner to check AI_KEY_ENCRYPTION_SECRET." }, 503, origin);
+  }
+
+  const clientIp = getClientIp(request);
+  const visitorId = typeof body.clientId === "string" ? body.clientId.trim().slice(0, 128) : "";
+  if (!clientIp || !visitorId) {
+    return json({ error: "Could not identify this visitor for AI generation protection. Please refresh and try again." }, 503, origin);
+  }
+
+  let ipHash: string;
+  let visitorHash: string;
+  try {
+    [ipHash, visitorHash] = await Promise.all([
+      sha256Hex(`pusoai:ip:${encryptionSecret}:${clientIp}`),
+      sha256Hex(`pusoai:visitor:${encryptionSecret}:${visitorId}`),
+    ]);
+  } catch (error) {
+    console.error("AI quota identifier hashing failed:", error instanceof Error ? error.message : "unknown error");
+    return json({ error: "Could not initialize AI generation protection. Please try again." }, 503, origin);
+  }
+
+  const { data: quota, error: quotaError } = await admin.rpc("consume_pusoai_ai_generation", {
+    p_ip_hash: ipHash,
+    p_visitor_hash: visitorHash,
+    p_ip_daily_limit: IP_DAILY_LIMIT,
+    p_visitor_daily_limit: VISITOR_DAILY_LIMIT,
+    p_global_daily_limit: GLOBAL_DAILY_LIMIT,
+  });
+
+  if (quotaError) {
+    console.error("AI generation quota check failed:", quotaError.message);
+    return json({
+      error: "AI generation protection is not installed yet. The website owner must run supabase/ai-generation-rate-limit.sql in Supabase SQL Editor.",
+    }, 503, origin);
+  }
+
+  if (!quota || quota.allowed !== true) {
+    const scope = String(quota?.scope || "visitor");
+    const resetAt = typeof quota?.reset_at === "string" ? quota.reset_at : null;
+    const errorMessage = scope === "global"
+      ? "PusoAI has reached its daily AI generation capacity. Please try again after the daily reset."
+      : scope === "ip"
+        ? "This network has reached its daily AI generation limit. Please try again after the daily reset."
+        : "You have reached your daily AI generation limit. Please try again after the daily reset.";
+    return json({
+      error: errorMessage,
+      code: "AI_DAILY_LIMIT_REACHED",
+      scope,
+      limit: Number(quota?.limit || 0),
+      remaining: 0,
+      reset_at: resetAt,
+    }, 429, origin);
   }
 
   const dimensions = safeImageDimensions(body.outputWidth, body.outputHeight);
