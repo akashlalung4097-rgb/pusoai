@@ -595,6 +595,26 @@ body.light .admin hr{border-color:#d8dfec!important}
  body.light .admin .admintop{background:#f4f6fc!important}
 }
 
+
+/* Desktop and laptop: larger Live Preview canvas, preserve every image's original ratio. */
+@media(min-width:1024px){
+  .pg-preview-panel{width:100%!important;min-width:0!important;max-width:800px!important;justify-self:stretch!important}
+  .pg-preview-stage{
+    width:100%!important;min-height:clamp(500px,70vh,760px)!important;
+    height:clamp(500px,70vh,760px)!important;max-height:80vh!important;
+    padding:22px!important;display:flex!important;align-items:center!important;justify-content:center!important;
+  }
+  #pgPreviewStage #userPhotoPreview.user-upload-preview{
+    width:auto!important;height:auto!important;max-width:100%!important;
+    max-height:75vh!important;object-fit:contain!important;object-position:center!important;
+  }
+  #pgPreviewStage .pg-preview-empty{min-height:100%!important}
+}
+@media(min-width:1440px){
+  .pg-preview-panel{max-width:800px!important}
+  .pg-preview-stage{min-height:clamp(560px,72vh,820px)!important;height:clamp(560px,72vh,820px)!important}
+}
+
 </style>
 <style id="modern-ui-refresh">
 /* PusoAI modern UI refresh: light-first, calm contrast, responsive layout. */
