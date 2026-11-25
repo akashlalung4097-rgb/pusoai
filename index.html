@@ -1446,6 +1446,19 @@ body.pg-preview-modal-open{overflow:hidden!important;touch-action:none!important
 #pgPreviewStage #userPhotoPreview{cursor:zoom-in!important}
 @media(max-width:700px){.pg-preview-image-modal{position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;height:100dvh!important;padding:calc(env(safe-area-inset-top) + 64px) 10px calc(env(safe-area-inset-bottom) + 12px)!important;overflow:hidden!important;touch-action:pan-y!important}.pg-preview-image-modal img{max-width:100%!important;max-height:calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 90px)!important;object-fit:contain!important}.pg-preview-image-modal-close{position:fixed!important;top:calc(env(safe-area-inset-top) + 10px)!important;right:calc(env(safe-area-inset-right) + 10px)!important;width:52px!important;height:52px!important;min-width:52px!important;min-height:52px!important;z-index:2147483647!important;display:flex!important;align-items:center!important;justify-content:center!important;pointer-events:auto!important;touch-action:manipulation!important;-webkit-tap-highlight-color:transparent!important;font-size:34px!important}}
 </style>
+
+<style id="pusoai-mobile-hide-preview-zoom">
+/* Mobile only: remove both zoom controls from the Create Live Preview.
+   Keep fullscreen, download, share, and tap-to-open-full-image behavior. */
+@media (max-width:700px){
+  #pgPreviewStage #pgPreviewZoom,
+  #pgPreviewStage .zoom-controls,
+  #pgPreviewStage [aria-label*="zoom" i],
+  #pgPreviewStage [title*="zoom" i]{
+    display:none!important;
+  }
+}
+</style>
 </head>
 <body>
 <div id="aiGenerationOverlay" class="ai-generation-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="aiGenTitle" aria-describedby="aiGenDetail" aria-live="polite">
