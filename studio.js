@@ -11,12 +11,6 @@
  window.PusoAIStudioHistory={record(blob,text){if(!(blob instanceof Blob))return;const url=URL.createObjectURL(blob);history.unshift({id:Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7),blob,url,prompt:String(text||'AI image'),time:Date.now()});while(history.length>8)URL.revokeObjectURL(history.pop().url);render();updatePreview()},restorePrevious(){if(history.length<2)return;window.restorePusoAiHistory?.(history[1].blob,history[1].prompt);updatePreview()}};
  list?.addEventListener('click',e=>{const b=e.target.closest('[data-history-id]');if(!b)return;const item=history.find(x=>x.id===b.dataset.historyId);if(item)window.restorePusoAiHistory?.(item.blob,item.prompt);updatePreview()});
  $('pgSuggestPrompt')?.addEventListener('click',()=>{if(!prompt)return;const opts=samples.filter(x=>x!==prompt.value.trim());prompt.value=opts[Math.floor(Math.random()*opts.length)]||samples[0];prompt.dispatchEvent(new Event('input',{bubbles:true}));prompt.focus()});prompt?.addEventListener('input',updateCount);updateCount();
- const ratioButtons=[...document.querySelectorAll('.pg-ratio-btn')];
- let ratioWasChosen=false;
- const setResponsiveRatioDefault=()=>{if(ratioWasChosen)return;const ratio=window.matchMedia('(max-width: 1024px)').matches?'4:5':'1:1';ratioButtons.forEach(x=>{const active=x.dataset.ratio===ratio;x.classList.toggle('active',active);x.setAttribute('aria-pressed',String(active))})};
- setResponsiveRatioDefault();
- window.addEventListener('resize',setResponsiveRatioDefault,{passive:true});
- ratioButtons.forEach(b=>b.addEventListener('click',()=>{ratioWasChosen=true;ratioButtons.forEach(x=>{x.classList.remove('active');x.setAttribute('aria-pressed','false')});b.classList.add('active');b.setAttribute('aria-pressed','true')}));
  file?.addEventListener('change',()=>{const m=$('pgActiveModel');if(m)m.textContent=file.files?.[0]?'FLUX.2 Klein':'FLUX.1 Schnell';updatePreview()});
  if(preview){new MutationObserver(updatePreview).observe(preview,{attributes:true,attributeFilter:['src','style']});preview.addEventListener('load',updatePreview);updatePreview()}
  $('pgRegenerate')?.addEventListener('click',()=>window.generateAiImage?.());$('pgUndo')?.addEventListener('click',()=>window.PusoAIStudioHistory?.restorePrevious());
