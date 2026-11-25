@@ -1,16 +1,44 @@
 # PusoAI crawler guidance
-# The image sitemap is refreshed from approved public Supabase gallery photos.
-# Public site pages and assets may be crawled.
+# Public pages and approved public gallery content may be discovered by search crawlers.
+# Robots rules are crawl preferences, not access control or a security boundary.
+
 User-agent: *
 Allow: /
 
-# Allow OpenAI search crawling so PusoAI can be considered for ChatGPT search.
+# AI-powered search and answer engines
 User-agent: OAI-SearchBot
 Allow: /
 
-# GPTBot is separate from search crawling and is disallowed by default here.
-# This does not block OAI-SearchBot or ordinary Google/Bing search crawling.
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+# Training crawlers are separate from search crawlers.
+# Keep these disallowed; this does not block the search bots listed above.
 User-agent: GPTBot
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: Applebot-Extended
 Disallow: /
 
 Sitemap: https://pusoai.online/sitemap.xml
