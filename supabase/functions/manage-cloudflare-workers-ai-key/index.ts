@@ -6,15 +6,26 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const OWNER_EMAIL = "pusoai001@gmail.com";
 const PROVIDER = "cloudflare_workers_ai";
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Content-Type": "application/json",
-};
+const ALLOWED_ORIGINS = new Set([
+  "https://pusoai.online",
+  "https://www.pusoai.online",
+  "https://akashlalung4097-rgb.github.io",
+  "http://localhost:5500",
+  "http://127.0.0.1:5500",
+]);
 
-function json(status: number, body: Record<string, unknown>) {
-  return new Response(JSON.stringify(body), { status, headers: corsHeaders });
+function corsHeaders(origin: string | null): Record<string, string> {
+  return {
+    "Access-Control-Allow-Origin": origin && ALLOWED_ORIGINS.has(origin) ? origin : "null",
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Content-Type": "application/json",
+    "Vary": "Origin",
+  };
+}
+
+function json(status: number, body: Record<string, unknown>, origin: string | null) {
+  return new Response(JSON.stringify(body), { status, headers: corsHeaders(origin) });
 }
 
 function toBase64(bytes: Uint8Array): string {
@@ -37,8 +48,17 @@ async function encryptCredentials(value: unknown, secret: string) {
 }
 
 Deno.serve(async (req: Request) => {
-  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
-  if (req.method !== "POST") return json(405, { error: "Method not allowed." });
+  const origin = req.headers.get("origin");
+  if (req.method === "OPTIONS") {
+    if (!origin || !ALLOWED_ORIGINS.has(origin)) {
+      return new Response("Origin not allowed.", { status: 403, headers: corsHeaders(origin) });
+    }
+    return new Response("ok", { headers: corsHeaders(origin) });
+  }
+  if (!origin || !ALLOWED_ORIGINS.has(origin)) {
+    return json(403, { error: "This website origin is not allowed." }, origin);
+  }
+  if (req.method !== "POST") return json(405, { error: "Method not allowed." }, origin);
 
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
@@ -46,19 +66,19 @@ Deno.serve(async (req: Request) => {
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     const encryptionSecret = Deno.env.get("AI_KEY_ENCRYPTION_SECRET");
     if (!supabaseUrl || !anonKey || !serviceRoleKey || !encryptionSecret || encryptionSecret.length < 32) {
-      return json(500, { error: "Server configuration is incomplete. Check Supabase Edge Function secrets." });
+      return json(500, { error: "Server configuration is incomplete. Check Supabase Edge Function secrets." }, origin);
     }
 
     const authorization = req.headers.get("Authorization") || "";
-    const jwt = authorization.replace(/^Bearer\\s+/i, "");
-    if (!jwt || jwt === authorization) return json(401, { error: "Please sign in as the PusoAI owner." });
+    const jwt = authorization.replace(/^Bearer\s+/i, "").trim();
+    if (!jwt || jwt === authorization) return json(401, { error: "Please sign in as the PusoAI owner." }, origin);
 
     const authClient = createClient(supabaseUrl, anonKey, {
       auth: { persistSession: false, autoRefreshToken: false },
     });
     const { data: userData, error: userError } = await authClient.auth.getUser(jwt);
     if (userError || !userData.user || userData.user.email?.toLowerCase() !== OWNER_EMAIL) {
-      return json(403, { error: "Only the configured PusoAI owner can manage Cloudflare credentials." });
+      return json(403, { error: "Only the configured PusoAI owner can manage Cloudflare credentials." }, origin);
     }
 
     const admin = createClient(supabaseUrl, serviceRoleKey, {
@@ -71,21 +91,21 @@ Deno.serve(async (req: Request) => {
       const { data, error } = await admin.from("ai_provider_secrets")
         .select("provider").eq("provider", PROVIDER).maybeSingle();
       if (error) throw new Error("Could not read the saved Cloudflare configuration.");
-      return json(200, { configured: Boolean(data) });
+      return json(200, { configured: Boolean(data) }, origin);
     }
 
     if (action === "remove") {
       const { error } = await admin.from("ai_provider_secrets")
         .delete().eq("provider", PROVIDER);
       if (error) throw new Error("Could not remove the saved Cloudflare configuration.");
-      return json(200, { success: true, configured: false });
+      return json(200, { success: true, configured: false }, origin);
     }
 
     if (action === "save") {
       const accountId = typeof body.accountId === "string" ? body.accountId.trim() : "";
       const apiToken = typeof body.apiToken === "string" ? body.apiToken.trim() : "";
-      if (!/^[a-f0-9]{32}$/i.test(accountId)) return json(400, { error: "Enter a valid 32-character Cloudflare Account ID." });
-      if (apiToken.length < 20 || apiToken.length > 1000) return json(400, { error: "The Cloudflare API token is missing or invalid." });
+      if (!/^[a-f0-9]{32}$/i.test(accountId)) return json(400, { error: "Enter a valid 32-character Cloudflare Account ID." }, origin);
+      if (apiToken.length < 20 || apiToken.length > 1000) return json(400, { error: "The Cloudflare API token is missing or invalid." }, origin);
 
       // Verify the token is active without ever logging or returning it.
       const verifyResponse = await fetch("https://api.cloudflare.com/client/v4/user/tokens/verify", {
@@ -94,7 +114,7 @@ Deno.serve(async (req: Request) => {
       });
       const verifyData = await verifyResponse.json().catch(() => ({}));
       if (!verifyResponse.ok || verifyData?.success !== true) {
-        return json(400, { error: "Cloudflare rejected this API token. Check that it is active and try again." });
+        return json(400, { error: "Cloudflare rejected this API token. Check that it is active and try again." }, origin);
       }
 
       const encrypted = await encryptCredentials({ accountId, apiToken }, encryptionSecret);
@@ -105,13 +125,13 @@ Deno.serve(async (req: Request) => {
         updated_at: new Date().toISOString(),
       }, { onConflict: "provider" });
       if (error) throw new Error("Could not save the encrypted Cloudflare credentials.");
-      return json(200, { success: true, configured: true });
+      return json(200, { success: true, configured: true }, origin);
     }
 
-    return json(400, { error: "Unsupported action. Use save, status, or remove." });
+    return json(400, { error: "Unsupported action. Use save, status, or remove." }, origin);
   } catch (error) {
     // Deliberately avoid logging request bodies or secret values.
     console.error("Cloudflare credential manager error:", error instanceof Error ? error.message : "Unknown error");
-    return json(500, { error: error instanceof Error ? error.message : "Unexpected server error." });
+    return json(500, { error: error instanceof Error ? error.message : "Unexpected server error." }, origin);
   }
 });
