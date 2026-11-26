@@ -1531,6 +1531,29 @@ body.pg-preview-modal-open{overflow:hidden!important;touch-action:none!important
 @media(prefers-reduced-motion:no-preference){.pg-notification-popover{animation:pgNoticeIn .16s ease-out}@keyframes pgNoticeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}}
 </style>
 
+<style id="pusoai-community-submission-review">
+.submission-review-summary{display:flex;gap:9px;flex-wrap:wrap;margin:14px 0}
+.submission-review-stat{border:1px solid var(--line);background:var(--panel2);border-radius:12px;padding:9px 13px;min-width:100px}
+.submission-review-stat b{display:block;font-size:18px}.submission-review-stat span{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+.submission-review-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr));gap:14px;margin-top:14px}
+.community-submission-card{min-width:0;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--panel);box-shadow:var(--shadow)}
+.community-submission-preview{display:grid;place-items:center;width:100%;height:230px;background:var(--panel2);overflow:hidden}
+.community-submission-preview img{width:100%;height:100%;object-fit:contain}
+.community-submission-no-preview{padding:20px;color:var(--muted);font-size:12px;text-align:center}
+.community-submission-body{padding:14px}
+.community-submission-top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:9px}
+.community-submission-state{display:inline-flex;align-items:center;border-radius:99px;padding:4px 9px;font-size:10px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;background:var(--panel2);color:var(--muted)}
+.community-submission-state.pending{background:rgba(245,158,11,.14);color:#d99519}
+.community-submission-state.approved{background:rgba(34,197,94,.14);color:#16a34a}
+.community-submission-state.rejected{background:rgba(239,68,68,.13);color:#ef4444}
+.community-submission-prompt{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.55;font-size:13px;margin:8px 0 10px}
+.community-submission-meta{color:var(--muted);font-size:11px;line-height:1.6}
+.community-submission-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+.community-submission-actions button{flex:1 1 110px}
+.community-submission-actions button:disabled{opacity:.55;cursor:not-allowed}
+@media(max-width:600px){.submission-review-grid{grid-template-columns:minmax(0,1fr)}.community-submission-preview{height:210px}.submission-review-stat{flex:1}}
+</style>
+
 </head>
 <body>
 <div id="aiGenerationOverlay" class="ai-generation-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="aiGenTitle" aria-describedby="aiGenDetail" aria-live="polite">
@@ -3911,6 +3934,178 @@ async function replySharedComment(commentId){
     console.error('Admin comment reply failed:',error);
     toast('Could not save admin reply: '+(error?.message||'check comment SQL setup and owner permissions.'));
     if(button){button.disabled=false;button.textContent='Try Again';}
+  }
+}
+
+
+function communitySubmissionDate(value){
+  if(value==null||value==='')return 'Date unavailable';
+  const asNumber=Number(value);
+  const date=Number.isFinite(asNumber)&&String(value).trim()!==''?new Date(asNumber):new Date(value);
+  return Number.isNaN(date.getTime())?'Date unavailable':date.toLocaleString();
+}
+function communitySubmissionStatus(value){
+  const status=String(value||'pending').toLowerCase();
+  return ['pending','approved','rejected'].includes(status)?status:'pending';
+}
+async function renderUserSubmissions(){
+  const box=document.getElementById('userSubmissionList');
+  if(!box)return;
+  if(!requireAdmin()){box.innerHTML='<div class="empty">Owner login required to review community submissions.</div>';return;}
+  if(!CLOUD_ENABLED){box.innerHTML='<div class="empty">Community submissions require the Supabase cloud service.</div>';return;}
+  if(!sbClient){box.innerHTML='<div class="empty">Supabase is unavailable. Refresh the page and try again.</div>';return;}
+  box.innerHTML='<div class="empty">Loading visitor submissions…</div>';
+  const refreshButton=document.getElementById('refreshUserSubmissions');
+  if(refreshButton)refreshButton.disabled=true;
+  try{
+    const rows=await fetchAllSupabaseRows(
+      ()=>sbClient.from(SUBMISSIONS_TABLE).select('*').order('created',{ascending:false}).order('id',{ascending:false}),
+      500
+    );
+    userSubmissions=(rows||[]).slice().sort((a,b)=>{
+      const ap=communitySubmissionStatus(a.status)==='pending'?1:0;
+      const bp=communitySubmissionStatus(b.status)==='pending'?1:0;
+      if(ap!==bp)return bp-ap;
+      return (Number(b.created)||0)-(Number(a.created)||0);
+    });
+    const pending=userSubmissions.filter(row=>communitySubmissionStatus(row.status)==='pending').length;
+    const approved=userSubmissions.filter(row=>communitySubmissionStatus(row.status)==='approved').length;
+    const rejected=userSubmissions.filter(row=>communitySubmissionStatus(row.status)==='rejected').length;
+    const summary='<div class="submission-review-summary"><div class="submission-review-stat"><b>'+pending+'</b><span>Pending review</span></div><div class="submission-review-stat"><b>'+approved+'</b><span>Approved</span></div><div class="submission-review-stat"><b>'+rejected+'</b><span>Rejected</span></div></div>';
+    if(!userSubmissions.length){box.innerHTML=summary+'<div class="empty">No visitor photo submissions yet. New uploads will appear here for review.</div>';return;}
+    const previewUrls=await mapWithConcurrency(userSubmissions,4,async row=>{
+      const path=String(row.storage_path||'');
+      if(!path)return '';
+      try{
+        const {data,error}=await sbClient.storage.from(SUBMISSIONS_BUCKET).createSignedUrl(path,900);
+        if(error)throw error;
+        return data?.signedUrl||'';
+      }catch(error){console.warn('Submission preview URL unavailable:',row.id,error);return '';}
+    });
+    const cards=userSubmissions.map((row,index)=>{
+      const status=communitySubmissionStatus(row.status);
+      const id=String(row.id||'');
+      const prompt=String(row.prompt||'').trim();
+      const name=String(row.submitter_name||'Anonymous').trim()||'Anonymous';
+      const date=communitySubmissionDate(row.created);
+      const preview=previewUrls[index];
+      const previewHtml=preview
+        ?'<div class="community-submission-preview"><img data-submission-preview src="'+esc(preview)+'" alt="Visitor submission preview" loading="lazy"></div>'
+        :'<div class="community-submission-preview"><div class="community-submission-no-preview">Photo preview unavailable.<br>Check the private submission Storage bucket and owner permissions.</div></div>';
+      const actions=status==='pending'
+        ?'<div class="community-submission-actions"><button type="button" class="primary" data-submission-action="approve" data-submission-id="'+esc(id)+'">✓ Approve &amp; Publish</button><button type="button" class="danger" data-submission-action="reject" data-submission-id="'+esc(id)+'">Reject</button></div>'
+        :'<div class="community-submission-actions"><button type="button" class="secondary" disabled>'+(status==='approved'?'Published to gallery':'Rejected · Not public')+'</button></div>';
+      return '<article class="community-submission-card">'+previewHtml+'<div class="community-submission-body"><div class="community-submission-top"><b>'+esc(name)+'</b><span class="community-submission-state '+status+'">'+esc(status)+'</span></div><div class="community-submission-prompt">'+(prompt?esc(prompt):'<span style="color:var(--muted)">No prompt provided.</span>')+'</div><div class="community-submission-meta">Submitted: '+esc(date)+'<br>Submission ID: '+esc(id)+'</div>'+actions+'</div></article>';
+    }).join('');
+    box.innerHTML=summary+'<div class="submission-review-grid">'+cards+'</div>';
+    box.querySelectorAll('[data-submission-action]').forEach(button=>button.addEventListener('click',()=>{
+      const id=button.dataset.submissionId;
+      if(button.dataset.submissionAction==='approve')void approveCommunitySubmission(id,button);
+      else if(button.dataset.submissionAction==='reject')void rejectCommunitySubmission(id,button);
+    }));
+    box.querySelectorAll('[data-submission-preview]').forEach(img=>img.addEventListener('error',()=>{
+      const preview=img.closest('.community-submission-preview');
+      if(preview)preview.innerHTML='<div class="community-submission-no-preview">Private photo preview unavailable.</div>';
+    }));
+  }catch(error){
+    console.error('Could not load community submissions:',error);
+    box.innerHTML='<div class="empty">Could not load submissions: '+esc(error?.message||'check photo_submissions table, private bucket and owner permissions')+'</div>';
+  }finally{
+    if(refreshButton)refreshButton.disabled=false;
+  }
+}
+async function approveCommunitySubmission(id,button){
+  if(!requireAdmin())return toast('Only the signed-in website owner can approve submissions.');
+  if(!CLOUD_ENABLED||!sbClient)return toast('Supabase is unavailable. Refresh and try again.');
+  const cached=userSubmissions.find(row=>String(row.id)===String(id));
+  if(!cached)return toast('Submission not found. Refresh the review queue.');
+  if(communitySubmissionStatus(cached.status)!=='pending')return toast('This submission has already been reviewed.');
+  if(!confirm('Approve this visitor photo and publish it to the public PusoAI gallery?'))return;
+  const card=button?.closest('.community-submission-card');
+  card?.querySelectorAll('button').forEach(item=>item.disabled=true);
+  const oldLabel=button?.textContent||'✓ Approve & Publish';
+  if(button)button.textContent='Publishing…';
+  let uploaded=null;
+  let photoSaved=false;
+  try{
+    const {data:row,error:rowError}=await sbClient.from(SUBMISSIONS_TABLE).select('*').eq('id',id).single();
+    if(rowError)throw rowError;
+    if(communitySubmissionStatus(row.status)!=='pending')throw new Error('This submission is no longer pending review.');
+    const privatePath=String(row.storage_path||'');
+    if(!privatePath.startsWith('submissions/'))throw new Error('The private submission file path is missing or invalid.');
+    const {data:alreadyPublished,error:lookupError}=await sbClient.from(PHOTOS_TABLE).select('id').eq('id',row.id).maybeSingle();
+    if(lookupError)throw lookupError;
+    let photo=photos.find(item=>String(item.id)===String(row.id));
+    if(!alreadyPublished){
+      const {data:fileBlob,error:downloadError}=await sbClient.storage.from(SUBMISSIONS_BUCKET).download(privatePath);
+      if(downloadError)throw new Error(uploadErrorMessage(downloadError,'private community submission'));
+      if(!fileBlob||!fileBlob.size)throw new Error('The submitted photo file is empty or unavailable.');
+      const mime=String(fileBlob.type||'image/jpeg').toLowerCase();
+      if(!mime.startsWith('image/'))throw new Error('Only image submissions can be published to the gallery.');
+      const fileName=privatePath.split('/').pop()||('community-'+String(row.id)+'.jpg');
+      const file=new File([fileBlob],fileName,{type:mime});
+      uploaded=await uploadToCloud(file,String(row.id));
+      const prompt=String(row.prompt||'').trim().slice(0,1500);
+      const defaultName=(prompt.replace(/\s+/g,' ').trim().slice(0,80)||'Community Photo');
+      photo={
+        id:String(row.id),name:defaultName,category:categories.includes('Other')?'Other':(categories[0]||'Other'),
+        caption:prompt,tags:'#community #visitor-submission',src:uploaded.galleryUrl,
+        storagePath:uploaded.path,created:Number(row.created)||Date.now(),views:0,likes:0,downloads:0,
+        featured:false,download:true,like:true,overlay:'',overlayColor:'#ffffff',mediaType:'image',comments:[]
+      };
+      try{
+        await syncRemotePhoto(photo);
+        photoSaved=true;
+      }catch(error){
+        if(uploaded?.path)await deleteCloudPhotoFiles(uploaded.path,uploaded.galleryUrl);
+        throw error;
+      }
+      photos=[photo,...photos.filter(item=>String(item.id)!==String(photo.id))];
+    }else if(!photo){
+      await loadRemotePhotos();
+      photo=photos.find(item=>String(item.id)===String(row.id))||null;
+    }
+    const {error:statusError}=await sbClient.from(SUBMISSIONS_TABLE).update({status:'approved'}).eq('id',id);
+    if(statusError)throw new Error('The photo may already be in the public gallery, but its review status could not be updated: '+statusError.message);
+    row.status='approved';
+    const submissionIndex=userSubmissions.findIndex(item=>String(item.id)===String(id));
+    if(submissionIndex>=0)userSubmissions[submissionIndex]={...userSubmissions[submissionIndex],status:'approved'};
+    try{
+      const {error:cleanupError}=await sbClient.storage.from(SUBMISSIONS_BUCKET).remove([privatePath]);
+      if(cleanupError)console.warn('Approved submission private-file cleanup failed:',cleanupError);
+    }catch(cleanupError){console.warn('Approved submission private-file cleanup failed:',cleanupError);}
+    try{save()}catch(cacheError){console.warn('Could not save public gallery cache:',cacheError);}
+    renderGallery();renderCategories();renderAdminPhotos();updateStats();updateHeroFeatured();
+    await renderUserSubmissions();
+    addPusoaiNotification('photo','Community photo published','A visitor photo has been approved and added to the public gallery.');
+    toast('Submission approved and published to the public gallery.');
+  }catch(error){
+    console.error('Community submission approval failed:',error);
+    if(uploaded?.path&&!photoSaved)await deleteCloudPhotoFiles(uploaded.path,uploaded.galleryUrl);
+    toast('Could not publish submission: '+(error?.message||'check Supabase table and Storage policies.'));
+    if(button){button.disabled=false;button.textContent=oldLabel;}
+    card?.querySelectorAll('button').forEach(item=>item.disabled=false);
+  }
+}
+async function rejectCommunitySubmission(id,button){
+  if(!requireAdmin())return toast('Only the signed-in website owner can reject submissions.');
+  if(!CLOUD_ENABLED||!sbClient)return toast('Supabase is unavailable. Refresh and try again.');
+  const row=userSubmissions.find(item=>String(item.id)===String(id));
+  if(!row)return toast('Submission not found. Refresh the review queue.');
+  if(communitySubmissionStatus(row.status)!=='pending')return toast('This submission has already been reviewed.');
+  if(!confirm('Reject this submission? It will remain private and will not be published to the gallery.'))return;
+  const card=button?.closest('.community-submission-card');
+  card?.querySelectorAll('button').forEach(item=>item.disabled=true);
+  try{
+    const {error}=await sbClient.from(SUBMISSIONS_TABLE).update({status:'rejected'}).eq('id',id);
+    if(error)throw error;
+    row.status='rejected';
+    await renderUserSubmissions();
+    toast('Submission rejected. It was not published.');
+  }catch(error){
+    console.error('Community submission rejection failed:',error);
+    toast('Could not reject submission: '+(error?.message||'check owner permissions.'));
+    card?.querySelectorAll('button').forEach(item=>item.disabled=false);
   }
 }
 
