@@ -1604,6 +1604,16 @@ body.pg-camera-open{overflow:hidden;touch-action:none}
  .pg-camera-actions button{width:100%;padding:10px 8px;font-size:13px}
  .pg-camera-actions #pgCameraUse{grid-column:1/-1}
 }
+
+/* Live camera is intentionally limited to mobile and tablet viewports. */
+@media(min-width:1025px){
+  #pgOpenCamera{display:none!important}
+  .pg-reference-actions{grid-template-columns:minmax(0,1fr)}
+}
+@media(max-width:1024px){
+  #pgOpenCamera{display:flex!important}
+  .pg-reference-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
 </style>
 </head>
 <body>
