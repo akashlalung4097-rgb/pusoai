@@ -4348,16 +4348,26 @@ async function renderUserSubmissions(){
     const rejected=userSubmissions.filter(row=>communitySubmissionStatus(row.status)==='rejected').length;
     const summary='<div class="submission-review-summary"><div class="submission-review-stat"><b>'+pending+'</b><span>Pending review</span></div><div class="submission-review-stat"><b>'+approved+'</b><span>Approved</span></div><div class="submission-review-stat"><b>'+rejected+'</b><span>Rejected</span></div></div>';
     if(!userSubmissions.length){box.innerHTML=summary+'<div class="empty">No visitor photo submissions yet. New uploads will appear here for review.</div>';return;}
+    const approvedPhotoIds=[...new Set(userSubmissions
+      .filter(row=>communitySubmissionStatus(row.status)==='approved'&&row.approved_photo_id)
+      .map(row=>String(row.approved_photo_id)))];
+    const approvedPhotoById=new Map();
+    if(approvedPhotoIds.length){
+      const {data:approvedRows,error:approvedRowsError}=await sbClient.from(PHOTOS_TABLE)
+        .select('id,src').in('id',approvedPhotoIds);
+      if(approvedRowsError)console.warn('Could not load published submission previews:',approvedRowsError);
+      else (approvedRows||[]).forEach(photo=>approvedPhotoById.set(String(photo.id),photo));
+    }
     const previewUrls=await mapWithConcurrency(userSubmissions,4,async row=>{
       const status=communitySubmissionStatus(row.status);
-      // Approved uploads are moved into the public gallery and their private
-      // source object is removed. Never request a signed URL for that old path.
+      // Approved uploads move into the public gallery; their private source
+      // objects are removed. Read the gallery URL instead of signing old paths.
       if(status==='approved'){
-        const published=photos.find(photo=>String(photo.id)===String(row.approved_photo_id||''));
+        const published=approvedPhotoById.get(String(row.approved_photo_id||''));
         return published?.src||'';
       }
-      // Rejected submissions are not previewed; their private object may have
-      // been cleaned up already. Only pending uploads need a private signed URL.
+      // Rejected submissions may have been cleaned up. Only pending uploads
+      // need a private signed URL for the owner review screen.
       if(status!=='pending')return '';
       const path=String(row.storage_path||'');
       if(!path)return '';
