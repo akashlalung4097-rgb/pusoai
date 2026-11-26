@@ -1619,6 +1619,35 @@ html.pg-mobile-tablet .pg-reference-actions{grid-template-columns:repeat(2,minma
 .pg-camera-switch-btn:focus-visible{outline:3px solid #9acaff;outline-offset:2px}
 .pg-camera-switch-btn:disabled{opacity:.55;cursor:wait}
 </style>
+<style id="pusoai-light-photo-modal-fix">
+/* Light-mode-only contrast fix for the community photo viewer */
+body.light #photoModal .modalbox{background:#fff!important;border-color:#d7deea!important;color:#182238!important}
+body.light #photoModal .modal-top{background:#fff!important;border-bottom:1px solid #d7deea!important;color:#182238!important}
+body.light #photoModal .modal-top b,
+body.light #photoModal #commentsBox h3{color:#182238!important}
+body.light #photoModal #closePhoto{background:#fff!important;color:#25324a!important;border:1px solid #cbd5e1!important;box-shadow:0 2px 8px rgba(15,23,42,.08)}
+body.light #photoModal .modal-info{background:#fff!important;color:#25324a!important}
+body.light #photoModal .modal-info p,
+body.light #photoModal #modalTags{color:#596579!important}
+body.light #photoModal .modal-actions button.secondary{background:#fff!important;color:#26344d!important;border:1.5px solid #c5cfdd!important;box-shadow:0 2px 7px rgba(20,35,60,.06)}
+body.light #photoModal .modal-actions button.secondary:hover,
+body.light #photoModal .modal-actions button.secondary:focus-visible{background:#eef2ff!important;color:#3730a3!important;border-color:#7770ed!important;outline:2px solid rgba(99,91,220,.18);outline-offset:1px}
+body.light #photoModal .modal-actions button.primary{background:linear-gradient(105deg,#5145d8,#7651e8)!important;color:#fff!important;border:1px solid #5145d8!important}
+body.light #photoModal .photo-view .zoom-controls button,
+body.light #photoModal .photo-view .side{background:rgba(15,23,42,.92)!important;color:#fff!important;border:1px solid rgba(255,255,255,.5)!important;box-shadow:0 4px 16px rgba(0,0,0,.35)!important}
+body.light #photoModal .photo-view .zoom-controls button{width:48px;height:48px;border-radius:14px;font-size:22px}
+body.light #photoModal .photo-view .side{border-radius:12px;font-weight:800}
+body.light #photoModal .share-menu a{background:#f3f5fb!important;color:#26344d!important;border:1px solid #cbd5e1!important}
+body.light #photoModal #commentName,
+body.light #photoModal #commentInput{background:#fff!important;color:#182238!important;border:1.5px solid #c5cfdd!important}
+body.light #photoModal #commentName::placeholder,
+body.light #photoModal #commentInput::placeholder{color:#748096!important;opacity:1}
+@media(max-width:600px){
+ body.light #photoModal .modal{padding:8px}
+ body.light #photoModal .modal-actions button{min-height:44px;font-weight:700}
+ body.light #photoModal .photo-view .zoom-controls{right:12px;bottom:12px}
+}
+</style>
 </head>
 <body>
 <div id="aiGenerationOverlay" class="ai-generation-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="aiGenTitle" aria-describedby="aiGenDetail" aria-live="polite">
