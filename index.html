@@ -1605,15 +1605,12 @@ body.pg-camera-open{overflow:hidden;touch-action:none}
  .pg-camera-actions #pgCameraUse{grid-column:1/-1}
 }
 
-/* Live camera is intentionally limited to mobile and tablet viewports. */
-@media(min-width:1025px){
-  #pgOpenCamera{display:none!important}
-  .pg-reference-actions{grid-template-columns:minmax(0,1fr)}
-}
-@media(max-width:1024px){
-  #pgOpenCamera{display:flex!important}
-  .pg-reference-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
-}
+/* Live Camera is enabled for mobile phones and tablets only.
+   The JS adds .pg-mobile-tablet for Android/iOS/iPadOS, including large iPads. */
+#pgOpenCamera{display:none!important}
+.pg-reference-actions{grid-template-columns:minmax(0,1fr)}
+html.pg-mobile-tablet #pgOpenCamera{display:flex!important}
+html.pg-mobile-tablet .pg-reference-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
 
 .pg-camera-switch{display:flex;justify-content:center;margin:0 0 12px}
 .pg-camera-switch[hidden]{display:none!important}
@@ -1643,7 +1640,7 @@ body.pg-camera-open{overflow:hidden;touch-action:none}
 </div>
 <header class="pg-top-header"><div class="container nav">
 <a class="brand pg-top-brand" href="#home" aria-label="PusoAI Home"><span class="pg-logo-mark" aria-hidden="true"><svg viewBox="0 0 64 64" role="img" focusable="false"><defs><linearGradient id="pusoLogoBg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#168cff"/><stop offset="1" stop-color="#1027bd"/></linearGradient><linearGradient id="pusoLogoEdge" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#42f4ff"/><stop offset="1" stop-color="#3977ff"/></linearGradient></defs><rect x="3" y="3" width="58" height="58" rx="15" fill="url(#pusoLogoBg)" stroke="url(#pusoLogoEdge)" stroke-width="2.5"/><path d="M19 48V17h17c9 0 14 5 14 13S45 43 36 43h-7v5zM29 34h7c3 0 5-1 5-4s-2-4-5-4h-7z" fill="#fff"/><rect x="43" y="9" width="9" height="9" rx="2" fill="#fff"/></svg></span><span>Puso<b>AI</b></span></a>
-<nav class="navlinks" aria-label="Studio modes"><a href="#studio" class="pg-active-link">Image mode</a><a href="#video-mode" class="pg-mode-disabled" aria-disabled="true" title="Video generation is not connected yet">Video mode <small>SOON</small></a><a href="#prompt-guide">AI Tools</a></nav>
+<nav class="navlinks" aria-label="Studio modes"><a href="#studio" class="pg-active-link">Image mode</a><a href="#video-mode" class="pg-mode-disabled" aria-disabled="true" title="Video generation is not connected yet">Video mode <small>SOON</small></a><a href="/ai-prompt-guide.html">AI Tools</a></nav>
 <div class="navactions"><label class="pg-global-search" aria-label="Search gallery"><span>⌕</span><input id="pgGlobalSearch" type="search" placeholder="Search gallery…"><kbd>↵</kbd></label><div class="pg-notification-wrap"><button class="iconbtn pg-top-icon" id="pgNotifications" type="button" aria-label="Notifications" aria-expanded="false" aria-controls="pgNotificationPanel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg><span class="pg-notification-count" id="pgNotificationCount" aria-live="polite">0</span></button><section class="pg-notification-popover" id="pgNotificationPanel" hidden aria-label="Notifications"><div class="pg-notification-head"><b>Notifications</b><div class="pg-notification-head-actions"><button type="button" id="pgNotificationReadAll">Mark all read</button><button type="button" id="pgNotificationClose" aria-label="Close notifications">✕</button></div></div><div class="pg-notification-list" id="pgNotificationList"><div class="pg-notification-empty">You’re all caught up.</div></div><div class="pg-notification-foot">Updates for this browser · AI activity · Gallery · Likes · Comments</div></section></div><button class="iconbtn" id="themeBtn" title="Theme" aria-label="Toggle theme">☾</button><button class="admin-nav-btn primary" id="adminOpen" style="display:none">Admin</button></div>
 </div></header>
 <aside class="pg-sidebar" aria-label="Main navigation"><a class="pg-sidebar-logo" href="#home"><span class="pg-sidebar-mark"><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="3" y="3" width="58" height="58" rx="15" fill="url(#pusoLogoBg)" stroke="url(#pusoLogoEdge)" stroke-width="2.5"/><path d="M19 48V17h17c9 0 14 5 14 13S45 43 36 43h-7v5zM29 34h7c3 0 5-1 5-4s-2-4-5-4h-7z" fill="#fff"/><rect x="43" y="9" width="9" height="9" rx="2" fill="#fff"/></svg></span><span>Puso<b>AI</b><small>CREATIVE STUDIO</small></span></a><div class="pg-sidebar-label">WORKSPACE</div><nav class="pg-sidebar-nav"><a class="active" href="#home"><span>⌂</span>Home</a><a href="#studio"><span>✦</span>AI Image Generator</a><a href="#explore"><span>▦</span>Gallery</a><a href="#generationHistoryPanel"><span>◷</span>History</a></nav><div class="pg-sidebar-bottom"><div class="pg-profile-avatar">G</div><div class="pg-profile-copy"><b>Guest Creator</b><small>No account needed</small></div><span class="pg-profile-dot"></span></div></aside>
@@ -1754,7 +1751,7 @@ body.pg-camera-open{overflow:hidden;touch-action:none}
 </div>
 </section></div>
 <div id="toast" style="position:fixed;right:18px;bottom:18px;z-index:5000;background:var(--panel);border:1px solid var(--line);padding:12px 15px;border-radius:12px;box-shadow:var(--shadow);display:none"></div>
-<div id="pgCameraDialog" class="pg-camera-dialog" hidden role="dialog" aria-modal="true" aria-labelledby="pgCameraTitle"><div class="pg-camera-card"><div class="pg-camera-header"><div><h3 id="pgCameraTitle">Take a reference photo</h3><p>Position your subject in the frame, then take a photo.</p></div><button type="button" id="pgCameraClose" class="pg-camera-close" aria-label="Close camera">×</button></div><div class="pg-camera-switch" role="group" aria-label="Switch between front and back camera"><button type="button" id="pgCameraToggle" class="pg-camera-switch-btn" aria-label="Switch to front camera"><span aria-hidden="true">↻</span> <span id="pgCameraToggleLabel">Front Camera</span></button></div><div class="pg-camera-view"><video id="pgCameraVideo" autoplay playsinline muted></video><canvas id="pgCameraCanvas" hidden></canvas></div><p id="pgCameraStatus" class="pg-camera-status" role="status" aria-live="polite">Requesting camera access…</p><div class="pg-camera-actions"><button type="button" id="pgCameraRetake" class="secondary" hidden>Retake</button><button type="button" id="pgCameraCapture" class="primary">Take photo</button><button type="button" id="pgCameraUse" class="primary" hidden>Use photo</button></div></div></div>
+<div id="pgCameraDialog" class="pg-camera-dialog" hidden role="dialog" aria-modal="true" aria-labelledby="pgCameraTitle"><div class="pg-camera-card"><div class="pg-camera-header"><div><h3 id="pgCameraTitle">Take a reference photo</h3><p>Position your subject in the frame, then take a photo.</p></div><button type="button" id="pgCameraClose" class="pg-camera-close" aria-label="Close camera">×</button></div><div class="pg-camera-switch" role="group" aria-label="Switch between front and back camera"><button type="button" id="pgCameraToggle" class="pg-camera-switch-btn" aria-label="Switch to front camera" title="Switch between front and back cameras"><span aria-hidden="true">↻</span> <span id="pgCameraToggleLabel">Switch Camera</span></button></div><div class="pg-camera-view"><video id="pgCameraVideo" autoplay playsinline muted></video><canvas id="pgCameraCanvas" hidden></canvas></div><p id="pgCameraStatus" class="pg-camera-status" role="status" aria-live="polite">Requesting camera access…</p><div class="pg-camera-actions"><button type="button" id="pgCameraRetake" class="secondary" hidden>Retake</button><button type="button" id="pgCameraCapture" class="primary">Take photo</button><button type="button" id="pgCameraUse" class="primary" hidden>Use photo</button></div></div></div>
 <script>
 'use strict';
 
@@ -3113,6 +3110,11 @@ function setupUserUpload(){
   document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement)document.getElementById('pgPreviewStage')?.classList.remove('preview-fullscreen-fallback');});
   const modeHint=document.getElementById('aiModeHint');
   if(!form||!fileInput)return;
+  const userAgent=String(navigator.userAgent||'');
+  const isAppleTablet=navigator.platform==='MacIntel'&&Number(navigator.maxTouchPoints||0)>1;
+  const isMobileOrTablet=/Android|iPhone|iPad|iPod/i.test(userAgent)||isAppleTablet;
+  if(isMobileOrTablet)document.documentElement.classList.add('pg-mobile-tablet');
+
   const cameraDialog=document.getElementById('pgCameraDialog');
   const cameraVideo=document.getElementById('pgCameraVideo');
   const cameraCanvas=document.getElementById('pgCameraCanvas');
@@ -3124,38 +3126,184 @@ function setupUserUpload(){
   const cameraToggleLabel=document.getElementById('pgCameraToggleLabel');
   const cameraSwitch=document.querySelector('.pg-camera-switch');
   let cameraStream=null,cameraPhotoBlob=null,cameraRequestId=0,cameraFacingMode='environment';
-  const stopCameraStream=()=>{if(cameraStream){cameraStream.getTracks().forEach(track=>track.stop());cameraStream=null;}if(cameraVideo)cameraVideo.srcObject=null;};
-  const updateCameraChoice=()=>{const nextLabel=cameraFacingMode==='environment'?'Front Camera':'Back Camera';if(cameraToggleLabel)cameraToggleLabel.textContent=nextLabel;if(cameraToggleBtn)cameraToggleBtn.setAttribute('aria-label','Switch to '+(cameraFacingMode==='environment'?'front':'back')+' camera');};
-  const closeCamera=()=>{cameraRequestId++;stopCameraStream();if(cameraDialog)cameraDialog.hidden=true;document.body.classList.remove('pg-camera-open');if(cameraVideo)cameraVideo.hidden=false;if(cameraCanvas)cameraCanvas.hidden=true;cameraPhotoBlob=null;if(cameraCaptureBtn)cameraCaptureBtn.hidden=false;if(cameraRetakeBtn)cameraRetakeBtn.hidden=true;if(cameraUseBtn)cameraUseBtn.hidden=true;if(cameraSwitch)cameraSwitch.hidden=false;};
+
+  const updateCameraChoice=()=>{
+    const nextFacing=cameraFacingMode==='environment'?'front':'back';
+    if(cameraToggleLabel)cameraToggleLabel.textContent='Switch Camera';
+    if(cameraToggleBtn){
+      cameraToggleBtn.setAttribute('aria-label','Switch to '+nextFacing+' camera');
+      cameraToggleBtn.setAttribute('title','Switch to '+nextFacing+' camera');
+    }
+  };
+  const stopCameraStream=()=>{
+    if(cameraStream){cameraStream.getTracks().forEach(track=>track.stop());cameraStream=null;}
+    if(cameraVideo)cameraVideo.srcObject=null;
+  };
+  const isConstraintError=error=>['OverconstrainedError','NotFoundError','ConstraintNotSatisfiedError','TypeError'].includes(error?.name);
+  const findOtherCameraDevice=async(facingMode)=>{
+    try{
+      const devices=(await navigator.mediaDevices.enumerateDevices()).filter(device=>device.kind==='videoinput'&&device.deviceId);
+      if(devices.length<2)return null;
+      const currentId=cameraStream?.getVideoTracks?.()[0]?.getSettings?.().deviceId||'';
+      const labelPattern=facingMode==='environment'?/back|rear|environment|world|outward/i:/front|user|facetime|selfie/i;
+      const named=devices.find(device=>device.deviceId!==currentId&&labelPattern.test(device.label||''));
+      if(named)return named.deviceId;
+      const currentIndex=devices.findIndex(device=>device.deviceId===currentId);
+      if(currentIndex>=0)return devices[(currentIndex+1)%devices.length]?.deviceId||null;
+      return devices.find(device=>device.deviceId!==currentId)?.deviceId||null;
+    }catch(_error){return null;}
+  };
+  const requestCameraStream=async(facingMode,strict,targetDeviceId)=>{
+    const videoBase={width:{ideal:1920},height:{ideal:1080}};
+    if(strict&&targetDeviceId){
+      try{
+        return await navigator.mediaDevices.getUserMedia({
+          audio:false,video:{...videoBase,deviceId:{exact:targetDeviceId}}
+        });
+      }catch(error){if(!isConstraintError(error))throw error;}
+    }
+    try{
+      return await navigator.mediaDevices.getUserMedia({
+        audio:false,video:{...videoBase,facingMode:{exact:facingMode}}
+      });
+    }catch(error){
+      if(!isConstraintError(error))throw error;
+      try{
+        return await navigator.mediaDevices.getUserMedia({
+          audio:false,video:{...videoBase,facingMode:{ideal:facingMode}}
+        });
+      }catch(idealError){
+        if(strict)throw idealError;
+        return await navigator.mediaDevices.getUserMedia({audio:false,video:true});
+      }
+    }
+  };
+  const closeCamera=()=>{
+    cameraRequestId++;stopCameraStream();
+    if(cameraDialog)cameraDialog.hidden=true;
+    document.body.classList.remove('pg-camera-open');
+    if(cameraVideo)cameraVideo.hidden=false;
+    if(cameraCanvas)cameraCanvas.hidden=true;
+    cameraPhotoBlob=null;
+    if(cameraCaptureBtn){cameraCaptureBtn.hidden=false;cameraCaptureBtn.disabled=false;}
+    if(cameraRetakeBtn)cameraRetakeBtn.hidden=true;
+    if(cameraUseBtn)cameraUseBtn.hidden=true;
+    if(cameraSwitch)cameraSwitch.hidden=false;
+    if(cameraToggleBtn)cameraToggleBtn.disabled=false;
+  };
   const startCamera=async(facingMode,strict=false)=>{
-    if(!navigator.mediaDevices?.getUserMedia){cameraStatus.textContent='Live camera is unavailable in this browser. Please choose a photo from Gallery.';return false;}
+    if(!navigator.mediaDevices?.getUserMedia){
+      cameraStatus.textContent='Live camera is unavailable in this browser. Please choose a photo from Gallery.';
+      if(cameraCaptureBtn)cameraCaptureBtn.disabled=true;
+      return false;
+    }
     const requestId=++cameraRequestId;
     const previousFacingMode=cameraFacingMode;
-    stopCameraStream();
-    cameraStatus.textContent=facingMode==='user'?'Opening front camera…':'Opening back camera…';
+    const previousStream=cameraStream;
+    const previousSettings=previousStream?.getVideoTracks?.()[0]?.getSettings?.()||{};
     if(cameraCaptureBtn)cameraCaptureBtn.disabled=true;
+    if(cameraToggleBtn)cameraToggleBtn.disabled=true;
+    cameraStatus.textContent=facingMode==='user'?'Opening front camera…':'Opening back camera…';
+
+    let targetDeviceId=null;
+    if(strict)targetDeviceId=await findOtherCameraDevice(facingMode);
+    if(requestId!==cameraRequestId||cameraDialog.hidden){
+      if(cameraToggleBtn)cameraToggleBtn.disabled=false;
+      return false;
+    }
+
+    // Stop the current lens before opening the other one; several mobile browsers
+    // keep the camera hardware locked until the previous MediaStream is stopped.
+    stopCameraStream();
+    let nextStream=null;
     try{
-      let stream;
-      try{stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:strict?{exact:facingMode}:{ideal:facingMode}}});}
-      catch(firstError){
-        if(!strict&&(firstError?.name==='OverconstrainedError'||firstError?.name==='NotFoundError'||firstError?.name==='ConstraintNotSatisfiedError'||firstError?.name==='TypeError')){
-          try{stream=await navigator.mediaDevices.getUserMedia({audio:false,video:true});}
-          catch(_fallbackError){throw firstError;}
-        }else throw firstError;
+      nextStream=await requestCameraStream(facingMode,strict,targetDeviceId);
+      if(requestId!==cameraRequestId||cameraDialog.hidden){
+        nextStream.getTracks().forEach(track=>track.stop());
+        if(cameraToggleBtn)cameraToggleBtn.disabled=false;
+        return false;
       }
-      if(requestId!==cameraRequestId||cameraDialog.hidden){stream.getTracks().forEach(track=>track.stop());return false;}
-      cameraStream=stream;cameraFacingMode=facingMode;updateCameraChoice();
-      cameraVideo.hidden=false;if(cameraCanvas)cameraCanvas.hidden=true;cameraVideo.srcObject=stream;
+
+      const nextTrack=nextStream.getVideoTracks?.()[0];
+      const nextSettings=nextTrack?.getSettings?.()||{};
+      const actualFacing=nextSettings.facingMode==='user'||nextSettings.facingMode==='environment'
+        ?nextSettings.facingMode:facingMode;
+      const sameDevice=Boolean(strict&&previousSettings.deviceId&&nextSettings.deviceId&&previousSettings.deviceId===nextSettings.deviceId);
+      const wrongFacing=Boolean(strict&&nextSettings.facingMode&&nextSettings.facingMode!==facingMode);
+      if(sameDevice||wrongFacing){
+        nextStream.getTracks().forEach(track=>track.stop());
+        nextStream=null;
+        throw new Error('The other camera was not available. The previous camera will be restored.');
+      }
+
+      cameraStream=nextStream;
+      cameraFacingMode=actualFacing;
+      updateCameraChoice();
+      cameraVideo.hidden=false;
+      if(cameraCanvas)cameraCanvas.hidden=true;
+      cameraVideo.srcObject=nextStream;
       try{await cameraVideo.play();}catch(_playError){}
+      if(previousStream&&previousStream!==nextStream)previousStream.getTracks().forEach(track=>track.stop());
       if(cameraCaptureBtn)cameraCaptureBtn.disabled=false;
-      cameraStatus.textContent=(facingMode==='user'?'Front':'Back')+' camera is ready. Tap “Take photo” when you are ready.';
+      if(cameraToggleBtn)cameraToggleBtn.disabled=false;
+      cameraStatus.textContent=(cameraFacingMode==='user'?'Front':'Back')+' camera is ready. Tap “Take photo” when you are ready.';
       return true;
     }catch(error){
-      if(requestId!==cameraRequestId)return false;
-      cameraFacingMode=previousFacingMode;updateCameraChoice();
-      if(cameraCaptureBtn)cameraCaptureBtn.disabled=false;
-      const message=location.protocol!=='https:'&&location.hostname!=='localhost'?'Camera access requires HTTPS. Open PusoAI using https://pusoai.online/.':error?.name==='NotAllowedError'||error?.name==='PermissionDeniedError'?'Camera permission was blocked. In your browser or device settings, allow camera access for pusoai.online, then reload the page.':strict&&(error?.name==='OverconstrainedError'||error?.name==='NotFoundError'||error?.name==='ConstraintNotSatisfiedError')?'This camera is not available on your device. Try the other camera.':error?.name==='NotFoundError'?'No usable camera was found. Choose a photo from Gallery instead.':error?.name==='NotReadableError'||error?.name==='AbortError'?'The camera may be in use by another app. Close other camera apps and try again.':error?.name==='SecurityError'?'Your browser blocked camera access. Check site permissions and open PusoAI over HTTPS.':'Could not open this camera. Check browser camera permission or choose a photo from Gallery.';
-      cameraStatus.textContent=message;
+      if(nextStream&&nextStream!==cameraStream)nextStream.getTracks().forEach(track=>track.stop());
+      if(requestId!==cameraRequestId){
+        if(cameraToggleBtn)cameraToggleBtn.disabled=false;
+        return false;
+      }
+
+      // Re-open the previously selected lens if the requested camera could not start.
+      let restoredStream=null;
+      if(previousStream){
+        try{
+          if(previousSettings.deviceId){
+            restoredStream=await navigator.mediaDevices.getUserMedia({
+              audio:false,video:{deviceId:{exact:previousSettings.deviceId}}
+            });
+          }
+        }catch(_restoreDeviceError){}
+        if(!restoredStream){
+          try{
+            restoredStream=await navigator.mediaDevices.getUserMedia({
+              audio:false,video:{facingMode:{ideal:previousFacingMode}}
+            });
+          }catch(_restoreFacingError){}
+        }
+        if(restoredStream&&requestId===cameraRequestId&&!cameraDialog.hidden){
+          cameraStream=restoredStream;
+          cameraFacingMode=previousFacingMode;
+          cameraVideo.srcObject=restoredStream;
+          cameraVideo.hidden=false;
+          try{await cameraVideo.play();}catch(_restorePlayError){}
+        }else if(restoredStream){
+          restoredStream.getTracks().forEach(track=>track.stop());
+        }
+      }
+
+      cameraFacingMode=previousFacingMode;
+      updateCameraChoice();
+      if(cameraCaptureBtn)cameraCaptureBtn.disabled=!cameraStream;
+      if(cameraToggleBtn)cameraToggleBtn.disabled=false;
+
+      if(strict&&cameraStream){
+        cameraStatus.textContent='Could not switch cameras. Your previous camera is still active. Try again or use Gallery.';
+      }else{
+        const message=location.protocol!=='https:'&&location.hostname!=='localhost'
+          ?'Camera access requires HTTPS. Open PusoAI using https://pusoai.online/.'
+          :error?.name==='NotAllowedError'||error?.name==='PermissionDeniedError'
+            ?'Camera permission was blocked. In your browser or device settings, allow camera access for pusoai.online, then reload the page.'
+            :error?.name==='NotFoundError'
+              ?'No usable camera was found. Choose a photo from Gallery instead.'
+              :error?.name==='NotReadableError'||error?.name==='AbortError'
+                ?'The camera may be in use by another app. Close other camera apps and try again.'
+                :error?.name==='SecurityError'
+                  ?'Your browser blocked camera access. Check site permissions and open PusoAI over HTTPS.'
+                  :error?.message||'Could not open this camera. Check browser camera permission or choose a photo from Gallery.';
+        cameraStatus.textContent=message;
+      }
       return false;
     }
   };
@@ -3163,11 +3311,18 @@ function setupUserUpload(){
     if(!cameraDialog||!cameraVideo||!cameraStatus)return;
     cameraPhotoBlob=null;cameraFacingMode='environment';updateCameraChoice();
     cameraVideo.hidden=false;if(cameraCanvas)cameraCanvas.hidden=true;
-    if(cameraCaptureBtn){cameraCaptureBtn.hidden=false;cameraCaptureBtn.disabled=false;}if(cameraRetakeBtn)cameraRetakeBtn.hidden=true;if(cameraUseBtn)cameraUseBtn.hidden=true;if(cameraSwitch)cameraSwitch.hidden=false;
+    if(cameraCaptureBtn){cameraCaptureBtn.hidden=false;cameraCaptureBtn.disabled=false;}
+    if(cameraRetakeBtn)cameraRetakeBtn.hidden=true;
+    if(cameraUseBtn)cameraUseBtn.hidden=true;
+    if(cameraSwitch)cameraSwitch.hidden=false;
     cameraDialog.hidden=false;document.body.classList.add('pg-camera-open');
     await startCamera('environment',false);
   };
-  cameraToggleBtn?.addEventListener('click',()=>{if(cameraPhotoBlob||!cameraDialog||cameraDialog.hidden)return;const nextFacing=cameraFacingMode==='environment'?'user':'environment';startCamera(nextFacing,true);});
+  cameraToggleBtn?.addEventListener('click',()=>{
+    if(cameraPhotoBlob||!cameraDialog||cameraDialog.hidden||cameraToggleBtn.disabled)return;
+    const nextFacing=cameraFacingMode==='environment'?'user':'environment';
+    startCamera(nextFacing,true);
+  });
   document.getElementById('pgOpenCamera')?.addEventListener('click',openCamera);
   document.getElementById('pgOpenGallery')?.addEventListener('click',()=>fileInput.click());
   document.getElementById('pgCameraClose')?.addEventListener('click',closeCamera);
