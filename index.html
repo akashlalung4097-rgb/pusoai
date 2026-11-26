@@ -1510,12 +1510,12 @@ body.pg-preview-modal-open{overflow:hidden!important;touch-action:none!important
 
 <style id="pusoai-notification-center">
 .pg-notification-wrap{position:relative;display:inline-flex;align-items:center}
-#pgNotifications{position:relative;display:grid;place-items:center;font-size:20px;line-height:1}
+#pgNotifications{position:relative;display:grid;place-items:center;font-size:20px;line-height:1;cursor:pointer;pointer-events:auto;z-index:2;touch-action:manipulation}
 #pgNotifications svg{width:20px;height:20px;display:block}
 .pg-notification-count{position:absolute;top:-5px;right:-5px;min-width:17px;height:17px;padding:0 4px;border-radius:99px;background:#ef476f;color:#fff;font:700 10px/17px Inter,system-ui,sans-serif;text-align:center;border:2px solid var(--panel);display:none}
 .pg-notification-count.visible{display:block}
-.pg-notification-popover{position:absolute;z-index:12000;top:calc(100% + 14px);right:0;width:min(390px,calc(100vw - 24px));max-height:min( min(580px,75vh),580px);overflow:hidden;border:1px solid var(--line);border-radius:18px;background:var(--panel);box-shadow:0 22px 70px #0005;color:var(--text);display:flex;flex-direction:column}
-.pg-notification-popover[hidden]{display:none!important}
+.pg-notification-popover{position:absolute;z-index:12000;pointer-events:auto;top:calc(100% + 14px);right:0;width:min(390px,calc(100vw - 24px));max-height:min( min(580px,75vh),580px);overflow:hidden;border:1px solid var(--line);border-radius:18px;background:var(--panel);box-shadow:0 22px 70px #0005;color:var(--text);display:flex;flex-direction:column}
+.pg-notification-popover[hidden],.pg-notification-popover[hidden=""]{display:none!important;visibility:hidden!important;pointer-events:none!important}
 .pg-notification-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 17px;border-bottom:1px solid var(--line)}
 .pg-notification-head b{font-size:15px}.pg-notification-head-actions{display:flex;gap:8px;align-items:center}
 .pg-notification-head button,.pg-notification-empty button{border:0;background:transparent;color:var(--accent);font-size:12px;font-weight:700;padding:5px}
@@ -3492,16 +3492,41 @@ function addPusoaiNotification(type,title,message,options={}){
   if(options.browserAlert&&'Notification'in window&&Notification.permission==='granted'){try{new Notification(title,{body:item.message,icon:'/favicon.ico'});}catch(_error){}}
 }
 function setupPusoaiNotificationCenter(){
-  loadPusoaiNotifications();renderPusoaiNotifications();
-  const bell=document.getElementById('pgNotifications'),panel=document.getElementById('pgNotificationPanel');
-  if(!bell||!panel||bell.dataset.bound==='true')return;
+  const bell=document.getElementById('pgNotifications');
+  const panel=document.getElementById('pgNotificationPanel');
+  if(!bell||!panel)return;
+  loadPusoaiNotifications();
+  try{renderPusoaiNotifications();}catch(error){console.error('Could not render PusoAI notifications:',error);}
+  if(bell.dataset.bound==='true')return;
   bell.dataset.bound='true';
-  const close=()=>{panel.hidden=true;bell.setAttribute('aria-expanded','false');};
-  bell.addEventListener('click',e=>{e.stopPropagation();panel.hidden=!panel.hidden;bell.setAttribute('aria-expanded',String(!panel.hidden));if(!panel.hidden)renderPusoaiNotifications();});
-  document.getElementById('pgNotificationClose')?.addEventListener('click',close);
-  document.getElementById('pgNotificationReadAll')?.addEventListener('click',()=>{pusoaiNotifications.forEach(item=>item.read=true);savePusoaiNotifications();renderPusoaiNotifications();});
-  document.addEventListener('click',e=>{if(!panel.hidden&&!panel.contains(e.target)&&!bell.contains(e.target))close();});
-  document.addEventListener('keydown',e=>{if(e.key==='Escape')close();});
+  const close=()=>{
+    panel.hidden=true;
+    panel.setAttribute('hidden','');
+    bell.setAttribute('aria-expanded','false');
+  };
+  const open=()=>{
+    panel.hidden=false;
+    panel.removeAttribute('hidden');
+    bell.setAttribute('aria-expanded','true');
+    try{renderPusoaiNotifications();}catch(error){console.error('Could not refresh notifications:',error);}
+  };
+  bell.addEventListener('click',event=>{
+    event.preventDefault();
+    event.stopPropagation();
+    if(panel.hidden)open();else close();
+  });
+  panel.addEventListener('click',event=>event.stopPropagation());
+  document.getElementById('pgNotificationClose')?.addEventListener('click',event=>{event.preventDefault();close();});
+  document.getElementById('pgNotificationReadAll')?.addEventListener('click',event=>{
+    event.preventDefault();
+    pusoaiNotifications.forEach(item=>item.read=true);
+    savePusoaiNotifications();
+    try{renderPusoaiNotifications();}catch(error){console.error('Could not update notification list:',error);}
+  });
+  document.addEventListener('click',event=>{
+    if(!panel.hidden&&!panel.contains(event.target)&&!bell.contains(event.target))close();
+  });
+  document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!panel.hidden)close();});
 }
 
 function setupPublic(){setupPusoaiNotificationCenter();document.getElementById('searchBtn').onclick=()=>{const latest=document.querySelector('#filterChips .chip[data-mode="latest"]');if(latest)latest.click();else renderGallery('All',document.getElementById('searchInput').value,'latest')};document.getElementById('searchInput').oninput=e=>renderGallery(document.querySelector('.chip.active')?.dataset.cat||'All',e.target.value,document.querySelector('.chip.active')?.dataset.mode||'latest');document.getElementById('heroSearch').onclick=()=>{document.getElementById('searchInput').focus();location.hash='explore'};document.getElementById('mobileSearch').onclick=()=>{location.hash='explore';setTimeout(()=>document.getElementById('searchInput').focus(),100)};document.querySelectorAll('[data-nav]').forEach(b=>b.onclick=()=>location.hash=b.dataset.nav);const themeBtn=document.getElementById('themeBtn');const syncThemeButton=()=>{const isLight=document.body.classList.contains('light');themeBtn.textContent=isLight?'☾':'☀';themeBtn.title=isLight?'Switch to dark mode':'Switch to light mode';themeBtn.setAttribute('aria-label',themeBtn.title)};themeBtn.onclick=()=>{document.body.classList.toggle('light');storageSet('pg_theme',document.body.classList.contains('light')?'light':'dark');syncThemeButton()};// Keep PusoAI's dark-blue appearance as the first-visit default. Respect an explicit saved light preference.
