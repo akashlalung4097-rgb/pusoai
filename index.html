@@ -1614,6 +1614,13 @@ body.pg-camera-open{overflow:hidden;touch-action:none}
   #pgOpenCamera{display:flex!important}
   .pg-reference-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
+
+.pg-camera-switch{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 12px}
+.pg-camera-switch[hidden]{display:none!important}
+.pg-camera-switch-btn{min-height:42px;padding:9px 12px;border:1px solid #46506b;border-radius:11px;background:#151c30;color:#d8def2;font-size:13px;font-weight:700;cursor:pointer}
+.pg-camera-switch-btn.is-active{border-color:#8b83ff;background:linear-gradient(110deg,#5144c8,#276e9f);color:#fff;box-shadow:0 4px 18px rgba(96,89,255,.2)}
+.pg-camera-switch-btn:focus-visible{outline:3px solid #9acaff;outline-offset:2px}
+.pg-camera-switch-btn:disabled{opacity:.55;cursor:wait}
 </style>
 </head>
 <body>
@@ -1747,7 +1754,7 @@ body.pg-camera-open{overflow:hidden;touch-action:none}
 </div>
 </section></div>
 <div id="toast" style="position:fixed;right:18px;bottom:18px;z-index:5000;background:var(--panel);border:1px solid var(--line);padding:12px 15px;border-radius:12px;box-shadow:var(--shadow);display:none"></div>
-<div id="pgCameraDialog" class="pg-camera-dialog" hidden role="dialog" aria-modal="true" aria-labelledby="pgCameraTitle"><div class="pg-camera-card"><div class="pg-camera-header"><div><h3 id="pgCameraTitle">Take a reference photo</h3><p>Position your subject in the frame, then take a photo.</p></div><button type="button" id="pgCameraClose" class="pg-camera-close" aria-label="Close camera">×</button></div><div class="pg-camera-view"><video id="pgCameraVideo" autoplay playsinline muted></video><canvas id="pgCameraCanvas" hidden></canvas></div><p id="pgCameraStatus" class="pg-camera-status" role="status" aria-live="polite">Requesting camera access…</p><div class="pg-camera-actions"><button type="button" id="pgCameraRetake" class="secondary" hidden>Retake</button><button type="button" id="pgCameraCapture" class="primary">Take photo</button><button type="button" id="pgCameraUse" class="primary" hidden>Use photo</button></div></div></div>
+<div id="pgCameraDialog" class="pg-camera-dialog" hidden role="dialog" aria-modal="true" aria-labelledby="pgCameraTitle"><div class="pg-camera-card"><div class="pg-camera-header"><div><h3 id="pgCameraTitle">Take a reference photo</h3><p>Position your subject in the frame, then take a photo.</p></div><button type="button" id="pgCameraClose" class="pg-camera-close" aria-label="Close camera">×</button></div><div class="pg-camera-switch" role="group" aria-label="Choose front or back camera"><button type="button" id="pgCameraBack" class="pg-camera-switch-btn is-active" aria-pressed="true">Back Camera</button><button type="button" id="pgCameraFront" class="pg-camera-switch-btn" aria-pressed="false">Front Camera</button></div><div class="pg-camera-view"><video id="pgCameraVideo" autoplay playsinline muted></video><canvas id="pgCameraCanvas" hidden></canvas></div><p id="pgCameraStatus" class="pg-camera-status" role="status" aria-live="polite">Requesting camera access…</p><div class="pg-camera-actions"><button type="button" id="pgCameraRetake" class="secondary" hidden>Retake</button><button type="button" id="pgCameraCapture" class="primary">Take photo</button><button type="button" id="pgCameraUse" class="primary" hidden>Use photo</button></div></div></div>
 <script>
 'use strict';
 
@@ -3113,36 +3120,55 @@ function setupUserUpload(){
   const cameraCaptureBtn=document.getElementById('pgCameraCapture');
   const cameraRetakeBtn=document.getElementById('pgCameraRetake');
   const cameraUseBtn=document.getElementById('pgCameraUse');
-  let cameraStream=null,cameraPhotoBlob=null,cameraRequestId=0;
+  const cameraBackBtn=document.getElementById('pgCameraBack');
+  const cameraFrontBtn=document.getElementById('pgCameraFront');
+  const cameraSwitch=document.querySelector('.pg-camera-switch');
+  let cameraStream=null,cameraPhotoBlob=null,cameraRequestId=0,cameraFacingMode='environment';
   const stopCameraStream=()=>{if(cameraStream){cameraStream.getTracks().forEach(track=>track.stop());cameraStream=null;}if(cameraVideo)cameraVideo.srcObject=null;};
-  const closeCamera=()=>{cameraRequestId++;stopCameraStream();if(cameraDialog)cameraDialog.hidden=true;document.body.classList.remove('pg-camera-open');if(cameraVideo)cameraVideo.hidden=false;if(cameraCanvas)cameraCanvas.hidden=true;cameraPhotoBlob=null;if(cameraCaptureBtn)cameraCaptureBtn.hidden=false;if(cameraRetakeBtn)cameraRetakeBtn.hidden=true;if(cameraUseBtn)cameraUseBtn.hidden=true;};
-  const openCamera=async()=>{
-    if(!cameraDialog||!cameraVideo||!cameraStatus)return;
-    if(!navigator.mediaDevices?.getUserMedia){status.textContent='Live camera is unavailable in this browser. Please choose a photo from Gallery.';return;}
+  const updateCameraChoice=()=>{if(cameraBackBtn){const active=cameraFacingMode==='environment';cameraBackBtn.classList.toggle('is-active',active);cameraBackBtn.setAttribute('aria-pressed',String(active));}if(cameraFrontBtn){const active=cameraFacingMode==='user';cameraFrontBtn.classList.toggle('is-active',active);cameraFrontBtn.setAttribute('aria-pressed',String(active));}};
+  const closeCamera=()=>{cameraRequestId++;stopCameraStream();if(cameraDialog)cameraDialog.hidden=true;document.body.classList.remove('pg-camera-open');if(cameraVideo)cameraVideo.hidden=false;if(cameraCanvas)cameraCanvas.hidden=true;cameraPhotoBlob=null;if(cameraCaptureBtn)cameraCaptureBtn.hidden=false;if(cameraRetakeBtn)cameraRetakeBtn.hidden=true;if(cameraUseBtn)cameraUseBtn.hidden=true;if(cameraSwitch)cameraSwitch.hidden=false;};
+  const startCamera=async(facingMode,strict=false)=>{
+    if(!navigator.mediaDevices?.getUserMedia){cameraStatus.textContent='Live camera is unavailable in this browser. Please choose a photo from Gallery.';return false;}
     const requestId=++cameraRequestId;
-    stopCameraStream();cameraPhotoBlob=null;
-    cameraVideo.hidden=false;if(cameraCanvas)cameraCanvas.hidden=true;
-    if(cameraCaptureBtn)cameraCaptureBtn.hidden=false;if(cameraRetakeBtn)cameraRetakeBtn.hidden=true;if(cameraUseBtn)cameraUseBtn.hidden=true;
-    cameraDialog.hidden=false;document.body.classList.add('pg-camera-open');cameraStatus.textContent='Allow camera access in your browser to continue.';
+    const previousFacingMode=cameraFacingMode;
+    stopCameraStream();
+    cameraStatus.textContent=facingMode==='user'?'Opening front camera…':'Opening back camera…';
+    if(cameraCaptureBtn)cameraCaptureBtn.disabled=true;
     try{
       let stream;
-      try{stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:'environment'}}});}
+      try{stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:strict?{exact:facingMode}:{ideal:facingMode}}});}
       catch(firstError){
-        if(firstError?.name==='OverconstrainedError'||firstError?.name==='NotFoundError'||firstError?.name==='ConstraintNotSatisfiedError'||firstError?.name==='TypeError'){
-          try{stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:'environment'}});}
-          catch(_rearCameraError){stream=await navigator.mediaDevices.getUserMedia({audio:false,video:true});}
+        if(!strict&&(firstError?.name==='OverconstrainedError'||firstError?.name==='NotFoundError'||firstError?.name==='ConstraintNotSatisfiedError'||firstError?.name==='TypeError')){
+          try{stream=await navigator.mediaDevices.getUserMedia({audio:false,video:true});}
+          catch(_fallbackError){throw firstError;}
         }else throw firstError;
       }
-      if(requestId!==cameraRequestId||cameraDialog.hidden){stream.getTracks().forEach(track=>track.stop());return;}
-      cameraStream=stream;cameraVideo.srcObject=stream;
+      if(requestId!==cameraRequestId||cameraDialog.hidden){stream.getTracks().forEach(track=>track.stop());return false;}
+      cameraStream=stream;cameraFacingMode=facingMode;updateCameraChoice();
+      cameraVideo.hidden=false;if(cameraCanvas)cameraCanvas.hidden=true;cameraVideo.srcObject=stream;
       try{await cameraVideo.play();}catch(_playError){}
-      cameraStatus.textContent='Camera is ready. Tap “Take photo” when you are ready.';
+      if(cameraCaptureBtn)cameraCaptureBtn.disabled=false;
+      cameraStatus.textContent=(facingMode==='user'?'Front':'Back')+' camera is ready. Tap “Take photo” when you are ready.';
+      return true;
     }catch(error){
-      if(requestId!==cameraRequestId)return;
-      const message=location.protocol!=='https:'&&location.hostname!=='localhost'?'Camera access requires HTTPS. Open PusoAI using https://pusoai.online/.':error?.name==='NotAllowedError'||error?.name==='PermissionDeniedError'?'Camera permission was blocked. In your browser or device settings, allow camera access for pusoai.online, then reload the page.':error?.name==='NotFoundError'?'No usable camera was found. Choose a photo from Gallery instead.':error?.name==='NotReadableError'||error?.name==='AbortError'?'The camera may be in use by another app. Close other camera apps and try again.':error?.name==='SecurityError'?'Your browser blocked camera access. Check site permissions and open PusoAI over HTTPS.':'Could not open the camera. Check browser camera permission or choose a photo from Gallery.';
-      cameraStatus.textContent=message;cameraCaptureBtn.hidden=true;
+      if(requestId!==cameraRequestId)return false;
+      cameraFacingMode=previousFacingMode;updateCameraChoice();
+      if(cameraCaptureBtn)cameraCaptureBtn.disabled=false;
+      const message=location.protocol!=='https:'&&location.hostname!=='localhost'?'Camera access requires HTTPS. Open PusoAI using https://pusoai.online/.':error?.name==='NotAllowedError'||error?.name==='PermissionDeniedError'?'Camera permission was blocked. In your browser or device settings, allow camera access for pusoai.online, then reload the page.':strict&&(error?.name==='OverconstrainedError'||error?.name==='NotFoundError'||error?.name==='ConstraintNotSatisfiedError')?'This camera is not available on your device. Try the other camera.':error?.name==='NotFoundError'?'No usable camera was found. Choose a photo from Gallery instead.':error?.name==='NotReadableError'||error?.name==='AbortError'?'The camera may be in use by another app. Close other camera apps and try again.':error?.name==='SecurityError'?'Your browser blocked camera access. Check site permissions and open PusoAI over HTTPS.':'Could not open this camera. Check browser camera permission or choose a photo from Gallery.';
+      cameraStatus.textContent=message;
+      return false;
     }
   };
+  const openCamera=async()=>{
+    if(!cameraDialog||!cameraVideo||!cameraStatus)return;
+    cameraPhotoBlob=null;cameraFacingMode='environment';updateCameraChoice();
+    cameraVideo.hidden=false;if(cameraCanvas)cameraCanvas.hidden=true;
+    if(cameraCaptureBtn){cameraCaptureBtn.hidden=false;cameraCaptureBtn.disabled=false;}if(cameraRetakeBtn)cameraRetakeBtn.hidden=true;if(cameraUseBtn)cameraUseBtn.hidden=true;if(cameraSwitch)cameraSwitch.hidden=false;
+    cameraDialog.hidden=false;document.body.classList.add('pg-camera-open');
+    await startCamera('environment',false);
+  };
+  cameraBackBtn?.addEventListener('click',()=>{if(!cameraPhotoBlob&&cameraDialog&&!cameraDialog.hidden&&cameraFacingMode!=='environment')startCamera('environment',true);});
+  cameraFrontBtn?.addEventListener('click',()=>{if(!cameraPhotoBlob&&cameraDialog&&!cameraDialog.hidden&&cameraFacingMode!=='user')startCamera('user',true);});
   document.getElementById('pgOpenCamera')?.addEventListener('click',openCamera);
   document.getElementById('pgOpenGallery')?.addEventListener('click',()=>fileInput.click());
   document.getElementById('pgCameraClose')?.addEventListener('click',closeCamera);
@@ -3155,10 +3181,10 @@ function setupUserUpload(){
     context.drawImage(cameraVideo,0,0,cameraCanvas.width,cameraCanvas.height);
     cameraCanvas.toBlob(blob=>{
       if(!blob){cameraStatus.textContent='Could not prepare this photo. Please try again.';return;}
-      cameraPhotoBlob=blob;cameraVideo.hidden=true;cameraCanvas.hidden=false;cameraCaptureBtn.hidden=true;cameraRetakeBtn.hidden=false;cameraUseBtn.hidden=false;cameraStatus.textContent='Photo captured. Retake it or use this photo as your reference.';
+      cameraPhotoBlob=blob;cameraVideo.hidden=true;cameraCanvas.hidden=false;cameraCaptureBtn.hidden=true;cameraRetakeBtn.hidden=false;cameraUseBtn.hidden=false;if(cameraSwitch)cameraSwitch.hidden=true;cameraStatus.textContent='Photo captured. Retake it or use this photo as your reference.';
     },'image/jpeg',0.9);
   });
-  cameraRetakeBtn?.addEventListener('click',()=>{cameraPhotoBlob=null;cameraCanvas.hidden=true;cameraVideo.hidden=false;cameraCaptureBtn.hidden=false;cameraRetakeBtn.hidden=true;cameraUseBtn.hidden=true;cameraStatus.textContent='Camera is ready. Tap “Take photo” when you are ready.';});
+  cameraRetakeBtn?.addEventListener('click',()=>{cameraPhotoBlob=null;cameraCanvas.hidden=true;cameraVideo.hidden=false;cameraCaptureBtn.hidden=false;cameraRetakeBtn.hidden=true;cameraUseBtn.hidden=true;if(cameraSwitch)cameraSwitch.hidden=false;cameraStatus.textContent=(cameraFacingMode==='user'?'Front':'Back')+' camera is ready. Tap “Take photo” when you are ready.';});
   cameraUseBtn?.addEventListener('click',()=>{
     if(!cameraPhotoBlob)return;
     try{
