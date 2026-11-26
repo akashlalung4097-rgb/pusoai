@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
+    <loc>https://pusoai.online/photos/a-peaceful-japanese-garden-in-spring-cherry-blos-p_mwwensec_646e5i/</loc>
+    <image:image>
+      <image:loc>https://bgteingwoenkzfublqkr.supabase.co/storage/v1/object/public/photogram/media/thumbs/p_mwwensec_646e5i-mwxw8h7z.webp</image:loc>
+      <image:title>A peaceful Japanese garden in spring, cherry blossoms, gen</image:title>
+      <image:caption>A peaceful Japanese garden in spring, cherry blossoms, gentle mist, warm sunlight, serene fine-art photography - View this photo on PusoAI.</image:caption>
+    </image:image>
+  </url>
+  <url>
     <loc>https://pusoai.online/photos/community-photo-community_p_mwsmv1kr_rs6zch/</loc>
     <image:image>
       <image:loc>https://bgteingwoenkzfublqkr.supabase.co/storage/v1/object/public/photogram/media/thumbs/community_p_mwsmv1kr_rs6zch-mwxr3duy.webp</image:loc>
@@ -70,14 +78,6 @@
       <image:loc>https://bgteingwoenkzfublqkr.supabase.co/storage/v1/object/public/photogram/media/thumbs/community_p_mwp0rv4m_xlkzrr-mwxr3ntq.webp</image:loc>
       <image:title>Public Gallery Photo</image:title>
       <image:caption>Community photo Prompt: INSTAGRAM PROMPT Create an ultra-realistic, high-quality 3D surreal fashion photograph in a vertical 9:16 composition. A giant modern…</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://pusoai.online/photos/community-photo-community_p_mwnrxj7g_jxxwdz/</loc>
-    <image:image>
-      <image:loc>https://bgteingwoenkzfublqkr.supabase.co/storage/v1/object/public/photogram/media/thumbs/community_p_mwnrxj7g_jxxwdz-mwxr3ou1.webp</image:loc>
-      <image:title>Red Apple Photo</image:title>
-      <image:caption>A red apple image from the PusoAI public gallery. Explore more colorful still-life and creative images.</image:caption>
     </image:image>
   </url>
   <url>
