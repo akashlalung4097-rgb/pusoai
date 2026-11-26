@@ -1669,7 +1669,7 @@ body.pg-preview-modal-open{overflow:hidden!important;touch-action:none!important
   <div id="tab-comments" class="tab hidden">
     <div class="panel"><h3>Comments Management / Inbox</h3><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><p style="color:var(--muted);margin:0">Visitor comments from all devices appear here after the Supabase comments table is configured.</p><button class="secondary" id="refreshCommentInbox">↻ Refresh Inbox</button></div><div id="adminCommentList" style="margin-top:12px"></div></div>
   </div>
-<div id="tab-users" class="tab hidden"><div class="panel"><div class="admin-dashboard-head"><div><h3>Visitors & Traffic</h3><p>Cross-device analytics are fetched from Supabase when setup is complete.</p></div><div class="analytic-status" id="usersTrafficStatus" role="status">Checking…</div></div><div class="stats" style="grid-template-columns:repeat(4,minmax(0,1fr))"><div class="stat"><span>Unique visitors</span><b id="uVisitors">—</b></div><div class="stat"><span>Page views</span><b id="uPageViews">—</b></div><div class="stat"><span>Photo views</span><b id="uPhotoViews">—</b></div><div class="stat"><span>Sessions</span><b id="uSessions">—</b></div></div><div id="usersTrafficChart" style="margin-top:18px"></div><div class="tablewrap" style="margin-top:18px"><table class="table"><thead><tr><th>Date (UTC)</th><th>Page views</th><th>Photo views</th><th>Downloads</th><th>Likes</th></tr></thead><tbody id="trafficTable"></tbody></table></div></div><div class="panel"><h3>Recent activity</h3><p class="section-note">Anonymous usage events only. Visitor names, IP addresses and passwords are not collected by this feature.</p><div id="userActivityList"></div></div></div>
+<div id="tab-users" class="tab hidden"><div class="panel"><div class="admin-dashboard-head"><div><h3>Visitors & Traffic</h3><p>Live cross-device analytics. New visitor activity updates automatically while this panel is open.</p></div><div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap"><div class="analytic-status" id="usersTrafficStatus" role="status" aria-live="polite">Connecting…</div><button type="button" class="secondary" id="refreshUsersTraffic">↻ Refresh now</button></div></div><div class="stats" style="grid-template-columns:repeat(4,minmax(0,1fr))"><div class="stat"><span>Unique visitors</span><b id="uVisitors">—</b></div><div class="stat"><span>Page views</span><b id="uPageViews">—</b></div><div class="stat"><span>Photo views</span><b id="uPhotoViews">—</b></div><div class="stat"><span>Sessions</span><b id="uSessions">—</b></div></div><div id="usersTrafficChart" style="margin-top:18px"></div><div class="tablewrap" style="margin-top:18px"><table class="table"><thead><tr><th>Date (UTC)</th><th>Page views</th><th>Photo views</th><th>Downloads</th><th>Likes</th></tr></thead><tbody id="trafficTable"></tbody></table></div></div><div class="panel"><h3>Recent activity</h3><p class="section-note">Anonymous usage events only. Visitor names, IP addresses and passwords are not collected by this feature.</p><div id="userActivityList"></div></div></div>
 <div id="tab-settings" class="tab hidden"><div class="panel"><h3>Website Settings</h3><div class="admin-grid"><div class="field"><label>Site name</label><input id="siteName" value="PusoAI"></div><div class="field"><label>Contact email</label><input id="siteEmail" value="pusoai001@gmail.com"></div><div class="field"><label>Instagram</label><input id="siteInstagram" value="@akashlost47"></div><div class="field"><label>Hero title</label><input id="siteHero" value="Every image starts with inspiration."></div><div class="field full"><label class="toggle"><span class="switch"><input id="adsenseEnabled" type="checkbox"><span class="slider"></span></span>Enable Google AdSense</label></div><div class="field"><label for="adsensePublisher">AdSense Publisher ID</label><input id="adsensePublisher" inputmode="text" autocomplete="off" spellcheck="false" placeholder="ca-pub-1234567890123456"></div><div class="field"><label for="adsenseSlot">Responsive display ad slot ID (optional)</label><input id="adsenseSlot" inputmode="numeric" autocomplete="off" spellcheck="false" placeholder="1234567890"></div><div class="field full"><p class="community-note">Enter the Publisher ID shown in your own AdSense account and verify it before enabling ads. Ads are OFF by default. For Auto ads, enable Auto ads in AdSense and leave the slot empty. For a manual responsive display ad, create an ad unit in AdSense → Ads → By ad unit → Display ads, then paste its slot ID here. Turning this on only configures the ad code. Ads and earnings require Google AdSense site approval, valid account setup, and available ad inventory.</p><p id="adsenseStatus" class="community-note" role="status" aria-live="polite">AdSense is not yet checked.</p></div><div class="field full"><label>Custom CSS</label><textarea id="customCss" placeholder="Optional CSS"></textarea></div><div class="field full"><label>Text Animation</label><label class="toggle"><span class="switch"><input id="textAnimation" type="checkbox" checked><span class="slider"></span></span>Animate website text</label><p class="community-note">Turn this switch off to disable text entrance and glow animations across the website. Your preference is saved with Website Settings.</p></div></div><div class="panel" style="margin-top:14px;border-color:#6c63ff88"><h3>🔐 AI Image Generation API Key</h3><p style="color:var(--muted);line-height:1.6">Add or replace the OpenAI API key here as the signed-in website owner. The key is sent to a protected Supabase function and encrypted before server-side storage. It is not saved in this HTML file or browser storage.</p><div class="field"><label for="ownerOpenAiApiKey">OpenAI API Key</label><input id="ownerOpenAiApiKey" type="password" autocomplete="new-password" spellcheck="false" placeholder="Paste OpenAI API key (sk-...)"></div><div class="admin-actions"><button class="primary" id="saveOpenAiApiKey" type="button">Save API Key Securely</button><button class="secondary" id="checkOpenAiApiKeyStatus" type="button">Check Key Status</button><button class="danger" id="removeOpenAiApiKey" type="button">Remove Saved Key</button></div><p id="aiApiKeyStatus" role="status" aria-live="polite" style="color:var(--muted);font-size:13px;margin-top:12px">API key status has not been checked yet.</p><p style="color:var(--muted);font-size:12px">One-time setup: add <code>AI_KEY_ENCRYPTION_SECRET</code> to Supabase Edge Function Secrets before saving a key here. Keep this separate from your OpenAI API key.</p></div>
 <div class="panel" id="apiStatusMonitor" style="margin-top:14px;border-color:#14b8ff66">
 <h3>📡 AI API Status Monitor</h3>
@@ -2826,6 +2826,7 @@ function trackLike(photoId){
   data.traffic.likesByDay[d]=(data.traffic.likesByDay[d]||0)+1; save();
 }
 let analyticsData=null,analyticsMode='pending',analyticsError='',analyticsLastLoaded=0,analyticsDays=30,analyticsMetric='pageViews';
+let analyticsRealtimeChannel=null,analyticsRefreshInterval=null,analyticsRefreshDebounceTimer=null,analyticsFetchInFlight=false,analyticsRefreshQueued=false,analyticsRealtimeState='inactive';
 function analyticsUUID(){
   if(typeof crypto!=='undefined'&&crypto.randomUUID)return crypto.randomUUID();
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.floor(Math.random()*16);return(c==='x'?r:(r&3|8)).toString(16)});
@@ -2865,14 +2866,75 @@ function normalizeAnalyticsData(raw){
 }
 async function fetchTrafficAnalytics(force=false){
   if(!isAdmin()||!sbClient)return;
+  if(analyticsFetchInFlight){if(force)analyticsRefreshQueued=true;return;}
   if(!force&&analyticsMode==='ready'&&analyticsLastLoaded&&Date.now()-analyticsLastLoaded<30000){renderAnalyticsDashboard();return;}
+  analyticsFetchInFlight=true;
   analyticsMode='loading';renderAnalyticsDashboard();
   try{
     const {data:result,error}=await sbClient.rpc('pg_analytics_dashboard',{p_days:analyticsDays});
     if(error)throw error;
     analyticsData=normalizeAnalyticsData(result);analyticsMode='ready';analyticsError='';analyticsLastLoaded=Date.now();
-  }catch(error){analyticsData=null;analyticsMode='unavailable';analyticsError=error?.message||'Could not load traffic data';console.warn('Admin traffic analytics:',error);}
+  }catch(error){analyticsMode='unavailable';analyticsError=error?.message||'Could not load traffic data';console.warn('Admin traffic analytics:',error);}
+  finally{
+    analyticsFetchInFlight=false;
+    renderAnalyticsDashboard();
+    if(analyticsRefreshQueued){
+      analyticsRefreshQueued=false;
+      if(isAnalyticsTrafficViewActive())scheduleAnalyticsTrafficRefresh();
+    }
+  }
+}
+function isAnalyticsTrafficViewActive(){
+  const panel=document.getElementById('adminPanel');
+  if(!panel?.classList.contains('open')||!isAdmin()||document.visibilityState==='hidden')return false;
+  return ['tab-dashboard','tab-users'].some(id=>{
+    const tab=document.getElementById(id);
+    return tab&&!tab.classList.contains('hidden');
+  });
+}
+function scheduleAnalyticsTrafficRefresh(){
+  if(!isAdmin())return;
+  if(analyticsRefreshDebounceTimer!==null)clearTimeout(analyticsRefreshDebounceTimer);
+  analyticsRefreshDebounceTimer=setTimeout(()=>{
+    analyticsRefreshDebounceTimer=null;
+    if(isAnalyticsTrafficViewActive())void fetchTrafficAnalytics(true);
+  },600);
+}
+function startAnalyticsTrafficLiveUpdates(){
+  if(!isAdmin()||!sbClient)return;
+  if(analyticsRefreshInterval===null){
+    analyticsRefreshInterval=setInterval(()=>{
+      if(isAnalyticsTrafficViewActive())void fetchTrafficAnalytics(true);
+    },15000);
+  }
+  if(analyticsRealtimeChannel)return;
+  analyticsRealtimeState='connecting';
   renderAnalyticsDashboard();
+  analyticsRealtimeChannel=sbClient.channel('pusoai-visitor-analytics-live')
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'visitor_events'},payload=>{
+      if(!isAdmin())return;
+      console.debug('PusoAI traffic event received:',payload?.new?.event_type||'visitor event');
+      scheduleAnalyticsTrafficRefresh();
+    })
+    .subscribe(status=>{
+      if(status==='SUBSCRIBED'){
+        analyticsRealtimeState='connected';
+        renderAnalyticsDashboard();
+        scheduleAnalyticsTrafficRefresh();
+      }else if(['CHANNEL_ERROR','TIMED_OUT','CLOSED'].includes(status)){
+        analyticsRealtimeState='fallback';
+        console.warn('Traffic Realtime unavailable; 15-second refresh remains active:',status);
+        renderAnalyticsDashboard();
+      }
+    });
+}
+function stopAnalyticsTrafficLiveUpdates(){
+  if(analyticsRefreshInterval!==null){clearInterval(analyticsRefreshInterval);analyticsRefreshInterval=null;}
+  if(analyticsRefreshDebounceTimer!==null){clearTimeout(analyticsRefreshDebounceTimer);analyticsRefreshDebounceTimer=null;}
+  const channel=analyticsRealtimeChannel;
+  analyticsRealtimeChannel=null;
+  analyticsRealtimeState='inactive';
+  if(channel&&sbClient){void sbClient.removeChannel(channel).catch(error=>console.warn('Could not close traffic Realtime channel:',error));}
 }
 function localAnalyticsFallback(){
   ensureAnalytics();const t=data.traffic||{};
@@ -2894,17 +2956,19 @@ function renderTrafficSvg(daily,metric){
   return '<svg xmlns="http://www.w3.org/2000/svg" class="traffic-svg" viewBox="0 0 800 285" role="img" aria-label="Daily '+esc(metric)+' from '+esc(daily[0].day)+' to '+esc(daily[daily.length-1].day)+'"><defs><linearGradient id="pgChartFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7568ff" stop-opacity=".38"/><stop offset="1" stop-color="#7568ff" stop-opacity=".015"/></linearGradient></defs>'+grid+'<path d="'+area+'" fill="url(#pgChartFill)"/><path d="'+line+'" fill="none" stroke="#9687ff" stroke-width="3.3" stroke-linecap="round" stroke-linejoin="round"/>'+points+labels+'</svg>';
 }
 function renderAnalyticsDashboard(){
-  const remote=analyticsMode==='ready';const payload=remote?analyticsData:localAnalyticsFallback();const s=payload.summary;
-  const statusMsg=remote?'Live Supabase data':analyticsMode==='loading'?'Updating traffic…':'Local browser data only — run SUPABASE_FULL_SETUP_FINAL.sql';
-  for(const id of ['analyticsStatus','usersTrafficStatus']){const el=document.getElementById(id);if(!el)continue;el.textContent=statusMsg;el.classList.remove('ready','error');if(remote)el.classList.add('ready');else if(analyticsMode==='unavailable')el.classList.add('error');el.title=analyticsError||''}
+  const remote=analyticsMode==='ready'||(analyticsMode==='loading'&&!!analyticsData);
+  const payload=remote?analyticsData:localAnalyticsFallback();const s=payload.summary;
+  const realtimeLabel=analyticsRealtimeState==='connected'?' · Realtime connected':analyticsRealtimeState==='connecting'?' · Realtime connecting (15s backup)':' · 15s auto-refresh';
+  const statusMsg=remote?(analyticsMode==='loading'?'Updating Supabase data':'Live Supabase data')+realtimeLabel:analyticsMode==='loading'?'Updating traffic…':'Local browser data only — run SUPABASE_FULL_SETUP_FINAL.sql';
+  for(const id of ['analyticsStatus','usersTrafficStatus']){const el=document.getElementById(id);if(!el)continue;el.textContent=statusMsg;el.classList.remove('ready','error');if(remote)el.classList.add('ready');else if(analyticsMode==='unavailable')el.classList.add('error');el.title=analyticsError||(analyticsLastLoaded?'Last updated '+new Date(analyticsLastLoaded).toLocaleString():'Waiting for the first cloud refresh');}
   for(const [id,value] of Object.entries({dVisitors:s.uniqueVisitors,dPageViews:s.pageViews,dSessions:s.sessions,dToday:s.today,uVisitors:s.uniqueVisitors,uPageViews:s.pageViews,uPhotoViews:s.photoViews,uSessions:s.sessions})){
     const el=document.getElementById(id);if(el)el.textContent=fmtAnalytics(value);
   }
   const svg=renderTrafficSvg(payload.daily,analyticsMetric);
   document.getElementById('trafficChart').innerHTML=svg;
   document.getElementById('usersTrafficChart').innerHTML=svg;
-  document.getElementById('trafficSummary').innerHTML='<span><i class="chart-dot"></i>'+esc(document.getElementById('analyticsMetric')?.selectedOptions[0]?.textContent||'Page views')+'</span><span>'+analyticsDays+' days · '+(remote?'shared UTC traffic':'local preview')+'</span>';
-  document.getElementById('dashboardTrafficDetails').textContent=remote?'Totals are for the selected period. Refresh to include the latest visitor events.':'Local values are estimates from this browser; other devices will not appear until SQL setup is complete.';
+  document.getElementById('trafficSummary').innerHTML='<span><i class="chart-dot"></i>'+esc(document.getElementById('analyticsMetric')?.selectedOptions[0]?.textContent||'Page views')+'</span><span>'+analyticsDays+' days · '+(remote?'shared UTC traffic · live refresh':'local preview')+'</span>';
+  document.getElementById('dashboardTrafficDetails').textContent=remote?'Updated '+(analyticsLastLoaded?new Date(analyticsLastLoaded).toLocaleTimeString():'just now')+'. New visitor events refresh this dashboard automatically; a 15-second backup refresh runs while it is open.':'Local values are estimates from this browser; other devices will not appear until SQL setup is complete.';
   const dates=payload.daily.slice().reverse();
   document.getElementById('trafficTable').innerHTML=dates.length?dates.map(d=>'<tr><td>'+esc(d.day)+'</td><td>'+fmtAnalytics(d.pageViews)+'</td><td>'+fmtAnalytics(d.photoViews)+'</td><td>'+fmtAnalytics(d.downloads)+'</td><td>'+fmtAnalytics(d.likes)+'</td></tr>').join(''):'<tr><td colspan="5">No activity recorded yet.</td></tr>';
   const media=payload.top.slice(0,6);
@@ -3603,10 +3667,14 @@ async function login(){
 function openAdmin(){
   if(!requireAdmin())return document.getElementById('login').classList.add('open');
   document.getElementById('adminPanel').classList.add('open');
+  startAnalyticsTrafficLiveUpdates();
   populateAdmin();
   void fetchTrafficAnalytics(true);
 }
-function closeAdmin(){document.getElementById('adminPanel').classList.remove('open')}
+function closeAdmin(){
+  document.getElementById('adminPanel').classList.remove('open');
+  stopAnalyticsTrafficLiveUpdates();
+}
 function clearAdminAutoLogoutTimer(){if(adminAutoLogoutTimer!==null){clearTimeout(adminAutoLogoutTimer);adminAutoLogoutTimer=null;}}
 function scheduleAdminAutoLogout(){
   clearAdminAutoLogoutTimer();
@@ -4547,6 +4615,8 @@ function bootAdmin(){
   document.getElementById('analyticsPeriod').onchange=e=>{analyticsDays=Number(e.target.value)||30;void fetchTrafficAnalytics(true)};
   document.getElementById('analyticsMetric').onchange=e=>{analyticsMetric=e.target.value;renderAnalyticsDashboard()};
   document.getElementById('refreshDashboard').onclick=()=>{void loadRemotePhotos().then(ok=>{if(ok){renderGallery();updateStats();updateHeroFeatured();}});void fetchTrafficAnalytics(true)};
+  const refreshUsersTrafficButton=document.getElementById('refreshUsersTraffic');
+  if(refreshUsersTrafficButton)refreshUsersTrafficButton.onclick=()=>void fetchTrafficAnalytics(true);
   document.getElementById('adminToday').textContent=new Date().toLocaleDateString(undefined,{weekday:'long',month:'short',day:'numeric',year:'numeric'});
   document.getElementById('adminLogout').onclick=async()=>{
     clearAdminAutoLogoutTimer();
@@ -4669,7 +4739,10 @@ async function startPusoAI(){
     await loadSupabaseLibrary();
     initializeSupabaseClient();
     subscribeToAdminAuth();
-    void initializeCloudData();
+    await initializeCloudData();
+    // bootApp() runs before the Supabase SDK loads; record this initial page view
+    // now that the client and owner session are ready.
+    recordVisitorEvent('page_view');
   }catch(error){
     remotePhotoLoadError=error?.message||'Supabase could not be loaded.';
     console.error('Supabase lazy-load failed:',error);
