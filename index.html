@@ -1348,6 +1348,15 @@ body.light #downloadGeneratedAiImage:focus-visible{
 
 </style>
 
+<style id="pusoai-live-preview-clear-button">
+.pg-preview-header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.pg-preview-header-actions{display:flex;align-items:center;gap:10px}
+.pg-preview-clear[hidden]{display:none!important}
+.pg-preview-clear{width:36px;height:36px;flex:0 0 36px;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;background:var(--panel2);color:var(--text);font-size:25px;line-height:1;cursor:pointer;transition:background .18s ease,transform .18s ease}
+.pg-preview-clear:hover{background:var(--panel);transform:scale(1.06)}
+.pg-preview-clear:focus-visible{outline:3px solid #8b7cff;outline-offset:3px}
+@media(max-width:380px){.pg-preview-header-actions{gap:6px}.pg-preview-clear{width:32px;height:32px;flex-basis:32px}}
+</style>
 <style id="pusoai-live-preview-light-fix">
 /* Make the AI Live Preview a real, spacious canvas in both themes. */
 .pg-preview-panel{min-width:0;overflow:hidden}
@@ -1597,7 +1606,7 @@ body.pg-preview-modal-open{overflow:hidden!important;touch-action:none!important
 <p class="pg-generator-status" id="userPhotoStatus" role="status" aria-live="polite">Your generated image is private until you submit it for review.</p>
 <div id="aiGenerationError" class="ai-gen-error" role="alert" hidden><div class="ai-gen-error-copy"><strong>AI image generation failed</strong><span id="aiGenerationErrorText">Please try again.</span></div><button class="ai-gen-retry" id="retryAiGeneration" type="button">↻ Retry</button></div>
 </form></section>
-<section class="pg-glass-panel pg-preview-panel" aria-labelledby="pgPreviewTitle"><div class="pg-preview-header"><div><small>CANVAS PREVIEW</small><h2 id="pgPreviewTitle">Your creation</h2></div><span class="pg-preview-live"><i></i> LIVE PREVIEW</span></div>
+<section class="pg-glass-panel pg-preview-panel" aria-labelledby="pgPreviewTitle"><div class="pg-preview-header"><div><small>CANVAS PREVIEW</small><h2 id="pgPreviewTitle">Your creation</h2></div><div class="pg-preview-header-actions"><span class="pg-preview-live"><i></i> LIVE PREVIEW</span><button type="button" id="pgPreviewClear" class="pg-preview-clear" aria-label="Clear live preview" title="Clear preview" hidden>×</button></div></div>
 <div class="pg-preview-stage" id="pgPreviewStage"><img id="userPhotoPreview" class="user-upload-preview" alt="Reference or successfully generated AI image" style="display:none"><div class="pg-live-preview-tools" id="pgLivePreviewTools" role="group" aria-label="Live preview actions" hidden><button type="button" id="pgPreviewZoom" aria-label="Zoom preview" title="Zoom"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg></button><button type="button" id="pgPreviewFullscreen" aria-label="Fullscreen preview" title="Fullscreen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M3 16v3a2 2 0 0 0 2 2h3"/></svg></button><button type="button" id="pgPreviewDownload" aria-label="Download preview" title="Download"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 20h16"/></svg></button><button type="button" id="pgPreviewShare" aria-label="Share preview" title="Share"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.7 10.6 6.6-4.2M8.7 13.4l6.6 4.2"/></svg></button></div><div class="pg-preview-empty" id="pgPreviewEmpty"><div class="pg-empty-orbit">✧</div><b>Your canvas is waiting</b><p>Your image appears here after the AI API responds successfully.</p><small>PNG · JPG · WEBP</small></div></div>
 <div class="pg-preview-toolbar"><span><i></i> Generation preview</span><div></div></div>
 <div class="pg-preview-actions"><button class="pg-preview-download" id="downloadGeneratedAiImage" type="button" style="display:none">↓ Download</button><button class="pg-preview-regenerate" id="pgRegenerate" type="button">↻ Regenerate</button><button class="pg-preview-undo" id="pgUndo" type="button" disabled>↶ Undo</button></div><div class="pg-preview-foot"><span>✦ Crafted with PusoAI</span><span>Private by default</span></div></section>
@@ -3026,7 +3035,7 @@ function setupUserUpload(){
   const cancelUploadBtn=document.getElementById('cancelPhotoUpload');
   const cancelSelectedBtn=document.getElementById('cancelSelectedPhoto');
   const previewTools=document.getElementById('pgLivePreviewTools');
-  const syncPreviewTools=()=>{if(previewTools)previewTools.hidden=!(preview&&preview.style.display!=='none'&&preview.getAttribute('src'));};
+  const syncPreviewTools=()=>{const hasPreview=!!(preview&&preview.style.display!=='none'&&preview.getAttribute('src'));if(previewTools)previewTools.hidden=!hasPreview;const clearPreviewBtn=document.getElementById('pgPreviewClear');if(clearPreviewBtn)clearPreviewBtn.hidden=!hasPreview;};
   const previewZoomBtn=document.getElementById('pgPreviewZoom');
   const previewFullscreenBtn=document.getElementById('pgPreviewFullscreen');
   const previewDownloadBtn=document.getElementById('pgPreviewDownload');
@@ -3053,7 +3062,7 @@ function setupUserUpload(){
     if(modeHint)modeHint.textContent='Text-only AI mode: no reference photo selected.';
     status.textContent='Selected photo canceled. You can choose another photo.';
   };
-  cancelSelectedBtn?.addEventListener('click',clearSelectedPhoto);
+  cancelSelectedBtn?.addEventListener('click',clearSelectedPhoto);document.getElementById('pgPreviewClear')?.addEventListener('click',clearSelectedPhoto);
   fileInput.addEventListener('change',()=>{
     const file=fileInput.files?.[0];
     generatedImageFile=null;
