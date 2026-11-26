@@ -1509,8 +1509,8 @@ body.pg-preview-modal-open{overflow:hidden!important;touch-action:none!important
 </style>
 
 <style id="pusoai-notification-center">
-.pg-notification-wrap{position:relative;display:inline-flex;align-items:center}
-#pgNotifications{position:relative;display:grid;place-items:center;font-size:20px;line-height:1;cursor:pointer;pointer-events:auto;z-index:2;touch-action:manipulation}
+.pg-notification-wrap{position:relative;display:inline-flex;align-items:center;z-index:250;pointer-events:auto}
+#pgNotifications{position:relative;display:grid;place-items:center;font-size:20px;line-height:1;cursor:pointer;pointer-events:auto;z-index:250;touch-action:manipulation}
 #pgNotifications svg{width:20px;height:20px;display:block}
 .pg-notification-count{position:absolute;top:-5px;right:-5px;min-width:17px;height:17px;padding:0 4px;border-radius:99px;background:#ef476f;color:#fff;font:700 10px/17px Inter,system-ui,sans-serif;text-align:center;border:2px solid var(--panel);display:none}
 .pg-notification-count.visible{display:block}
@@ -1554,7 +1554,7 @@ body.pg-preview-modal-open{overflow:hidden!important;touch-action:none!important
 <a class="brand pg-top-brand" href="#home" aria-label="PusoAI Home"><span class="pg-logo-mark" aria-hidden="true"><svg viewBox="0 0 64 64" role="img" focusable="false"><defs><linearGradient id="pusoLogoBg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#168cff"/><stop offset="1" stop-color="#1027bd"/></linearGradient><linearGradient id="pusoLogoEdge" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#42f4ff"/><stop offset="1" stop-color="#3977ff"/></linearGradient></defs><rect x="3" y="3" width="58" height="58" rx="15" fill="url(#pusoLogoBg)" stroke="url(#pusoLogoEdge)" stroke-width="2.5"/><path d="M19 48V17h17c9 0 14 5 14 13S45 43 36 43h-7v5zM29 34h7c3 0 5-1 5-4s-2-4-5-4h-7z" fill="#fff"/><rect x="43" y="9" width="9" height="9" rx="2" fill="#fff"/></svg></span><span>Puso<b>AI</b></span></a>
 <nav class="navlinks" aria-label="Studio modes"><a href="#studio" class="pg-active-link">Image mode</a><a href="#video-mode" class="pg-mode-disabled" aria-disabled="true" title="Video generation is not connected yet">Video mode <small>SOON</small></a><a href="#prompt-guide">AI Tools</a></nav>
 <div class="navactions"><label class="pg-global-search" aria-label="Search gallery"><span>⌕</span><input id="pgGlobalSearch" type="search" placeholder="Search gallery…"><kbd>↵</kbd></label><div class="pg-notification-wrap"><button class="iconbtn pg-top-icon" id="pgNotifications" type="button" aria-label="Notifications" aria-expanded="false" aria-controls="pgNotificationPanel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg><span class="pg-notification-count" id="pgNotificationCount" aria-live="polite">0</span></button><section class="pg-notification-popover" id="pgNotificationPanel" hidden aria-label="Notifications"><div class="pg-notification-head"><b>Notifications</b><div class="pg-notification-head-actions"><button type="button" id="pgNotificationReadAll">Mark all read</button><button type="button" id="pgNotificationClose" aria-label="Close notifications">✕</button></div></div><div class="pg-notification-list" id="pgNotificationList"><div class="pg-notification-empty">You’re all caught up.</div></div><div class="pg-notification-foot">Updates for this browser · AI activity · Gallery · Likes · Comments</div></section></div><a class="iconbtn pg-top-icon pg-message-link" href="#contact" aria-label="Messages and contact">✉</a><button class="iconbtn" id="themeBtn" title="Theme" aria-label="Toggle theme">☾</button><button class="admin-nav-btn primary" id="adminOpen" style="display:none">Admin</button></div>
-<div class="pg-notification-popover" id="pgNotificationPanel" hidden><b>Notifications are not enabled yet</b><span>This panel will show PusoAI studio alerts when the notification service is connected.</span></div></div></header>
+</div></header>
 <aside class="pg-sidebar" aria-label="Main navigation"><a class="pg-sidebar-logo" href="#home"><span class="pg-sidebar-mark"><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="3" y="3" width="58" height="58" rx="15" fill="url(#pusoLogoBg)" stroke="url(#pusoLogoEdge)" stroke-width="2.5"/><path d="M19 48V17h17c9 0 14 5 14 13S45 43 36 43h-7v5zM29 34h7c3 0 5-1 5-4s-2-4-5-4h-7z" fill="#fff"/><rect x="43" y="9" width="9" height="9" rx="2" fill="#fff"/></svg></span><span>Puso<b>AI</b><small>CREATIVE STUDIO</small></span></a><div class="pg-sidebar-label">WORKSPACE</div><nav class="pg-sidebar-nav"><a class="active" href="#home"><span>⌂</span>Home</a><a href="#studio"><span>✦</span>AI Image Generator</a><a href="#explore"><span>▦</span>Gallery</a><a href="#generationHistoryPanel"><span>◷</span>History</a></nav><div class="pg-sidebar-bottom"><div class="pg-profile-avatar">G</div><div class="pg-profile-copy"><b>Guest Creator</b><small>No account needed</small></div><span class="pg-profile-dot"></span></div></aside>
 <nav class="pg-mobile-nav" aria-label="Mobile navigation"><a href="#home"><span>⌂</span>Home</a><a href="#studio"><span>✦</span>Create</a><a href="#explore"><span>▦</span>Gallery</a><a href="#generationHistoryPanel"><span>◷</span>History</a></nav>
 <main id="home" class="pg-main">
@@ -3496,37 +3496,48 @@ function setupPusoaiNotificationCenter(){
   const panel=document.getElementById('pgNotificationPanel');
   if(!bell||!panel)return;
   loadPusoaiNotifications();
-  try{renderPusoaiNotifications();}catch(error){console.error('Could not render PusoAI notifications:',error);}
-  if(bell.dataset.bound==='true')return;
-  bell.dataset.bound='true';
-  const close=()=>{
+  try{renderPusoaiNotifications();}catch(error){console.error('PusoAI notification render error:',error);}
+  if(document.documentElement.dataset.pusoaiNoticeEvents==='ready')return;
+  document.documentElement.dataset.pusoaiNoticeEvents='ready';
+  const closePanel=()=>{
     panel.hidden=true;
     panel.setAttribute('hidden','');
     bell.setAttribute('aria-expanded','false');
   };
-  const open=()=>{
+  const openPanel=()=>{
     panel.hidden=false;
     panel.removeAttribute('hidden');
     bell.setAttribute('aria-expanded','true');
-    try{renderPusoaiNotifications();}catch(error){console.error('Could not refresh notifications:',error);}
+    try{renderPusoaiNotifications();}catch(error){console.error('PusoAI notification render error:',error);}
   };
-  bell.addEventListener('click',event=>{
-    event.preventDefault();
-    event.stopPropagation();
-    if(panel.hidden)open();else close();
-  });
-  panel.addEventListener('click',event=>event.stopPropagation());
-  document.getElementById('pgNotificationClose')?.addEventListener('click',event=>{event.preventDefault();close();});
-  document.getElementById('pgNotificationReadAll')?.addEventListener('click',event=>{
-    event.preventDefault();
-    pusoaiNotifications.forEach(item=>item.read=true);
-    savePusoaiNotifications();
-    try{renderPusoaiNotifications();}catch(error){console.error('Could not update notification list:',error);}
-  });
+  // Capture clicks at document level so header/nav handlers cannot swallow the bell.
   document.addEventListener('click',event=>{
-    if(!panel.hidden&&!panel.contains(event.target)&&!bell.contains(event.target))close();
-  });
-  document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!panel.hidden)close();});
+    const target=event.target instanceof Element?event.target:null;
+    if(!target)return;
+    const clickedBell=target.closest('#pgNotifications');
+    if(clickedBell){
+      event.preventDefault();
+      event.stopPropagation();
+      if(panel.hidden)openPanel();else closePanel();
+      return;
+    }
+    if(target.closest('#pgNotificationClose')){
+      event.preventDefault();
+      event.stopPropagation();
+      closePanel();
+      return;
+    }
+    if(target.closest('#pgNotificationReadAll')){
+      event.preventDefault();
+      event.stopPropagation();
+      pusoaiNotifications.forEach(item=>item.read=true);
+      savePusoaiNotifications();
+      renderPusoaiNotifications();
+      return;
+    }
+    if(!panel.hidden&&!panel.contains(target))closePanel();
+  },true);
+  document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!panel.hidden)closePanel();});
 }
 
 function setupPublic(){setupPusoaiNotificationCenter();document.getElementById('searchBtn').onclick=()=>{const latest=document.querySelector('#filterChips .chip[data-mode="latest"]');if(latest)latest.click();else renderGallery('All',document.getElementById('searchInput').value,'latest')};document.getElementById('searchInput').oninput=e=>renderGallery(document.querySelector('.chip.active')?.dataset.cat||'All',e.target.value,document.querySelector('.chip.active')?.dataset.mode||'latest');document.getElementById('heroSearch').onclick=()=>{document.getElementById('searchInput').focus();location.hash='explore'};document.getElementById('mobileSearch').onclick=()=>{location.hash='explore';setTimeout(()=>document.getElementById('searchInput').focus(),100)};document.querySelectorAll('[data-nav]').forEach(b=>b.onclick=()=>location.hash=b.dataset.nav);const themeBtn=document.getElementById('themeBtn');const syncThemeButton=()=>{const isLight=document.body.classList.contains('light');themeBtn.textContent=isLight?'☾':'☀';themeBtn.title=isLight?'Switch to dark mode':'Switch to light mode';themeBtn.setAttribute('aria-label',themeBtn.title)};themeBtn.onclick=()=>{document.body.classList.toggle('light');storageSet('pg_theme',document.body.classList.contains('light')?'light':'dark');syncThemeButton()};// Keep PusoAI's dark-blue appearance as the first-visit default. Respect an explicit saved light preference.
