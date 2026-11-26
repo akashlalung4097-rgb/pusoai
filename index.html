@@ -1615,10 +1615,10 @@ body.pg-camera-open{overflow:hidden;touch-action:none}
   .pg-reference-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 
-.pg-camera-switch{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 12px}
+.pg-camera-switch{display:flex;justify-content:center;margin:0 0 12px}
 .pg-camera-switch[hidden]{display:none!important}
-.pg-camera-switch-btn{min-height:42px;padding:9px 12px;border:1px solid #46506b;border-radius:11px;background:#151c30;color:#d8def2;font-size:13px;font-weight:700;cursor:pointer}
-.pg-camera-switch-btn.is-active{border-color:#8b83ff;background:linear-gradient(110deg,#5144c8,#276e9f);color:#fff;box-shadow:0 4px 18px rgba(96,89,255,.2)}
+.pg-camera-switch-btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-width:min(220px,100%);min-height:42px;padding:9px 18px;border:1px solid #6d71c9;border-radius:999px;background:linear-gradient(110deg,#5144c8,#276e9f);color:#fff;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 18px rgba(96,89,255,.2)}
+.pg-camera-switch-btn span[aria-hidden="true"]{font-size:19px;line-height:1}
 .pg-camera-switch-btn:focus-visible{outline:3px solid #9acaff;outline-offset:2px}
 .pg-camera-switch-btn:disabled{opacity:.55;cursor:wait}
 </style>
@@ -1754,7 +1754,7 @@ body.pg-camera-open{overflow:hidden;touch-action:none}
 </div>
 </section></div>
 <div id="toast" style="position:fixed;right:18px;bottom:18px;z-index:5000;background:var(--panel);border:1px solid var(--line);padding:12px 15px;border-radius:12px;box-shadow:var(--shadow);display:none"></div>
-<div id="pgCameraDialog" class="pg-camera-dialog" hidden role="dialog" aria-modal="true" aria-labelledby="pgCameraTitle"><div class="pg-camera-card"><div class="pg-camera-header"><div><h3 id="pgCameraTitle">Take a reference photo</h3><p>Position your subject in the frame, then take a photo.</p></div><button type="button" id="pgCameraClose" class="pg-camera-close" aria-label="Close camera">×</button></div><div class="pg-camera-switch" role="group" aria-label="Choose front or back camera"><button type="button" id="pgCameraBack" class="pg-camera-switch-btn is-active" aria-pressed="true">Back Camera</button><button type="button" id="pgCameraFront" class="pg-camera-switch-btn" aria-pressed="false">Front Camera</button></div><div class="pg-camera-view"><video id="pgCameraVideo" autoplay playsinline muted></video><canvas id="pgCameraCanvas" hidden></canvas></div><p id="pgCameraStatus" class="pg-camera-status" role="status" aria-live="polite">Requesting camera access…</p><div class="pg-camera-actions"><button type="button" id="pgCameraRetake" class="secondary" hidden>Retake</button><button type="button" id="pgCameraCapture" class="primary">Take photo</button><button type="button" id="pgCameraUse" class="primary" hidden>Use photo</button></div></div></div>
+<div id="pgCameraDialog" class="pg-camera-dialog" hidden role="dialog" aria-modal="true" aria-labelledby="pgCameraTitle"><div class="pg-camera-card"><div class="pg-camera-header"><div><h3 id="pgCameraTitle">Take a reference photo</h3><p>Position your subject in the frame, then take a photo.</p></div><button type="button" id="pgCameraClose" class="pg-camera-close" aria-label="Close camera">×</button></div><div class="pg-camera-switch" role="group" aria-label="Switch between front and back camera"><button type="button" id="pgCameraToggle" class="pg-camera-switch-btn" aria-label="Switch to front camera"><span aria-hidden="true">↻</span> <span id="pgCameraToggleLabel">Front Camera</span></button></div><div class="pg-camera-view"><video id="pgCameraVideo" autoplay playsinline muted></video><canvas id="pgCameraCanvas" hidden></canvas></div><p id="pgCameraStatus" class="pg-camera-status" role="status" aria-live="polite">Requesting camera access…</p><div class="pg-camera-actions"><button type="button" id="pgCameraRetake" class="secondary" hidden>Retake</button><button type="button" id="pgCameraCapture" class="primary">Take photo</button><button type="button" id="pgCameraUse" class="primary" hidden>Use photo</button></div></div></div>
 <script>
 'use strict';
 
@@ -3120,12 +3120,12 @@ function setupUserUpload(){
   const cameraCaptureBtn=document.getElementById('pgCameraCapture');
   const cameraRetakeBtn=document.getElementById('pgCameraRetake');
   const cameraUseBtn=document.getElementById('pgCameraUse');
-  const cameraBackBtn=document.getElementById('pgCameraBack');
-  const cameraFrontBtn=document.getElementById('pgCameraFront');
+  const cameraToggleBtn=document.getElementById('pgCameraToggle');
+  const cameraToggleLabel=document.getElementById('pgCameraToggleLabel');
   const cameraSwitch=document.querySelector('.pg-camera-switch');
   let cameraStream=null,cameraPhotoBlob=null,cameraRequestId=0,cameraFacingMode='environment';
   const stopCameraStream=()=>{if(cameraStream){cameraStream.getTracks().forEach(track=>track.stop());cameraStream=null;}if(cameraVideo)cameraVideo.srcObject=null;};
-  const updateCameraChoice=()=>{if(cameraBackBtn){const active=cameraFacingMode==='environment';cameraBackBtn.classList.toggle('is-active',active);cameraBackBtn.setAttribute('aria-pressed',String(active));}if(cameraFrontBtn){const active=cameraFacingMode==='user';cameraFrontBtn.classList.toggle('is-active',active);cameraFrontBtn.setAttribute('aria-pressed',String(active));}};
+  const updateCameraChoice=()=>{const nextLabel=cameraFacingMode==='environment'?'Front Camera':'Back Camera';if(cameraToggleLabel)cameraToggleLabel.textContent=nextLabel;if(cameraToggleBtn)cameraToggleBtn.setAttribute('aria-label','Switch to '+(cameraFacingMode==='environment'?'front':'back')+' camera');};
   const closeCamera=()=>{cameraRequestId++;stopCameraStream();if(cameraDialog)cameraDialog.hidden=true;document.body.classList.remove('pg-camera-open');if(cameraVideo)cameraVideo.hidden=false;if(cameraCanvas)cameraCanvas.hidden=true;cameraPhotoBlob=null;if(cameraCaptureBtn)cameraCaptureBtn.hidden=false;if(cameraRetakeBtn)cameraRetakeBtn.hidden=true;if(cameraUseBtn)cameraUseBtn.hidden=true;if(cameraSwitch)cameraSwitch.hidden=false;};
   const startCamera=async(facingMode,strict=false)=>{
     if(!navigator.mediaDevices?.getUserMedia){cameraStatus.textContent='Live camera is unavailable in this browser. Please choose a photo from Gallery.';return false;}
@@ -3167,8 +3167,7 @@ function setupUserUpload(){
     cameraDialog.hidden=false;document.body.classList.add('pg-camera-open');
     await startCamera('environment',false);
   };
-  cameraBackBtn?.addEventListener('click',()=>{if(!cameraPhotoBlob&&cameraDialog&&!cameraDialog.hidden&&cameraFacingMode!=='environment')startCamera('environment',true);});
-  cameraFrontBtn?.addEventListener('click',()=>{if(!cameraPhotoBlob&&cameraDialog&&!cameraDialog.hidden&&cameraFacingMode!=='user')startCamera('user',true);});
+  cameraToggleBtn?.addEventListener('click',()=>{if(cameraPhotoBlob||!cameraDialog||cameraDialog.hidden)return;const nextFacing=cameraFacingMode==='environment'?'user':'environment';startCamera(nextFacing,true);});
   document.getElementById('pgOpenCamera')?.addEventListener('click',openCamera);
   document.getElementById('pgOpenGallery')?.addEventListener('click',()=>fileInput.click());
   document.getElementById('pgCameraClose')?.addEventListener('click',closeCamera);
