@@ -1737,6 +1737,7 @@ body.pg-camera-open{overflow:hidden;touch-action:none}
 </div>
 </section></div>
 <div id="toast" style="position:fixed;right:18px;bottom:18px;z-index:5000;background:var(--panel);border:1px solid var(--line);padding:12px 15px;border-radius:12px;box-shadow:var(--shadow);display:none"></div>
+<div id="pgCameraDialog" class="pg-camera-dialog" hidden role="dialog" aria-modal="true" aria-labelledby="pgCameraTitle"><div class="pg-camera-card"><div class="pg-camera-header"><div><h3 id="pgCameraTitle">Take a reference photo</h3><p>Position your subject in the frame, then take a photo.</p></div><button type="button" id="pgCameraClose" class="pg-camera-close" aria-label="Close camera">×</button></div><div class="pg-camera-view"><video id="pgCameraVideo" autoplay playsinline muted></video><canvas id="pgCameraCanvas" hidden></canvas></div><p id="pgCameraStatus" class="pg-camera-status" role="status" aria-live="polite">Requesting camera access…</p><div class="pg-camera-actions"><button type="button" id="pgCameraRetake" class="secondary" hidden>Retake</button><button type="button" id="pgCameraCapture" class="primary">Take photo</button><button type="button" id="pgCameraUse" class="primary" hidden>Use photo</button></div></div></div>
 <script>
 'use strict';
 
@@ -3115,15 +3116,20 @@ function setupUserUpload(){
     cameraDialog.hidden=false;document.body.classList.add('pg-camera-open');cameraStatus.textContent='Allow camera access in your browser to continue.';
     try{
       let stream;
-      try{stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}}});}
-      catch(firstError){if(firstError?.name==='OverconstrainedError'||firstError?.name==='NotFoundError'||firstError?.name==='ConstraintNotSatisfiedError'){stream=await navigator.mediaDevices.getUserMedia({audio:false,video:true});}else throw firstError;}
+      try{stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:'environment'}}});}
+      catch(firstError){
+        if(firstError?.name==='OverconstrainedError'||firstError?.name==='NotFoundError'||firstError?.name==='ConstraintNotSatisfiedError'||firstError?.name==='TypeError'){
+          try{stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:'environment'}});}
+          catch(_rearCameraError){stream=await navigator.mediaDevices.getUserMedia({audio:false,video:true});}
+        }else throw firstError;
+      }
       if(requestId!==cameraRequestId||cameraDialog.hidden){stream.getTracks().forEach(track=>track.stop());return;}
       cameraStream=stream;cameraVideo.srcObject=stream;
       try{await cameraVideo.play();}catch(_playError){}
       cameraStatus.textContent='Camera is ready. Tap “Take photo” when you are ready.';
     }catch(error){
       if(requestId!==cameraRequestId)return;
-      const message=error?.name==='NotAllowedError'||error?.name==='PermissionDeniedError'?'Camera permission was denied. Allow camera access in your browser settings, then try again.':error?.name==='NotFoundError'?'No camera was found on this device. Choose a photo from Gallery instead.':location.protocol!=='https:'&&location.hostname!=='localhost'?'Camera access requires HTTPS. Open PusoAI using https://pusoai.online/.':'Could not open the camera. Please choose a photo from Gallery.';
+      const message=location.protocol!=='https:'&&location.hostname!=='localhost'?'Camera access requires HTTPS. Open PusoAI using https://pusoai.online/.':error?.name==='NotAllowedError'||error?.name==='PermissionDeniedError'?'Camera permission was blocked. In your browser or device settings, allow camera access for pusoai.online, then reload the page.':error?.name==='NotFoundError'?'No usable camera was found. Choose a photo from Gallery instead.':error?.name==='NotReadableError'||error?.name==='AbortError'?'The camera may be in use by another app. Close other camera apps and try again.':error?.name==='SecurityError'?'Your browser blocked camera access. Check site permissions and open PusoAI over HTTPS.':'Could not open the camera. Check browser camera permission or choose a photo from Gallery.';
       cameraStatus.textContent=message;cameraCaptureBtn.hidden=true;
     }
   };
@@ -4884,5 +4890,5 @@ startPusoAI();
 </script>
 <script src="/studio.js" defer></script>
 
-<div id="pgCameraDialog" class="pg-camera-dialog" hidden role="dialog" aria-modal="true" aria-labelledby="pgCameraTitle"><div class="pg-camera-card"><div class="pg-camera-header"><div><h3 id="pgCameraTitle">Take a reference photo</h3><p>Position your subject in the frame, then take a photo.</p></div><button type="button" id="pgCameraClose" class="pg-camera-close" aria-label="Close camera">×</button></div><div class="pg-camera-view"><video id="pgCameraVideo" autoplay playsinline muted></video><canvas id="pgCameraCanvas" hidden></canvas></div><p id="pgCameraStatus" class="pg-camera-status" role="status" aria-live="polite">Requesting camera access…</p><div class="pg-camera-actions"><button type="button" id="pgCameraRetake" class="secondary" hidden>Retake</button><button type="button" id="pgCameraCapture" class="primary">Take photo</button><button type="button" id="pgCameraUse" class="primary" hidden>Use photo</button></div></div></div><div id="pgPreviewImageModal" class="pg-preview-image-modal" hidden role="dialog" aria-modal="true" aria-label="Full size image preview"><button id="pgPreviewImageModalClose" class="pg-preview-image-modal-close" type="button" aria-label="Close full size image">×</button><img id="pgPreviewImageModalImg" alt="Full size PusoAI preview"></div>
+<div id="pgPreviewImageModal" class="pg-preview-image-modal" hidden role="dialog" aria-modal="true" aria-label="Full size image preview"><button id="pgPreviewImageModalClose" class="pg-preview-image-modal-close" type="button" aria-label="Close full size image">×</button><img id="pgPreviewImageModalImg" alt="Full size PusoAI preview"></div>
 </body></html>
