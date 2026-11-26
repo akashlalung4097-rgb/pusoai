@@ -3959,7 +3959,7 @@ async function renderUserSubmissions(){
   if(refreshButton)refreshButton.disabled=true;
   try{
     const rows=await fetchAllSupabaseRows(
-      ()=>sbClient.from(SUBMISSIONS_TABLE).select('*').order('created',{ascending:false}).order('id',{ascending:false}),
+      ()=>sbClient.from(SUBMISSIONS_TABLE).select('id,submitter_name,prompt,storage_path,created,status,media_type').order('created',{ascending:false}).order('id',{ascending:false}),
       500
     );
     userSubmissions=(rows||[]).slice().sort((a,b)=>{
