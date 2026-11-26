@@ -1563,6 +1563,48 @@ body.pg-preview-modal-open{overflow:hidden!important;touch-action:none!important
 @media(max-width:600px){.submission-review-grid{grid-template-columns:minmax(0,1fr)}.community-submission-preview{height:210px}.submission-review-stat{flex:1}}
 </style>
 
+<style id="pusoai-reference-camera">
+#userPhotoFile[hidden]{display:none!important}
+.pg-reference-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}
+.pg-reference-action{display:flex;align-items:center;justify-content:flex-start;gap:12px;min-width:0;min-height:68px;padding:12px 14px;border:1px solid rgba(116,134,255,.35);border-radius:14px;background:linear-gradient(135deg,rgba(20,184,255,.13),rgba(108,99,255,.18));color:var(--text);text-align:left;cursor:pointer;transition:border-color .18s ease,transform .18s ease,box-shadow .18s ease}
+.pg-reference-action:hover{border-color:#7d75ff;box-shadow:0 8px 24px rgba(94,83,255,.16);transform:translateY(-1px)}
+.pg-reference-action:focus-visible{outline:3px solid #8da8ff;outline-offset:3px}
+.pg-reference-action svg{width:25px;height:25px;flex:0 0 25px;fill:none;stroke:#8adfff;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.pg-reference-action span{display:grid;gap:3px;min-width:0}
+.pg-reference-action b{font-size:14px;line-height:1.25}
+.pg-reference-action small{font-size:11px;color:var(--muted);line-height:1.35}
+body.light .pg-reference-action{background:linear-gradient(135deg,#eefaff,#f3f0ff);border-color:#cbd5ff;color:#17152d}
+body.light .pg-reference-action small{color:#5b5d70}
+.pg-camera-dialog[hidden]{display:none!important}
+.pg-camera-dialog{position:fixed;inset:0;z-index:2147483100;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(2,5,14,.88);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.pg-camera-card{width:min(680px,100%);max-height:calc(100dvh - 36px);overflow:auto;border:1px solid rgba(142,151,255,.35);border-radius:20px;padding:18px;background:#0c1020;color:#fff;box-shadow:0 24px 90px #0009}
+.pg-camera-header{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:14px}
+.pg-camera-header h3{margin:0;font-size:20px}
+.pg-camera-header p{margin:6px 0 0;color:#b8bfd5;font-size:13px;line-height:1.5}
+.pg-camera-close{display:grid;place-items:center;flex:0 0 42px;width:42px;height:42px;border:1px solid #414963;border-radius:50%;background:#192039;color:#fff;font-size:29px;line-height:1;cursor:pointer}
+.pg-camera-view{display:grid;place-items:center;width:100%;min-height:220px;max-height:62dvh;overflow:hidden;border-radius:14px;background:#03050a}
+.pg-camera-view video,.pg-camera-view canvas{display:block;width:100%;max-height:62dvh;object-fit:contain}
+.pg-camera-view video[hidden],.pg-camera-view canvas[hidden]{display:none!important}
+.pg-camera-status{min-height:22px;margin:12px 0;color:#d2d8ed;font-size:13px;line-height:1.5}
+.pg-camera-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:9px}
+.pg-camera-actions button{min-height:44px;padding:10px 16px;border-radius:12px}
+.pg-camera-actions button[hidden]{display:none!important}
+body.pg-camera-open{overflow:hidden;touch-action:none}
+@media(max-width:520px){
+ .pg-reference-actions{gap:8px}
+ .pg-reference-action{min-height:64px;padding:10px;gap:8px}
+ .pg-reference-action svg{width:22px;height:22px;flex-basis:22px}
+ .pg-reference-action b{font-size:12px}
+ .pg-reference-action small{font-size:10px}
+ .pg-camera-dialog{padding:10px}
+ .pg-camera-card{max-height:calc(100dvh - 20px);padding:13px;border-radius:16px}
+ .pg-camera-view{min-height:180px;max-height:58dvh}
+ .pg-camera-view video,.pg-camera-view canvas{max-height:58dvh}
+ .pg-camera-actions{display:grid;grid-template-columns:1fr 1fr}
+ .pg-camera-actions button{width:100%;padding:10px 8px;font-size:13px}
+ .pg-camera-actions #pgCameraUse{grid-column:1/-1}
+}
+</style>
 </head>
 <body>
 <div id="aiGenerationOverlay" class="ai-generation-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="aiGenTitle" aria-describedby="aiGenDetail" aria-live="polite">
@@ -1598,7 +1640,7 @@ body.pg-preview-modal-open{overflow:hidden!important;touch-action:none!important
 <form id="userPhotoForm" class="pg-generator-form" novalidate>
 <div class="pg-field-heading"><label for="userPhotoPrompt">Your prompt</label><button class="pg-suggest-btn" id="pgSuggestPrompt" type="button">✧ Suggest prompt</button></div>
 <textarea id="userPhotoPrompt" name="prompt" minlength="5" maxlength="1500" placeholder="A cinematic view of a quiet mountain lake at blue hour, soft mist, dramatic natural lighting…" required></textarea><div class="pg-prompt-meta"><span>Be descriptive for better results</span><span id="pgPromptCount">0 / 1500</span></div>
-<div class="pg-upload-section"><div class="pg-field-heading"><label for="userPhotoFile">Reference image</label><small>OPTIONAL</small></div><label class="pg-upload-zone" for="userPhotoFile"><span class="pg-upload-symbol">⇧</span><span><b>Upload a reference image</b><small>Drop an image here or <u>browse files</u></small></span><span class="pg-upload-arrow">＋</span></label><input id="userPhotoFile" class="pg-file-input" name="photo" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif"><div class="pg-upload-status"><span id="aiModeHint" aria-live="polite">Text-to-image mode · No reference selected</span><button type="button" id="cancelSelectedPhoto">Remove</button></div></div>
+<div class="pg-upload-section"><div class="pg-field-heading"><label for="userPhotoFile">Reference image</label><small>OPTIONAL</small></div><div class="pg-reference-actions" role="group" aria-label="Add a reference image"><button type="button" id="pgOpenCamera" class="pg-reference-action"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7.5h3l1.5-2h7l1.5 2h3A1.5 1.5 0 0 1 21.5 9v9A1.5 1.5 0 0 1 20 19.5H4A1.5 1.5 0 0 1 2.5 18V9A1.5 1.5 0 0 1 4 7.5Z"/><circle cx="12" cy="13" r="3.5"/></svg><span><b>Live Camera</b><small>Take a new photo</small></span></button><button type="button" id="pgOpenGallery" class="pg-reference-action"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3.5" width="18" height="17" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="m4 17 5-5 3 3 2-2 6 5"/></svg><span><b>Gallery</b><small>Choose an existing image</small></span></button></div><input id="userPhotoFile" class="pg-file-input" name="photo" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif" hidden><div class="pg-upload-status"><span id="aiModeHint" aria-live="polite">Text-to-image mode · No reference selected</span><button type="button" id="cancelSelectedPhoto">Remove</button></div></div>
 <div class="pg-control-grid" id="studioSettings"><div class="pg-control-field"><label for="pgStyleSelect">Visual style</label><select id="pgStyleSelect"><option value="none">Auto · Balanced</option><option value="cinematic">Cinematic</option><option value="photorealistic">Photorealistic</option><option value="digital-art">Digital art</option><option value="anime">Anime</option><option value="illustration">Illustration</option><option value="minimal">Minimal</option><option value="3d">3D render</option></select></div><div class="pg-control-field pg-model-field"><span>AI model</span><b id="pgActiveModel">FLUX.1 Schnell</b><small>Auto-selected for your workflow</small></div></div>
 
 <div class="pg-generate-actions"><button class="pg-generate-btn" id="generateAiImage" type="button"><span>✦</span> Generate image <b>→</b></button><button class="pg-cancel-generation" id="cancelAiGeneration" type="button" style="display:none">Cancel generation</button></div>
@@ -3053,6 +3095,66 @@ function setupUserUpload(){
   document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement)document.getElementById('pgPreviewStage')?.classList.remove('preview-fullscreen-fallback');});
   const modeHint=document.getElementById('aiModeHint');
   if(!form||!fileInput)return;
+  const cameraDialog=document.getElementById('pgCameraDialog');
+  const cameraVideo=document.getElementById('pgCameraVideo');
+  const cameraCanvas=document.getElementById('pgCameraCanvas');
+  const cameraStatus=document.getElementById('pgCameraStatus');
+  const cameraCaptureBtn=document.getElementById('pgCameraCapture');
+  const cameraRetakeBtn=document.getElementById('pgCameraRetake');
+  const cameraUseBtn=document.getElementById('pgCameraUse');
+  let cameraStream=null,cameraPhotoBlob=null,cameraRequestId=0;
+  const stopCameraStream=()=>{if(cameraStream){cameraStream.getTracks().forEach(track=>track.stop());cameraStream=null;}if(cameraVideo)cameraVideo.srcObject=null;};
+  const closeCamera=()=>{cameraRequestId++;stopCameraStream();if(cameraDialog)cameraDialog.hidden=true;document.body.classList.remove('pg-camera-open');if(cameraVideo)cameraVideo.hidden=false;if(cameraCanvas)cameraCanvas.hidden=true;cameraPhotoBlob=null;if(cameraCaptureBtn)cameraCaptureBtn.hidden=false;if(cameraRetakeBtn)cameraRetakeBtn.hidden=true;if(cameraUseBtn)cameraUseBtn.hidden=true;};
+  const openCamera=async()=>{
+    if(!cameraDialog||!cameraVideo||!cameraStatus)return;
+    if(!navigator.mediaDevices?.getUserMedia){status.textContent='Live camera is unavailable in this browser. Please choose a photo from Gallery.';return;}
+    const requestId=++cameraRequestId;
+    stopCameraStream();cameraPhotoBlob=null;
+    cameraVideo.hidden=false;if(cameraCanvas)cameraCanvas.hidden=true;
+    if(cameraCaptureBtn)cameraCaptureBtn.hidden=false;if(cameraRetakeBtn)cameraRetakeBtn.hidden=true;if(cameraUseBtn)cameraUseBtn.hidden=true;
+    cameraDialog.hidden=false;document.body.classList.add('pg-camera-open');cameraStatus.textContent='Allow camera access in your browser to continue.';
+    try{
+      let stream;
+      try{stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}}});}
+      catch(firstError){if(firstError?.name==='OverconstrainedError'||firstError?.name==='NotFoundError'||firstError?.name==='ConstraintNotSatisfiedError'){stream=await navigator.mediaDevices.getUserMedia({audio:false,video:true});}else throw firstError;}
+      if(requestId!==cameraRequestId||cameraDialog.hidden){stream.getTracks().forEach(track=>track.stop());return;}
+      cameraStream=stream;cameraVideo.srcObject=stream;
+      try{await cameraVideo.play();}catch(_playError){}
+      cameraStatus.textContent='Camera is ready. Tap “Take photo” when you are ready.';
+    }catch(error){
+      if(requestId!==cameraRequestId)return;
+      const message=error?.name==='NotAllowedError'||error?.name==='PermissionDeniedError'?'Camera permission was denied. Allow camera access in your browser settings, then try again.':error?.name==='NotFoundError'?'No camera was found on this device. Choose a photo from Gallery instead.':location.protocol!=='https:'&&location.hostname!=='localhost'?'Camera access requires HTTPS. Open PusoAI using https://pusoai.online/.':'Could not open the camera. Please choose a photo from Gallery.';
+      cameraStatus.textContent=message;cameraCaptureBtn.hidden=true;
+    }
+  };
+  document.getElementById('pgOpenCamera')?.addEventListener('click',openCamera);
+  document.getElementById('pgOpenGallery')?.addEventListener('click',()=>fileInput.click());
+  document.getElementById('pgCameraClose')?.addEventListener('click',closeCamera);
+  cameraDialog?.addEventListener('click',event=>{if(event.target===cameraDialog)closeCamera();});
+  cameraCaptureBtn?.addEventListener('click',()=>{
+    if(!cameraVideo?.videoWidth||!cameraCanvas)return;
+    const scale=Math.min(1,2560/Math.max(cameraVideo.videoWidth,cameraVideo.videoHeight));
+    cameraCanvas.width=Math.max(1,Math.round(cameraVideo.videoWidth*scale));cameraCanvas.height=Math.max(1,Math.round(cameraVideo.videoHeight*scale));
+    const context=cameraCanvas.getContext('2d');if(!context){cameraStatus.textContent='Could not capture this photo. Please try again.';return;}
+    context.drawImage(cameraVideo,0,0,cameraCanvas.width,cameraCanvas.height);
+    cameraCanvas.toBlob(blob=>{
+      if(!blob){cameraStatus.textContent='Could not prepare this photo. Please try again.';return;}
+      cameraPhotoBlob=blob;cameraVideo.hidden=true;cameraCanvas.hidden=false;cameraCaptureBtn.hidden=true;cameraRetakeBtn.hidden=false;cameraUseBtn.hidden=false;cameraStatus.textContent='Photo captured. Retake it or use this photo as your reference.';
+    },'image/jpeg',0.9);
+  });
+  cameraRetakeBtn?.addEventListener('click',()=>{cameraPhotoBlob=null;cameraCanvas.hidden=true;cameraVideo.hidden=false;cameraCaptureBtn.hidden=false;cameraRetakeBtn.hidden=true;cameraUseBtn.hidden=true;cameraStatus.textContent='Camera is ready. Tap “Take photo” when you are ready.';});
+  cameraUseBtn?.addEventListener('click',()=>{
+    if(!cameraPhotoBlob)return;
+    try{
+      const file=new File([cameraPhotoBlob],'pusoai-camera-'+Date.now()+'.jpg',{type:'image/jpeg',lastModified:Date.now()});
+      if(typeof DataTransfer==='undefined')throw new Error('File selection is not supported in this browser.');
+      const transfer=new DataTransfer();transfer.items.add(file);fileInput.files=transfer.files;
+      closeCamera();fileInput.dispatchEvent(new Event('change',{bubbles:true}));
+      status.textContent='Camera photo selected. Write your prompt and click Generate / Edit With AI.';
+    }catch(error){cameraStatus.textContent='Could not attach the captured photo. Please choose it from Gallery instead.';}
+  });
+  document.addEventListener('keydown',event=>{if(event.key==='Escape'&&cameraDialog&&!cameraDialog.hidden)closeCamera();});
+  window.addEventListener('pagehide',stopCameraStream);
   const clearSelectedPhoto=()=>{
     if(uploadInProgress){status.textContent='An upload is running. Use “Cancel Upload” to stop it safely.';return;}
     fileInput.value='';generatedImageFile=null;
@@ -4782,5 +4884,5 @@ startPusoAI();
 </script>
 <script src="/studio.js" defer></script>
 
-<div id="pgPreviewImageModal" class="pg-preview-image-modal" hidden role="dialog" aria-modal="true" aria-label="Full size image preview"><button id="pgPreviewImageModalClose" class="pg-preview-image-modal-close" type="button" aria-label="Close full size image">×</button><img id="pgPreviewImageModalImg" alt="Full size PusoAI preview"></div>
+<div id="pgCameraDialog" class="pg-camera-dialog" hidden role="dialog" aria-modal="true" aria-labelledby="pgCameraTitle"><div class="pg-camera-card"><div class="pg-camera-header"><div><h3 id="pgCameraTitle">Take a reference photo</h3><p>Position your subject in the frame, then take a photo.</p></div><button type="button" id="pgCameraClose" class="pg-camera-close" aria-label="Close camera">×</button></div><div class="pg-camera-view"><video id="pgCameraVideo" autoplay playsinline muted></video><canvas id="pgCameraCanvas" hidden></canvas></div><p id="pgCameraStatus" class="pg-camera-status" role="status" aria-live="polite">Requesting camera access…</p><div class="pg-camera-actions"><button type="button" id="pgCameraRetake" class="secondary" hidden>Retake</button><button type="button" id="pgCameraCapture" class="primary">Take photo</button><button type="button" id="pgCameraUse" class="primary" hidden>Use photo</button></div></div></div><div id="pgPreviewImageModal" class="pg-preview-image-modal" hidden role="dialog" aria-modal="true" aria-label="Full size image preview"><button id="pgPreviewImageModalClose" class="pg-preview-image-modal-close" type="button" aria-label="Close full size image">×</button><img id="pgPreviewImageModalImg" alt="Full size PusoAI preview"></div>
 </body></html>
