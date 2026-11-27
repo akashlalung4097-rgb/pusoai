@@ -2106,6 +2106,31 @@ async function loadSharedSettings(){
     return false;
   }
 }
+function isPhotoInteractionOnlyUpdate(existing,updated){
+  if(!existing||!updated)return false;
+  const interactionFields=new Set(['likes','views','downloads']);
+  const keys=new Set([...Object.keys(existing),...Object.keys(updated)]);
+  for(const key of keys){
+    if(interactionFields.has(key))continue;
+    const before=JSON.stringify(existing[key]??null);
+    const after=JSON.stringify(updated[key]??null);
+    if(before!==after)return false;
+  }
+  return true;
+}
+function updatePhotoMetricsUI(photo){
+  if(!photo)return;
+  const photoId=String(photo.id);
+  document.querySelectorAll('#photoGrid .photo-card').forEach(card=>{
+    const likeButton=card.querySelector('button[data-act="like"]');
+    if(!likeButton||String(likeButton.dataset.id)!==photoId)return;
+    const metrics=card.querySelectorAll('.photo-meta span');
+    if(metrics[0])metrics[0].textContent='♥ '+(Number(photo.likes)||0);
+    if(metrics[1])metrics[1].textContent='👁 '+(Number(photo.views)||0);
+  });
+  updatePhotoLikeUI(photo);
+}
+
 function subscribeToPublicPhotos(){
   if(!CLOUD_ENABLED||!sbClient||publicPhotosRealtimeChannel)return;
   publicPhotosRealtimeChannel=sbClient.channel('public-pusoai-gallery-live')
@@ -2126,8 +2151,25 @@ function subscribeToPublicPhotos(){
         const updated=remoteToLocalPhoto(row);
         if(typeof updated.src==='string'&&updated.src.trim()){
           const existingIndex=photos.findIndex(photo=>String(photo.id)===String(updated.id));
-          if(existingIndex>=0)photos[existingIndex]=updated;
-          else{photos.push(updated);addPusoaiNotification('photo','New photo in the gallery','“'+(updated.name||'A new photo')+'” is now available in PusoAI.');}
+          if(existingIndex>=0){
+            const existing=photos[existingIndex];
+            /* Likes, views and downloads are frequent counter-only updates.
+               Keep the existing card DOM in place instead of rebuilding the gallery. */
+            if(isPhotoInteractionOnlyUpdate(existing,updated)){
+              existing.likes=updated.likes;
+              existing.views=updated.views;
+              existing.downloads=updated.downloads;
+              data.photos=photos;
+              try{save()}catch(error){console.warn('Photo interaction cache update failed:',error)}
+              updatePhotoMetricsUI(existing);
+              try{updateStats()}catch(error){console.warn('Photo interaction stats refresh failed:',error)}
+              return;
+            }
+            photos[existingIndex]=updated;
+          }else{
+            photos.push(updated);
+            addPusoaiNotification('photo','New photo in the gallery','“'+(updated.name||'A new photo')+'” is now available in PusoAI.');
+          }
           photos.sort((a,b)=>(Number(b.created)||0)-(Number(a.created)||0));
         }else{
           photos=photos.filter(photo=>String(photo.id)!==String(updated.id));
