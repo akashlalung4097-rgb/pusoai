@@ -2625,17 +2625,53 @@ function renderGallery(cat='All',q='',mode='latest'){
     else openPhoto(p.id);
   });
 }
+function updatePhotoLikeUI(photo){
+  if(!photo)return;
+  const photoId=String(photo.id);
+  const liked=visitor.likes.includes(photoId);
+  document.querySelectorAll('#photoGrid .photo-card').forEach(card=>{
+    const button=card.querySelector('[data-act="like"]');
+    if(!button||String(button.dataset.id)!==photoId)return;
+    button.classList.toggle('liked',liked);
+    button.textContent=liked?'♥':'♡';
+    button.setAttribute('aria-pressed',liked?'true':'false');
+    button.setAttribute('aria-label',liked?'Unlike photo':'Like photo');
+    button.title=liked?'Unlike':'Like';
+    const count=card.querySelector('.photo-meta span:first-child');
+    if(count)count.textContent='♥ '+(Number(photo.likes)||0);
+  });
+  const modal=document.getElementById('photoModal');
+  const active=currentList[currentIndex];
+  if(modal&&!modal.classList.contains('hidden')&&active&&String(active.id)===photoId){
+    const button=document.getElementById('modalLike');
+    if(button)button.textContent=liked?'♥ Liked':'♡ Like';
+  }
+}
+
 async function toggleLike(p){
   if(!p?.like)return toast('Likes are disabled for this photo.');
-  const alreadyLiked=visitor.likes.includes(p.id);
+  const photoId=String(p.id);
+  const alreadyLiked=visitor.likes.includes(photoId);
   const willLike=!alreadyLiked;
+
   if(CLOUD_ENABLED){
     if(!sbClient)return toast('Cloud service is unavailable. Refresh and try again.');
     try{
       const result=await syncPhotoInteraction(p,willLike?'like':'unlike');
-      if(willLike){if(!visitor.likes.includes(p.id))visitor.likes.push(p.id);trackLike(p.id);addPusoaiNotification('like','Photo liked','You liked “'+(p.name||'this photo')+'”.');}
-      else visitor.likes=visitor.likes.filter(id=>id!==p.id);
-      if(typeof result?.likes==='number')p.likes=result.likes;
+      if(willLike){
+        if(!visitor.likes.includes(photoId))visitor.likes.push(photoId);
+        if(typeof result?.likes==='number')p.likes=result.likes;
+        else p.likes=(Number(p.likes)||0)+1;
+      }else{
+        visitor.likes=visitor.likes.filter(id=>String(id)!==photoId);
+        if(typeof result?.likes==='number')p.likes=result.likes;
+        else p.likes=Math.max(0,(Number(p.likes)||0)-1);
+      }
+      if(willLike){
+        try{trackLike(photoId);}catch(error){console.warn('Like analytics could not be saved:',error);}
+        try{addPusoaiNotification('like','Photo liked','You liked “'+(p.name||'this photo')+'”.');}
+        catch(error){console.warn('Like notification could not be saved:',error);}
+      }
       saveVisitor();save();
     }catch(err){
       console.warn('Shared like counter unavailable:',err);
@@ -2644,15 +2680,23 @@ async function toggleLike(p){
       return;
     }
   }else{
-    if(willLike){visitor.likes.push(p.id);p.likes=(p.likes||0)+1;trackLike(p.id);addPusoaiNotification('like','Photo liked','You liked “'+(p.name||'this photo')+'”.');}
-    else{visitor.likes=visitor.likes.filter(id=>id!==p.id);p.likes=Math.max(0,(p.likes||0)-1);}
+    if(willLike){
+      if(!visitor.likes.includes(photoId))visitor.likes.push(photoId);
+      p.likes=(Number(p.likes)||0)+1;
+      try{trackLike(photoId);}catch(error){console.warn('Like analytics could not be saved:',error);}
+      try{addPusoaiNotification('like','Photo liked','You liked “'+(p.name||'this photo')+'”.');}
+      catch(error){console.warn('Like notification could not be saved:',error);}
+    }else{
+      visitor.likes=visitor.likes.filter(id=>String(id)!==photoId);
+      p.likes=Math.max(0,(Number(p.likes)||0)-1);
+    }
     saveVisitor();save();
   }
-  const activeChip=document.querySelector('.chip.active');
-  renderGallery(activeChip?.dataset.cat||'All',document.getElementById('searchInput').value,activeChip?.dataset.mode||'latest');
-  updateStats();
-  const active=currentList[currentIndex];
-  if(active?.id===p.id){const btn=document.getElementById('modalLike');btn.textContent=visitor.likes.includes(p.id)?'♥ Liked':'♡ Like';}
+
+  /* Update only this card. Rebuilding the entire gallery on every Like caused
+     unnecessary white flashes and could reset the visitor's current view. */
+  updatePhotoLikeUI(p);
+  try{updateStats();}catch(error){console.warn('Like stats refresh failed:',error);}
 }
 
 async function sharePhoto(p){
