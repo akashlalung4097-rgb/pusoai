@@ -1752,6 +1752,13 @@ body.light #photoModal #commentInput::placeholder{color:#748096!important;opacit
 #cancelPhotoEdit[hidden]{display:none!important}
 </style>
 
+<style id="pusoai-admin-individual-settings-save">
+.admin-setting-save{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:8px}
+.admin-setting-save button{min-height:34px;padding:7px 12px;font-size:12px}
+.admin-setting-status{display:block;min-height:16px;margin-top:5px;color:var(--muted);font-size:11px;line-height:1.4}
+.admin-setting-status.error{color:var(--danger)}
+@media(max-width:700px){.admin-setting-save button{min-height:38px}}
+</style>
 </head>
 <body>
 <div id="aiGenerationOverlay" class="ai-generation-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="aiGenTitle" aria-describedby="aiGenDetail" aria-live="polite">
@@ -1868,7 +1875,7 @@ body.light #photoModal #commentInput::placeholder{color:#748096!important;opacit
     <div class="panel"><h3>Comments Management / Inbox</h3><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><p style="color:var(--muted);margin:0">Visitor comments from all devices appear here after the Supabase comments table is configured.</p><button class="secondary" id="refreshCommentInbox">↻ Refresh Inbox</button></div><div id="adminCommentList" style="margin-top:12px"></div></div>
   </div>
 <div id="tab-users" class="tab hidden"><div class="panel"><div class="admin-dashboard-head"><div><h3>Visitors & Traffic</h3><p>Live cross-device analytics. New visitor activity updates automatically while this panel is open.</p></div><div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap"><div class="analytic-status" id="usersTrafficStatus" role="status" aria-live="polite">Connecting…</div><button type="button" class="secondary" id="refreshUsersTraffic">↻ Refresh now</button></div></div><div class="stats" style="grid-template-columns:repeat(4,minmax(0,1fr))"><div class="stat"><span>Unique visitors</span><b id="uVisitors">—</b></div><div class="stat"><span>Page views</span><b id="uPageViews">—</b></div><div class="stat"><span>Photo views</span><b id="uPhotoViews">—</b></div><div class="stat"><span>Sessions</span><b id="uSessions">—</b></div></div><div id="usersTrafficChart" style="margin-top:18px"></div><div class="tablewrap" style="margin-top:18px"><table class="table"><thead><tr><th>Date (UTC)</th><th>Page views</th><th>Photo views</th><th>Downloads</th><th>Likes</th></tr></thead><tbody id="trafficTable"></tbody></table></div></div><div class="panel"><h3>Recent activity</h3><p class="section-note">Anonymous usage events only. Visitor names, IP addresses and passwords are not collected by this feature.</p><div id="userActivityList"></div></div></div>
-<div id="tab-settings" class="tab hidden"><div class="panel"><h3>Website Settings</h3><div class="admin-grid"><div class="field"><label>Site name</label><input id="siteName" value="PusoAI"></div><div class="field"><label>Contact email</label><input id="siteEmail" value="pusoai001@gmail.com"></div><div class="field"><label>Instagram</label><input id="siteInstagram" value="@akashlost47"></div><div class="field"><label>Hero title</label><input id="siteHero" value="Every image starts with inspiration."></div><div class="field full"><label class="toggle"><span class="switch"><input id="adsenseEnabled" type="checkbox"><span class="slider"></span></span>Enable Google AdSense</label></div><div class="field"><label for="adsensePublisher">AdSense Publisher ID</label><input id="adsensePublisher" inputmode="text" autocomplete="off" spellcheck="false" placeholder="ca-pub-1234567890123456"></div><div class="field"><label for="adsenseSlot">Responsive display ad slot ID (optional)</label><input id="adsenseSlot" inputmode="numeric" autocomplete="off" spellcheck="false" placeholder="1234567890"></div><div class="field full"><p class="community-note">Enter the Publisher ID shown in your own AdSense account and verify it before enabling ads. Ads are OFF by default. For Auto ads, enable Auto ads in AdSense and leave the slot empty. For a manual responsive display ad, create an ad unit in AdSense → Ads → By ad unit → Display ads, then paste its slot ID here. Turning this on only configures the ad code. Ads and earnings require Google AdSense site approval, valid account setup, and available ad inventory.</p><p id="adsenseStatus" class="community-note" role="status" aria-live="polite">AdSense is not yet checked.</p></div><div class="field full"><label>Custom CSS</label><textarea id="customCss" placeholder="Optional CSS"></textarea></div><div class="field full"><label>Text Animation</label><label class="toggle"><span class="switch"><input id="textAnimation" type="checkbox" checked><span class="slider"></span></span>Animate website text</label><p class="community-note">Turn this switch off to disable text entrance and glow animations across the website. Your preference is saved with Website Settings.</p></div></div><div class="panel" style="margin-top:14px;border-color:#6c63ff88"><h3>🔐 AI Image Generation API Key</h3><p style="color:var(--muted);line-height:1.6">Add or replace the OpenAI API key here as the signed-in website owner. The key is sent to a protected Supabase function and encrypted before server-side storage. It is not saved in this HTML file or browser storage.</p><div class="field"><label for="ownerOpenAiApiKey">OpenAI API Key</label><input id="ownerOpenAiApiKey" type="password" autocomplete="new-password" spellcheck="false" placeholder="Paste OpenAI API key (sk-...)"></div><div class="admin-actions"><button class="primary" id="saveOpenAiApiKey" type="button">Save API Key Securely</button><button class="secondary" id="checkOpenAiApiKeyStatus" type="button">Check Key Status</button><button class="danger" id="removeOpenAiApiKey" type="button">Remove Saved Key</button></div><p id="aiApiKeyStatus" role="status" aria-live="polite" style="color:var(--muted);font-size:13px;margin-top:12px">API key status has not been checked yet.</p><p style="color:var(--muted);font-size:12px">One-time setup: add <code>AI_KEY_ENCRYPTION_SECRET</code> to Supabase Edge Function Secrets before saving a key here. Keep this separate from your OpenAI API key.</p></div>
+<div id="tab-settings" class="tab hidden"><div class="panel"><h3>Website Settings</h3><div class="admin-grid"><div class="field"><label for="siteName">Site name</label><input id="siteName" value="PusoAI"><div class="admin-setting-save"><button type="button" class="secondary" id="saveSiteName">Save Site Name</button></div><span id="siteNameSaveStatus" class="admin-setting-status" role="status" aria-live="polite"></span></div><div class="field"><label for="siteEmail">Contact email</label><input id="siteEmail" type="email" value="pusoai001@gmail.com"><div class="admin-setting-save"><button type="button" class="secondary" id="saveContactEmail">Save Contact Email</button></div><span id="contactEmailSaveStatus" class="admin-setting-status" role="status" aria-live="polite"></span></div><div class="field"><label for="siteInstagram">Instagram</label><input id="siteInstagram" value="@akashlost47"><div class="admin-setting-save"><button type="button" class="secondary" id="saveInstagram">Save Instagram</button></div><span id="instagramSaveStatus" class="admin-setting-status" role="status" aria-live="polite"></span></div><div class="field"><label for="siteHero">Hero title</label><input id="siteHero" value="Every image starts with inspiration."><div class="admin-setting-save"><button type="button" class="secondary" id="saveHeroTitle">Save Hero Title</button></div><span id="heroTitleSaveStatus" class="admin-setting-status" role="status" aria-live="polite"></span></div><div class="field full"><label class="toggle"><span class="switch"><input id="adsenseEnabled" type="checkbox"><span class="slider"></span></span>Enable Google AdSense</label><div class="admin-setting-save"><button type="button" class="secondary" id="saveAdSenseEnabled">Save AdSense Status</button></div><span id="adsenseEnabledSaveStatus" class="admin-setting-status" role="status" aria-live="polite"></span></div><div class="field"><label for="adsensePublisher">AdSense Publisher ID</label><input id="adsensePublisher" inputmode="text" autocomplete="off" spellcheck="false" placeholder="ca-pub-1234567890123456"><div class="admin-setting-save"><button type="button" class="secondary" id="saveAdSensePublisher">Save Publisher ID</button></div><span id="adsensePublisherSaveStatus" class="admin-setting-status" role="status" aria-live="polite"></span></div><div class="field"><label for="adsenseSlot">Responsive display ad slot ID (optional)</label><input id="adsenseSlot" inputmode="numeric" autocomplete="off" spellcheck="false" placeholder="1234567890"><div class="admin-setting-save"><button type="button" class="secondary" id="saveAdSenseSlot">Save Ad Slot ID</button></div><span id="adsenseSlotSaveStatus" class="admin-setting-status" role="status" aria-live="polite"></span></div><div class="field full"><p class="community-note">Enter the Publisher ID shown in your own AdSense account and verify it before enabling ads. Ads are OFF by default. For Auto ads, enable Auto ads in AdSense and leave the slot empty. For a manual responsive display ad, create an ad unit in AdSense → Ads → By ad unit → Display ads, then paste its slot ID here. Turning this on only configures the ad code. Ads and earnings require Google AdSense site approval, valid account setup, and available ad inventory.</p><p id="adsenseStatus" class="community-note" role="status" aria-live="polite">AdSense is not yet checked.</p></div><div class="field full"><label for="customCss">Custom CSS</label><textarea id="customCss" placeholder="Optional CSS"></textarea><div class="admin-setting-save"><button type="button" class="secondary" id="saveCustomCss">Save Custom CSS</button></div><span id="customCssSaveStatus" class="admin-setting-status" role="status" aria-live="polite"></span></div><div class="field full"><label>Text Animation</label><label class="toggle"><span class="switch"><input id="textAnimation" type="checkbox" checked><span class="slider"></span></span>Animate website text</label><p class="community-note">Turn this switch off to disable text entrance and glow animations across the website.</p><div class="admin-setting-save"><button type="button" class="secondary" id="saveTextAnimation">Save Text Animation</button></div><span id="textAnimationSaveStatus" class="admin-setting-status" role="status" aria-live="polite"></span></div></div><div class="panel" style="margin-top:14px;border-color:#6c63ff88"><h3>🔐 AI Image Generation API Key</h3><p style="color:var(--muted);line-height:1.6">Add or replace the OpenAI API key here as the signed-in website owner. The key is sent to a protected Supabase function and encrypted before server-side storage. It is not saved in this HTML file or browser storage.</p><div class="field"><label for="ownerOpenAiApiKey">OpenAI API Key</label><input id="ownerOpenAiApiKey" type="password" autocomplete="new-password" spellcheck="false" placeholder="Paste OpenAI API key (sk-...)"></div><div class="admin-actions"><button class="primary" id="saveOpenAiApiKey" type="button">Save API Key Securely</button><button class="secondary" id="checkOpenAiApiKeyStatus" type="button">Check Key Status</button><button class="danger" id="removeOpenAiApiKey" type="button">Remove Saved Key</button></div><p id="aiApiKeyStatus" role="status" aria-live="polite" style="color:var(--muted);font-size:13px;margin-top:12px">API key status has not been checked yet.</p><p style="color:var(--muted);font-size:12px">One-time setup: add <code>AI_KEY_ENCRYPTION_SECRET</code> to Supabase Edge Function Secrets before saving a key here. Keep this separate from your OpenAI API key.</p></div>
 <div class="panel" id="apiStatusMonitor" style="margin-top:14px;border-color:#14b8ff66">
 <h3>📡 AI API Status Monitor</h3>
 <p style="color:var(--muted);line-height:1.6">100 API slots are listed below. Status is checked securely from the owner-only Supabase functions. A configured key does not guarantee provider uptime; actual availability is confirmed when a generation request succeeds.</p>
@@ -1879,7 +1886,7 @@ body.light #photoModal #commentInput::placeholder{color:#748096!important;opacit
 <div id="apiStatusRows" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px;max-height:360px;overflow:auto;padding:2px" aria-live="polite"></div>
 <p style="color:var(--muted);font-size:12px;margin-top:12px">API 1 uses the saved OpenAI key status. API 2 uses the saved Cloudflare credentials status. API 3–100 are reserved slots and will remain Not configured until additional providers are connected. Secret keys are never displayed here.</p>
 </div>
-<div class="panel" style="margin-top:14px;border-color:#6c63ff55"><h3>☁ Public Cloud Storage</h3><p style="color:var(--muted);line-height:1.6">Cloud mode stores uploaded media in Supabase Storage and photo records in Supabase Database, so public visitors on other devices can see the same published photos. Configure the Supabase values at the top of this HTML file first.</p><div class="admin-actions"><button class="secondary" id="migrateLocalPhotos">Migrate Browser Photos to Cloud</button></div></div><button class="primary" id="saveSettings">Save Settings</button><p id="siteSettingsStatus" role="status" aria-live="polite" style="color:var(--muted);font-size:12px;margin-top:12px">Checking shared Supabase settings…</p></div></div>
+<div class="panel" style="margin-top:14px;border-color:#6c63ff55"><h3>☁ Public Cloud Storage</h3><p style="color:var(--muted);line-height:1.6">Cloud mode stores uploaded media in Supabase Storage and photo records in Supabase Database, so public visitors on other devices can see the same published photos. Configure the Supabase values at the top of this HTML file first.</p><div class="admin-actions"><button class="secondary" id="migrateLocalPhotos">Migrate Browser Photos to Cloud</button></div></div><p id="siteSettingsStatus" role="status" aria-live="polite" style="color:var(--muted);font-size:12px;margin-top:12px">Each setting has its own Save button. Changes are shared with visitors after saving.</p></div></div>
 <div id="tab-cloudflare-ai" class="tab hidden"><div class="panel"><h3>Cloudflare Workers AI Settings</h3><p style="color:var(--muted);line-height:1.6">Configure Cloudflare Workers AI for text-to-image generation and reference-photo editing. Your Account ID and API token are sent to an owner-only Supabase Edge Function and encrypted before storage; they are not saved in this HTML file or browser storage. When configured, Cloudflare Workers AI will be used for image generation once the generate-image Edge Function is deployed.</p></div><div class="panel" style="margin-top:14px;border-color:#f3802088"><h3>☁ Cloudflare Workers AI</h3><p style="color:var(--muted);line-height:1.6">Configure Cloudflare Workers AI for text-to-image generation and reference-photo editing. Your Account ID and API token are sent to an owner-only Supabase Edge Function and encrypted before storage; they are not saved in this HTML file or browser storage. When configured, Cloudflare Workers AI will be used for image generation once the generate-image Edge Function is deployed.</p><div class="field"><label for="cloudflareAccountId">Cloudflare Account ID</label><input id="cloudflareAccountId" type="text" autocomplete="off" spellcheck="false" placeholder="32-character Cloudflare Account ID"></div><div class="field" style="margin-top:10px"><label for="cloudflareApiToken">Cloudflare Workers AI API Token</label><input id="cloudflareApiToken" type="password" autocomplete="new-password" spellcheck="false" placeholder="Paste Cloudflare Workers AI API token"></div><div class="admin-actions" style="margin-top:12px"><button class="primary" id="saveCloudflareWorkersAiKey" type="button">Save Cloudflare Settings Securely</button><button class="secondary" id="checkCloudflareWorkersAiStatus" type="button">Check Status</button><button class="danger" id="removeCloudflareWorkersAiKey" type="button">Remove Cloudflare Settings</button></div><p id="cloudflareWorkersAiStatus" role="status" aria-live="polite" style="color:var(--muted);font-size:13px;margin-top:12px">Cloudflare Workers AI status has not been checked yet.</p><p style="color:var(--muted);font-size:12px">One-time setup: add <code>AI_KEY_ENCRYPTION_SECRET</code> to Supabase Edge Function Secrets (at least 32 characters) before saving. Create a token with Workers AI permissions. Keep both the token and encryption secret private.</p></div>
 </div>
 </section></div>
@@ -5208,57 +5215,98 @@ function applySiteSettings(){
   applyTextAnimation();
   void applyAdSenseSettings(settings);
 }
-async function saveSettings(){
-  if(!requireAdmin())return toast('Only the signed-in owner can save website settings.');
-  if(!sbClient)return toast('Supabase is unavailable. Refresh and try again.');
-  const nextSettings=normalizeSiteSettings({
-    siteName:document.getElementById('siteName').value.trim()||'PusoAI',
-    email:document.getElementById('siteEmail').value.trim(),
-    instagram:document.getElementById('siteInstagram').value.trim(),
-    hero:document.getElementById('siteHero').value.trim()||'Every image starts with inspiration.',
-    adsenseEnabled:document.getElementById('adsenseEnabled').checked,
-    adsensePublisher:document.getElementById('adsensePublisher').value.trim(),
-    adsenseSlot:document.getElementById('adsenseSlot').value.trim(),
-    customCss:document.getElementById('customCss').value,
-    textAnimation:document.getElementById('textAnimation').checked,
-    categories:categories.slice()
-  });
-  if(nextSettings.email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(nextSettings.email)){
-    setSharedSettingsStatus('Enter a valid contact email address before saving.',true);
-    return toast('Please check the contact email address.');
+function setAdminSettingStatus(id,message,isError=false){
+  const el=document.getElementById(id);
+  if(!el)return;
+  el.textContent=message;
+  el.classList.toggle('error',!!isError);
+}
+async function saveSharedSettingsPatch(patch,options={}){
+  if(!requireAdmin()){
+    const message='Only the signed-in owner can save website settings.';
+    if(options.statusId)setAdminSettingStatus(options.statusId,message,true);
+    return false;
   }
-  if(nextSettings.adsenseEnabled&&!ADSENSE_PUBLISHER_PATTERN.test(nextSettings.adsensePublisher)){
-    setSharedSettingsStatus('Enter a valid AdSense Publisher ID: ca-pub- followed by 16 digits.',true);
-    return toast('Please check the AdSense Publisher ID.');
+  if(!sbClient){
+    const message='Supabase is unavailable. Refresh the page and try again.';
+    if(options.statusId)setAdminSettingStatus(options.statusId,message,true);
+    toast(message);
+    return false;
   }
-  if(nextSettings.adsenseEnabled&&nextSettings.adsenseSlot&&!ADSENSE_SLOT_PATTERN.test(nextSettings.adsenseSlot)){
-    setSharedSettingsStatus('Ad slot ID must contain 6–20 digits.',true);
-    return toast('Please check the AdSense ad slot ID.');
-  }
-  const button=document.getElementById('saveSettings');
-  const oldLabel=button.textContent;
-  button.disabled=true;button.textContent='Publishing…';
-  setSharedSettingsStatus('Saving settings to Supabase for all visitors…');
+  const button=options.buttonId?document.getElementById(options.buttonId):null;
+  const oldLabel=button?.textContent||'';
+  if(button){button.disabled=true;button.textContent='Saving…';}
+  if(options.statusId)setAdminSettingStatus(options.statusId,'Saving this setting to Supabase…');
+  setSharedSettingsStatus('Saving '+(options.label||'setting')+' for all visitors…');
   try{
+    /* Read the latest shared row first, then merge only this button's field.
+       This prevents an unsaved value in another input from overwriting live settings. */
+    const {data:currentRow,error:readError}=await sbClient.from(SITE_SETTINGS_TABLE)
+      .select('settings').eq('id','global').maybeSingle();
+    if(readError)throw readError;
+    const current=normalizeSiteSettings(currentRow?.settings||data.settings);
+    const nextSettings=normalizeSiteSettings({...current,...patch});
     const {data:row,error}=await sbClient.from(SITE_SETTINGS_TABLE).upsert({
       id:'global',settings:nextSettings,updated_at:new Date().toISOString()
     },{onConflict:'id'}).select('settings').single();
     if(error)throw error;
     data.settings=normalizeSiteSettings(row?.settings||nextSettings);
+    categories=data.settings.categories.slice();
+    data.categories=categories.slice();
     save();
-    applySiteSettings();
     sharedSettingsLoadError='';
-    setSharedSettingsStatus('Published successfully. All visitors will see these settings. AdSense configuration has been applied; refresh this page if you changed the Publisher ID.');
+    applySiteSettings();
     subscribeToSharedSettings();
-    toast('Website settings published for all visitors.');
+    const message=(options.label||'Setting')+' saved successfully. Visitors will see the update.';
+    if(options.statusId)setAdminSettingStatus(options.statusId,message);
+    setSharedSettingsStatus(message);
+    toast(message);
+    return true;
   }catch(error){
-    console.error('Shared settings save failed:',error);
+    console.error('Individual website setting save failed:',options.label||'setting',error);
     const message=sharedSettingsErrorMessage(error);
+    if(options.statusId)setAdminSettingStatus(options.statusId,'Save failed: '+message,true);
     setSharedSettingsStatus('Save failed: '+message,true);
-    toast('Shared settings were not saved: '+message);
+    toast('Could not save '+(options.label||'setting')+': '+message);
+    return false;
   }finally{
-    button.disabled=false;button.textContent=oldLabel;
+    if(button){button.disabled=false;button.textContent=oldLabel;}
   }
+}
+async function saveAdminSettingField(key,inputId,buttonId,statusId,label){
+  const input=document.getElementById(inputId);
+  if(!input)return false;
+  let value=input.type==='checkbox'?input.checked:String(input.value??'').trim();
+  if(key==='siteName'&&!value){
+    setAdminSettingStatus(statusId,'Site name cannot be empty.',true);return toast('Enter a site name.');
+  }
+  if(key==='email'&&value&&!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(value)){
+    setAdminSettingStatus(statusId,'Enter a valid email address.',true);return toast('Please check the contact email address.');
+  }
+  if(key==='hero'&&!value){
+    setAdminSettingStatus(statusId,'Hero title cannot be empty.',true);return toast('Enter a hero title.');
+  }
+  if(key==='adsensePublisher'&&!ADSENSE_PUBLISHER_PATTERN.test(value)){
+    setAdminSettingStatus(statusId,'Use ca-pub- followed by exactly 16 digits.',true);return toast('Please check the AdSense Publisher ID.');
+  }
+  if(key==='adsenseSlot'&&value&&!ADSENSE_SLOT_PATTERN.test(value)){
+    setAdminSettingStatus(statusId,'Slot ID must contain 6–20 digits, or be left empty.',true);return toast('Please check the AdSense slot ID.');
+  }
+  if(key==='adsenseEnabled'&&value){
+    const saved=normalizeSiteSettings(data.settings);
+    if(!ADSENSE_PUBLISHER_PATTERN.test(saved.adsensePublisher)){
+      setAdminSettingStatus(statusId,'Save a valid Publisher ID first.',true);return toast('Save the AdSense Publisher ID first.');
+    }
+    if(saved.adsenseSlot&&!ADSENSE_SLOT_PATTERN.test(saved.adsenseSlot)){
+      setAdminSettingStatus(statusId,'Save a valid ad slot ID first, or clear it.',true);return toast('Please fix the AdSense slot ID first.');
+    }
+  }
+  if(key==='customCss'&&value.length>30000){
+    setAdminSettingStatus(statusId,'Custom CSS is too long (maximum 30,000 characters).',true);return toast('Custom CSS is too long.');
+  }
+  return saveSharedSettingsPatch({[key]:value},{
+    buttonId,statusId,label,
+  });
 }
 function tabs(){document.querySelectorAll('.menu button').forEach(b=>b.onclick=()=>{if(!requireAdmin())return;const tabName=b.dataset.tab;document.querySelectorAll('.menu button').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.tab').forEach(x=>x.classList.add('hidden'));const tab=document.getElementById('tab-'+tabName);if(!tab)return;tab.classList.remove('hidden');document.getElementById('adminTitle').textContent=b.textContent.trim();populateAdminTab(tabName)})}
 function subscribeToAdminAuth(){
@@ -5318,7 +5366,15 @@ function bootAdmin(){
   document.getElementById('optimizeGalleryImages').onclick=optimizeExistingGalleryImages;
   document.getElementById('adminPhotoSearch').oninput=renderAdminPhotos;
   document.getElementById('addCategory').onclick=addCategory;
-  document.getElementById('saveSettings').onclick=saveSettings;
+  document.getElementById('saveSiteName').onclick=()=>void saveAdminSettingField('siteName','siteName','saveSiteName','siteNameSaveStatus','Site name');
+  document.getElementById('saveContactEmail').onclick=()=>void saveAdminSettingField('email','siteEmail','saveContactEmail','contactEmailSaveStatus','Contact email');
+  document.getElementById('saveInstagram').onclick=()=>void saveAdminSettingField('instagram','siteInstagram','saveInstagram','instagramSaveStatus','Instagram');
+  document.getElementById('saveHeroTitle').onclick=()=>void saveAdminSettingField('hero','siteHero','saveHeroTitle','heroTitleSaveStatus','Hero title');
+  document.getElementById('saveAdSenseEnabled').onclick=()=>void saveAdminSettingField('adsenseEnabled','adsenseEnabled','saveAdSenseEnabled','adsenseEnabledSaveStatus','AdSense status');
+  document.getElementById('saveAdSensePublisher').onclick=()=>void saveAdminSettingField('adsensePublisher','adsensePublisher','saveAdSensePublisher','adsensePublisherSaveStatus','AdSense Publisher ID');
+  document.getElementById('saveAdSenseSlot').onclick=()=>void saveAdminSettingField('adsenseSlot','adsenseSlot','saveAdSenseSlot','adsenseSlotSaveStatus','AdSense display slot ID');
+  document.getElementById('saveCustomCss').onclick=()=>void saveAdminSettingField('customCss','customCss','saveCustomCss','customCssSaveStatus','Custom CSS');
+  document.getElementById('saveTextAnimation').onclick=()=>void saveAdminSettingField('textAnimation','textAnimation','saveTextAnimation','textAnimationSaveStatus','Text animation');
   document.getElementById('saveOpenAiApiKey').onclick=saveOpenAiApiKey;
   document.getElementById('saveCloudflareWorkersAiKey').onclick=saveCloudflareWorkersAiKey;
   document.getElementById('checkCloudflareWorkersAiStatus').onclick=checkCloudflareWorkersAiStatus;
