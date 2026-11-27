@@ -1759,6 +1759,52 @@ body.light #photoModal #commentInput::placeholder{color:#748096!important;opacit
 .admin-setting-status.error{color:var(--danger)}
 @media(max-width:700px){.admin-setting-save button{min-height:38px}}
 </style>
+<style id="pusoai-admin-premium-tools">
+.admin-quick-actions{margin:16px 0 20px;padding:20px;border:1px solid var(--adm-line);border-radius:18px;background:linear-gradient(135deg,#171f36,#121a2d 65%,#191b39);box-shadow:0 8px 24px #00000018}
+.admin-quick-actions-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.admin-quick-actions-head h3{margin:0;font-size:17px;color:#f5f7ff}
+.admin-quick-actions-head p{margin:4px 0 0;color:#9eacc8;font-size:12px}
+.admin-quick-actions-head>span{padding:6px 9px;border:1px solid #ffffff1c;border-radius:999px;color:#b9c2df;font-size:9px;font-weight:800;letter-spacing:.1em}
+.admin-quick-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.admin-quick-grid>button{display:flex;align-items:center;gap:10px;min-width:0;padding:13px 12px;border:1px solid #ffffff19;border-radius:13px;background:#ffffff09;color:#eef3ff;text-align:left;transition:background .18s ease,border-color .18s ease,transform .18s ease}
+.admin-quick-grid>button:hover{background:#ffffff12;border-color:#8c82ff88;transform:translateY(-2px)}
+.admin-quick-grid>button>i{display:grid;place-items:center;flex:0 0 34px;height:34px;border-radius:10px;background:#7667ff26;color:#beb5ff;font-size:19px;font-style:normal}
+.admin-quick-grid>button>span{display:block;min-width:0;flex:1}
+.admin-quick-grid>button b,.admin-quick-grid>button small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.admin-quick-grid>button b{font-size:12px}
+.admin-quick-grid>button small{margin-top:3px;color:#9eacc8;font-size:10px}
+.admin-quick-grid>button>strong{color:#a99fff;font-size:15px}
+.admin-photo-toolbar{display:grid;grid-template-columns:minmax(220px,1.5fr) repeat(3,minmax(130px,.8fr));gap:12px;align-items:end}
+.admin-photo-toolbar .field{margin:0;min-width:0}
+.admin-photo-toolbar label{display:block;margin-bottom:6px;color:var(--adm-sub);font-size:11px;font-weight:750}
+.admin-photo-toolbar input,.admin-photo-toolbar select{min-height:42px}
+.admin-photo-toolbar-actions{display:flex;grid-column:1/-1;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+.admin-photo-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr)) minmax(130px,1.3fr);gap:9px;margin:18px 0 12px}
+.admin-photo-summary>div{padding:12px 14px;border:1px solid var(--adm-line);border-radius:12px;background:var(--adm-bg)}
+.admin-photo-summary span,.admin-photo-summary b{display:block}
+.admin-photo-summary span{color:var(--adm-sub);font-size:10px;font-weight:700}
+.admin-photo-summary b{margin-top:4px;color:var(--adm-ink);font-size:21px;font-variant-numeric:tabular-nums}
+.admin-photo-summary p{align-self:center;margin:0;color:var(--adm-sub);font-size:11px;text-align:right}
+.admin-photo-list{display:grid;gap:9px}
+.admin-photo-card{display:grid;grid-template-columns:90px minmax(0,1fr) auto;align-items:center;gap:14px;min-width:0;padding:12px;border:1px solid var(--adm-line);border-radius:14px;background:var(--adm-bg);transition:border-color .18s ease,background .18s ease}
+.admin-photo-card:hover{border-color:#7063e7a3;background:#121b30}
+.admin-photo-thumb{display:grid;place-items:center;width:90px;height:72px;overflow:hidden;border-radius:10px;background:#060b16}
+.admin-photo-thumb img,.admin-photo-thumb video{display:block;width:100%;height:100%;object-fit:contain}
+.admin-photo-copy{min-width:0}
+.admin-photo-title-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.admin-photo-title{min-width:0;overflow:hidden;color:var(--adm-ink);font-size:13px;font-weight:800;text-overflow:ellipsis;white-space:nowrap}
+.admin-photo-badge{padding:3px 7px;border:1px solid #7a6df344;border-radius:999px;background:#796aff15;color:#b9afff;font-size:9px;font-weight:800;text-transform:uppercase}
+.admin-photo-meta{display:flex;gap:9px;flex-wrap:wrap;margin-top:5px;color:var(--adm-sub);font-size:10px}
+.admin-photo-date{margin-top:4px;color:#7f91b0;font-size:10px}
+.admin-photo-card-actions{display:flex;justify-content:flex-end;gap:7px;flex-wrap:wrap}
+.admin-photo-card-actions button{min-height:35px;padding:7px 11px;font-size:11px}
+.admin-photo-empty{padding:36px 18px;text-align:center;border:1px dashed var(--adm-line);border-radius:14px;color:var(--adm-sub)}
+.admin-photo-empty b{display:block;margin-bottom:5px;color:var(--adm-ink);font-size:14px}
+.admin-photo-empty p{margin:0 0 13px;font-size:12px}
+@media(max-width:1100px){.admin-quick-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-photo-toolbar{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-photo-toolbar .admin-photo-search{grid-column:1/-1}.admin-photo-summary{grid-template-columns:repeat(4,minmax(0,1fr))}.admin-photo-summary p{grid-column:1/-1;text-align:left}}
+@media(max-width:700px){.admin-quick-actions{padding:15px}.admin-quick-grid{grid-template-columns:1fr 1fr}.admin-quick-grid>button{padding:10px 8px;gap:7px}.admin-quick-grid>button>i{flex-basis:30px;height:30px}.admin-photo-toolbar{grid-template-columns:1fr 1fr}.admin-photo-toolbar .admin-photo-search,.admin-photo-toolbar-actions{grid-column:1/-1}.admin-photo-toolbar-actions{justify-content:stretch}.admin-photo-toolbar-actions button{flex:1}.admin-photo-summary{gap:6px}.admin-photo-summary>div{padding:10px}.admin-photo-summary b{font-size:18px}.admin-photo-card{grid-template-columns:64px minmax(0,1fr);gap:10px;padding:10px}.admin-photo-thumb{width:64px;height:58px}.admin-photo-card-actions{grid-column:1/-1;justify-content:flex-end}.admin-photo-card-actions button{flex:1}}
+@media(max-width:390px){.admin-quick-grid{grid-template-columns:1fr}.admin-photo-toolbar{grid-template-columns:1fr}.admin-photo-toolbar .admin-photo-search,.admin-photo-toolbar-actions{grid-column:auto}}
+</style>
 </head>
 <body>
 <div id="aiGenerationOverlay" class="ai-generation-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="aiGenTitle" aria-describedby="aiGenDetail" aria-live="polite">
@@ -1863,10 +1909,11 @@ body.light #photoModal #commentInput::placeholder{color:#748096!important;opacit
 <div class="admin" id="adminPanel" aria-label="Owner admin workspace"><aside class="aside"><div class="brandmark"><span class="brand-icon" aria-hidden="true">◈</span><span>PusoAI<small>OWNER WORKSPACE</small></span></div><nav class="menu" aria-label="Admin sections"><button class="active" data-tab="dashboard"><span class="navicon">▦</span>Overview</button><button data-tab="upload"><span class="navicon">⊕</span>Upload Photo</button><button data-tab="photos"><span class="navicon">▤</span>All Photos</button><button data-tab="categories"><span class="navicon">◫</span>Categories</button><button data-tab="reports"><span class="navicon">⚑</span>Reports</button><button data-tab="comments"><span class="navicon">▧</span>Comments</button><button data-tab="submissions"><span class="navicon">▧</span>User Submissions</button><button data-tab="users"><span class="navicon">▥</span>Users & Traffic</button><button data-tab="settings"><span class="navicon">⚙</span>Settings</button><button data-tab="cloudflare-ai"><span class="navicon">☁</span>Workers AI</button></nav><div class="aside-bottom"><div class="signed-in">Signed in as owner<br><b>pusoai001@gmail.com</b></div><button class="danger" id="adminLogout" style="width:100%">↪ Logout</button></div></aside><section class="adminmain"><div class="admintop"><div><h1 id="adminTitle">Overview</h1><div class="top-sub">Admin-only control center · <span id="adminToday">Traffic insights</span></div></div><div class="admin-actions"><button class="secondary" type="button" id="refreshDashboard">↻ Refresh</button><button class="secondary" id="adminLogoutMobile">↪ Logout</button><button class="secondary" id="adminClose">✕ Close</button></div></div>
 <div id="tab-dashboard" class="tab"><div class="admin-dashboard-head"><div><h2>Welcome back, Admin</h2><p>Gallery performance and visitor analytics in one place.</p></div><div id="analyticsStatus" class="analytic-status" role="status" aria-live="polite">Checking traffic connection…</div></div>
 <div class="stats"><div class="stat"><div class="kpi-icon">▧</div><span>Published photos</span><b id="sPhotos">0</b></div><div class="stat"><div class="kpi-icon">◉</div><span>Photo views</span><b id="sViews">0</b></div><div class="stat"><div class="kpi-icon">♥</div><span>Likes</span><b id="sLikes">0</b></div><div class="stat"><div class="kpi-icon">↓</div><span>Downloads</span><b id="sDownloads">0</b></div><div class="stat"><div class="kpi-icon">⚑</div><span>Visitor reports</span><b id="sReports">—</b></div></div>
+<div class="admin-quick-actions"><div class="admin-quick-actions-head"><div><h3>Quick actions</h3><p>Manage your PusoAI gallery without searching through the menu.</p></div><span>OWNER TOOLS</span></div><div class="admin-quick-grid"><button type="button" data-admin-quick-tab="upload"><i>＋</i><span><b>Upload media</b><small>Add a photo or video</small></span><strong>↗</strong></button><button type="button" data-admin-quick-tab="photos"><i>▤</i><span><b>Manage gallery</b><small>Edit, filter or remove media</small></span><strong>↗</strong></button><button type="button" data-admin-quick-tab="submissions"><i>▧</i><span><b>Review submissions</b><small>Moderate visitor uploads</small></span><strong>↗</strong></button><button type="button" data-admin-quick-tab="settings"><i>⚙</i><span><b>Website settings</b><small>Update site and AdSense details</small></span><strong>↗</strong></button></div></div>
 <div class="admin-grid-panels"><div class="panel"><div class="admin-dashboard-head"><div><h3>Visitor traffic</h3><p id="trafficChartSubtitle">Daily activity · UTC</p></div><div class="analytics-controls"><label for="analyticsPeriod">Period</label><select id="analyticsPeriod"><option value="7">Last 7 days</option><option value="30" selected>Last 30 days</option><option value="90">Last 90 days</option></select><label for="analyticsMetric">Metric</label><select id="analyticsMetric"><option value="pageViews">Page views</option><option value="photoViews">Photo views</option><option value="downloads">Downloads</option><option value="likes">Likes</option></select></div></div><div id="trafficChart" aria-live="polite"></div><div id="trafficSummary" class="chart-legend"></div><div id="dashboardTrafficDetails" class="section-note" style="margin-top:10px"></div></div><div class="panel"><h3>Audience snapshot</h3><div class="traffic-preview"><span><span class="dot"></span>Unique visitors<small>Distinct browsers · selected period</small></span><b id="dVisitors">—</b></div><div class="traffic-preview"><span><span class="dot" style="background:#4ddac4"></span>Page views<small>Pages opened</small></span><b id="dPageViews">—</b></div><div class="traffic-preview"><span><span class="dot" style="background:#ffaf73"></span>Sessions<small>Browser sessions</small></span><b id="dSessions">—</b></div><div class="traffic-preview"><span><span class="dot" style="background:#ff7d9b"></span>Today<small>Today's page views (UTC)</small></span><b id="dToday">—</b></div></div></div>
 <div class="admin-grid-panels"><div class="panel"><h3>Most viewed media</h3><div id="topMediaList" class="section-note">No traffic yet.</div></div></div></div>
-<div id="tab-upload" class="tab hidden"><div class="panel"><h3>Upload / Edit Photo</h3><div class="admin-grid"><div class="field full"><label>Photo / Video file</label><input id="photoFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif,video/mp4,video/webm,video/quicktime"></div><div class="photo-edit-current full" id="photoEditCurrent" hidden><div class="photo-edit-current-head"><b id="photoEditCurrentTitle">Current media</b><span id="photoEditCurrentType"></span></div><div id="photoEditCurrentPreview" class="photo-edit-current-preview"></div><p id="photoEditCurrentHint">No new file selected. The existing media will be kept when you save.</p></div><div class="field"><label>Photo name</label><input id="photoName" placeholder="Sunset Mountain"></div><div class="field"><label>Category</label><select id="photoCategory"></select></div><div class="field full"><label>Caption</label><textarea id="photoCaption"></textarea></div><div class="field full"><label>Tags / hashtags</label><input id="photoTags" placeholder="#nature #travel #sunset"></div><div class="field"><label>Photo text overlay</label><input id="photoOverlayText" placeholder="Optional text on photo"></div><div class="field"><label>Overlay color</label><input id="photoOverlayColor" type="color" value="#ffffff"></div><div class="field"><label>Download allowed</label><label class="toggle"><span class="switch"><input id="photoDownload" type="checkbox" checked><span class="slider"></span></span>Visitors can download</label></div><div class="field"><label>Likes enabled</label><label class="toggle"><span class="switch"><input id="photoLikes" type="checkbox" checked><span class="slider"></span></span>Visitors can like</label></div><div class="field"><label>Featured</label><label class="toggle"><span class="switch"><input id="photoFeatured" type="checkbox"><span class="slider"></span></span>Show as featured</label></div></div><div class="admin-actions"><button type="button" class="primary" id="savePhoto">Upload Photo</button><button type="button" class="secondary" id="clearPhotoForm">Clear</button><button type="button" class="danger" id="cancelPhotoEdit" hidden>Cancel Edit</button></div><p id="adminUploadStatus" role="status" aria-live="polite" style="color:var(--muted);font-size:13px;margin-top:12px">Image max 10 MB · Video max 20 MB. Public photos are saved to Supabase Storage.</p><div class="admin-actions" style="margin-top:16px"><button class="secondary" id="optimizeGalleryImages" type="button">Optimize Existing Gallery Images</button></div><p id="galleryOptimizationStatus" role="status" aria-live="polite" style="color:var(--muted);font-size:12px;margin-top:8px">Create lightweight WebP gallery thumbnails for existing photos. Original files stay unchanged for fullscreen and downloads.</p><input type="hidden" id="editingId"></div></div>
-<div id="tab-photos" class="tab hidden"><div class="panel"><div class="field"><label>Search admin photos</label><input id="adminPhotoSearch" placeholder="Search by name, category, tag…"></div><div id="adminPhotoList"></div></div></div>
+<div id="tab-upload" class="tab hidden"><div class="panel"><h3>Upload / Edit Photo</h3><div class="admin-grid"><div class="field full"><label>Photo / Video file</label><input id="photoFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif,video/mp4,video/webm,video/quicktime"></div><div class="photo-edit-current full" id="photoEditCurrent" hidden><div class="photo-edit-current-head"><b id="photoEditCurrentTitle">Current media</b><span id="photoEditCurrentType"></span></div><div id="photoEditCurrentPreview" class="photo-edit-current-preview"></div><p id="photoEditCurrentHint">No new file selected. The existing media will be kept when you save.</p></div><div class="field"><label>Photo name</label><input id="photoName" placeholder="Sunset Mountain"></div><div class="field"><label>Category</label><select id="photoCategory"></select></div><div class="field full"><label>Caption</label><textarea id="photoCaption"></textarea></div><div class="field full"><label>Tags / hashtags</label><input id="photoTags" placeholder="#nature #travel #sunset"></div><div class="field full"><label for="photoOverlayText">Photo text overlay</label><input id="photoOverlayText" placeholder="Optional text on photo · white text"></div><div class="field"><label>Download allowed</label><label class="toggle"><span class="switch"><input id="photoDownload" type="checkbox" checked><span class="slider"></span></span>Visitors can download</label></div><div class="field"><label>Likes enabled</label><label class="toggle"><span class="switch"><input id="photoLikes" type="checkbox" checked><span class="slider"></span></span>Visitors can like</label></div><div class="field"><label>Featured</label><label class="toggle"><span class="switch"><input id="photoFeatured" type="checkbox"><span class="slider"></span></span>Show as featured</label></div></div><div class="admin-actions"><button type="button" class="primary" id="savePhoto">Upload Photo</button><button type="button" class="secondary" id="clearPhotoForm">Clear</button><button type="button" class="danger" id="cancelPhotoEdit" hidden>Cancel Edit</button></div><p id="adminUploadStatus" role="status" aria-live="polite" style="color:var(--muted);font-size:13px;margin-top:12px">Image max 10 MB · Video max 20 MB. Public photos are saved to Supabase Storage.</p><div class="admin-actions" style="margin-top:16px"><button class="secondary" id="optimizeGalleryImages" type="button">Optimize Existing Gallery Images</button></div><p id="galleryOptimizationStatus" role="status" aria-live="polite" style="color:var(--muted);font-size:12px;margin-top:8px">Create lightweight WebP gallery thumbnails for existing photos. Original files stay unchanged for fullscreen and downloads.</p><input type="hidden" id="editingId"></div></div>
+<div id="tab-photos" class="tab hidden"><div class="panel"><div class="admin-photo-toolbar"><div class="field admin-photo-search"><label for="adminPhotoSearch">Search gallery</label><input id="adminPhotoSearch" type="search" placeholder="Search by name, caption, category or hashtag…"></div><div class="admin-photo-filter"><label for="adminPhotoTypeFilter">Media type</label><select id="adminPhotoTypeFilter"><option value="all">All media</option><option value="image">Photos</option><option value="video">Videos</option></select></div><div class="admin-photo-filter"><label for="adminPhotoCategoryFilter">Category</label><select id="adminPhotoCategoryFilter"><option value="">All categories</option></select></div><div class="admin-photo-filter"><label for="adminPhotoSort">Sort by</label><select id="adminPhotoSort"><option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="views">Most viewed</option><option value="likes">Most liked</option><option value="downloads">Most downloaded</option><option value="featured">Featured first</option></select></div><div class="admin-photo-toolbar-actions"><button type="button" class="secondary" id="refreshAdminPhotos">↻ Refresh</button><button type="button" class="primary" data-admin-quick-tab="upload">＋ Add media</button></div></div><div class="admin-photo-summary"><div><span>Total media</span><b id="adminPhotoTotalCount">0</b></div><div><span>Photos</span><b id="adminPhotoImageCount">0</b></div><div><span>Videos</span><b id="adminPhotoVideoCount">0</b></div><div><span>Featured</span><b id="adminPhotoFeaturedCount">0</b></div><p id="adminPhotoResultCount" role="status" aria-live="polite">Showing 0 items</p></div><div id="adminPhotoList" class="admin-photo-list"></div></div></div>
 <div id="tab-categories" class="tab hidden"><div class="panel"><h3>Categories</h3><div class="field"><label>Add category</label><div style="display:flex;gap:8px"><input id="newCategory"><button class="primary" id="addCategory">Add</button></div></div><div id="adminCategories"></div></div></div>
 <div id="tab-reports" class="tab hidden"><div class="panel"><div class="section-head"><div><h3>Visitor reports</h3><p>Reports submitted by visitors across devices.</p></div><button type="button" class="secondary" id="refreshReports">↻ Refresh</button></div><div id="reportList"></div></div></div>
 
@@ -4309,7 +4356,6 @@ function showPhotoEditPreview(photo){
 function clearForm(){
   ['photoName','photoCaption','photoTags','photoOverlayText','editingId'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   const file=document.getElementById('photoFile');if(file)file.value='';
-  const color=document.getElementById('photoOverlayColor');if(color)color.value='#ffffff';
   const category=document.getElementById('photoCategory');if(category&&category.options.length)category.selectedIndex=0;
   document.getElementById('photoDownload').checked=true;
   document.getElementById('photoLikes').checked=true;
@@ -4385,7 +4431,7 @@ async function savePhoto(){
     p.caption=document.getElementById('photoCaption').value.trim();
     p.tags=document.getElementById('photoTags').value.trim();
     p.overlay=document.getElementById('photoOverlayText').value.trim();
-    p.overlayColor=document.getElementById('photoOverlayColor').value;
+    p.overlayColor=p.overlayColor||'#ffffff';
     p.download=document.getElementById('photoDownload').checked;
     p.like=document.getElementById('photoLikes').checked;
     const makeFeatured=document.getElementById('photoFeatured').checked;
@@ -4470,7 +4516,6 @@ async function editPhoto(id){
   document.getElementById('photoCaption').value=photo.caption||'';
   document.getElementById('photoTags').value=photo.tags||'';
   document.getElementById('photoOverlayText').value=photo.overlay||'';
-  document.getElementById('photoOverlayColor').value=photo.overlayColor||'#ffffff';
   document.getElementById('photoDownload').checked=photo.download!==false;
   document.getElementById('photoLikes').checked=photo.like!==false;
   document.getElementById('photoFeatured').checked=!!photo.featured;
@@ -4511,18 +4556,66 @@ async function deletePhoto(id){
   }
 }
 
+function populateAdminPhotoFilters(){
+  const select=document.getElementById('adminPhotoCategoryFilter');
+  if(!select)return;
+  const current=select.value;
+  const available=Array.from(new Set([
+    ...categories,
+    ...photos.map(photo=>String(photo.category||'Other').trim()).filter(Boolean)
+  ])).sort((a,b)=>a.localeCompare(b));
+  select.innerHTML='<option value="">All categories</option>'+available.map(category=>'<option value="'+esc(category)+'">'+esc(category)+'</option>').join('');
+  select.value=available.includes(current)?current:'';
+}
 function renderAdminPhotos(){
-  const q=(document.getElementById('adminPhotoSearch')?.value||'').toLowerCase();
-  const list=photos.filter(p=>[p.name,p.category,p.tags,p.caption].join(' ').toLowerCase().includes(q));
   const box=document.getElementById('adminPhotoList');
   if(!box)return;
-  box.innerHTML=list.length?list.map(p=>{
-    const src=typeof p.src==='string'?esc(p.src):'';
-    const thumb=p.mediaType==='video'
-      ? `<video src="${src}" muted playsinline preload="metadata" style="width:80px;height:65px;object-fit:contain;border-radius:9px"></video>`
-      : `<img src="${src}" alt="${esc(p.name)}" loading="lazy" style="width:80px;height:65px;object-fit:contain;border-radius:9px">`;
-    return `<div class="admin-photo" style="padding:12px 0;border-bottom:1px solid var(--line)">${thumb}<div><b>${esc(p.name)}</b><div style="color:var(--muted);font-size:12px">${esc(p.mediaType||'image').toUpperCase()} · ${esc(p.category)} · ♥ ${p.likes||0} · 👁 ${p.views||0} · ↓ ${p.downloads||0} · 💬 ${(p.comments||[]).length}</div></div><div class="admin-actions"><button type="button" class="secondary" data-admin-photo-action="edit" data-photo-id="${esc(p.id)}">Edit</button><button type="button" class="danger" data-admin-photo-action="delete" data-photo-id="${esc(p.id)}">Delete</button></div></div>`;
-  }).join(''):'<div class="empty">No photos or videos.</div>';
+  populateAdminPhotoFilters();
+  const q=(document.getElementById('adminPhotoSearch')?.value||'').trim().toLowerCase();
+  const type=document.getElementById('adminPhotoTypeFilter')?.value||'all';
+  const category=document.getElementById('adminPhotoCategoryFilter')?.value||'';
+  const sort=document.getElementById('adminPhotoSort')?.value||'newest';
+
+  const totalPhotos=photos.filter(photo=>photo.mediaType!=='video').length;
+  const totalVideos=photos.filter(photo=>photo.mediaType==='video').length;
+  const totalFeatured=photos.filter(photo=>!!photo.featured).length;
+  const setCount=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=String(value);};
+  setCount('adminPhotoTotalCount',photos.length);
+  setCount('adminPhotoImageCount',totalPhotos);
+  setCount('adminPhotoVideoCount',totalVideos);
+  setCount('adminPhotoFeaturedCount',totalFeatured);
+
+  const list=photos.filter(photo=>{
+    const searchable=[photo.name,photo.category,photo.tags,photo.caption].join(' ').toLowerCase();
+    if(q&&!searchable.includes(q))return false;
+    if(type!=='all'&&(photo.mediaType||'image')!==type)return false;
+    if(category&&String(photo.category||'Other')!==category)return false;
+    return true;
+  }).slice();
+
+  const number=(value)=>Number(value)||0;
+  list.sort((a,b)=>{
+    if(sort==='oldest')return number(a.created)-number(b.created);
+    if(sort==='views')return number(b.views)-number(a.views);
+    if(sort==='likes')return number(b.likes)-number(a.likes);
+    if(sort==='downloads')return number(b.downloads)-number(a.downloads);
+    if(sort==='featured')return Number(!!b.featured)-Number(!!a.featured)||number(b.created)-number(a.created);
+    return number(b.created)-number(a.created);
+  });
+
+  const resultCount=document.getElementById('adminPhotoResultCount');
+  if(resultCount)resultCount.textContent='Showing '+list.length+' of '+photos.length+' media items';
+  box.innerHTML=list.length?list.map(photo=>{
+    const src=typeof photo.src==='string'?esc(photo.src):'';
+    const isVideo=photo.mediaType==='video';
+    const thumb=isVideo
+      ? '<video src="'+src+'" muted playsinline preload="metadata" aria-label="'+esc(photo.name||'Video preview')+'"></video>'
+      : '<img src="'+src+'" alt="'+esc(photo.name||'Photo preview')+'" loading="lazy">';
+    const featured=photo.featured?'<span class="admin-photo-badge">Featured</span>':'';
+    const date=photo.created?new Date(number(photo.created)).toLocaleDateString():'';
+    return '<article class="admin-photo-card"><div class="admin-photo-thumb">'+thumb+'</div><div class="admin-photo-copy"><div class="admin-photo-title-row"><b class="admin-photo-title">'+esc(photo.name||'Untitled media')+'</b>'+featured+'</div><div class="admin-photo-meta"><span>'+(isVideo?'VIDEO':'PHOTO')+'</span><span>'+esc(photo.category||'Other')+'</span><span>♥ '+number(photo.likes)+'</span><span>👁 '+number(photo.views)+'</span><span>↓ '+number(photo.downloads)+'</span><span>💬 '+(Array.isArray(photo.comments)?photo.comments.length:0)+'</span></div><div class="admin-photo-date">'+esc(date)+'</div></div><div class="admin-photo-card-actions"><button type="button" class="secondary" data-admin-photo-action="edit" data-photo-id="'+esc(photo.id)+'">Edit</button><button type="button" class="danger" data-admin-photo-action="delete" data-photo-id="'+esc(photo.id)+'">Delete</button></div></article>';
+  }).join(''):'<div class="admin-photo-empty"><b>No media found</b><p>Try changing the search, category or media-type filters.</p><button type="button" class="secondary" data-admin-quick-tab="upload">＋ Add media</button></div>';
+
   box.querySelectorAll('img,video').forEach(media=>{
     media.addEventListener('error',()=>{media.style.opacity='.35';media.title='Media could not load. Check the public Storage URL.'},{once:true});
   });
@@ -4532,6 +4625,11 @@ function renderAdminPhotos(){
     if(button.dataset.adminPhotoAction==='edit')void editPhoto(id);
     else if(button.dataset.adminPhotoAction==='delete')void deletePhoto(id);
   }));
+  box.querySelectorAll('[data-admin-quick-tab]').forEach(button=>button.addEventListener('click',()=>{
+    const tab=document.querySelector('.menu button[data-tab="'+button.dataset.adminQuickTab+'"]');
+    tab?.click();
+  }));
+}
 }
 
 async function persistSharedCategories(){
@@ -5365,6 +5463,30 @@ function bootAdmin(){
   });
   document.getElementById('optimizeGalleryImages').onclick=optimizeExistingGalleryImages;
   document.getElementById('adminPhotoSearch').oninput=renderAdminPhotos;
+  ['adminPhotoTypeFilter','adminPhotoCategoryFilter','adminPhotoSort'].forEach(id=>{
+    const control=document.getElementById(id);
+    if(control)control.addEventListener('change',renderAdminPhotos);
+  });
+  document.getElementById('refreshAdminPhotos').onclick=async event=>{
+    const button=event.currentTarget;
+    button.disabled=true;button.textContent='Refreshing…';
+    try{
+      if(CLOUD_ENABLED){
+        const success=await loadRemotePhotos();
+        if(!success)throw new Error(remotePhotoLoadError||'Could not refresh the gallery.');
+      }
+      renderAdminPhotos();updateStats();
+      toast('Gallery list refreshed.');
+    }catch(error){
+      toast('Refresh failed: '+(error?.message||'Check Supabase connection.'));
+    }finally{
+      button.disabled=false;button.textContent='↻ Refresh';
+    }
+  };
+  document.querySelectorAll('[data-admin-quick-tab]').forEach(button=>button.addEventListener('click',()=>{
+    const tab=document.querySelector('.menu button[data-tab="'+button.dataset.adminQuickTab+'"]');
+    tab?.click();
+  }));
   document.getElementById('addCategory').onclick=addCategory;
   document.getElementById('saveSiteName').onclick=()=>void saveAdminSettingField('siteName','siteName','saveSiteName','siteNameSaveStatus','Site name');
   document.getElementById('saveContactEmail').onclick=()=>void saveAdminSettingField('email','siteEmail','saveContactEmail','contactEmailSaveStatus','Contact email');
