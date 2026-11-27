@@ -2877,7 +2877,7 @@ function renderComments(p){
   document.getElementById('commentsList').innerHTML=list.length?list.map(c=>{
     const own=c.authorId===visitor.userId;
     // Visitors may edit only their own legacy/local comments. Deletion is admin-only.
-    const canEdit=isAdmin()||(!c.shared&&own);
+    const canEdit=isAdmin();
     const canDelete=isAdmin();
     const editButton=canEdit?`<button class="secondary comment-edit" data-comment="${esc(c.id)}" style="padding:5px 8px;font-size:11px">Edit</button>`:'';
     const deleteButton=canDelete?`<button class="danger comment-delete" data-comment="${esc(c.id)}" style="padding:5px 8px;font-size:11px">Delete</button>`:'';
@@ -2928,7 +2928,7 @@ async function editComment(photoId,commentId){
   const p=photos.find(x=>x.id===photoId);if(!p)return;
   const c=(p.comments||[]).find(x=>x.id===commentId);if(!c)return;
   if(c.shared){return editSharedComment(commentId);}
-  if(!isAdmin()&&c.authorId!==visitor.userId)return toast('You can edit only your own comment.');
+  if(!isAdmin())return toast('Only the website admin can edit comments.');
   const text=prompt('Edit your comment:',c.text);
   if(text===null)return;
   const clean=text.trim();
