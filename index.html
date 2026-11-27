@@ -5280,7 +5280,7 @@ async function saveAdminSettingField(key,inputId,buttonId,statusId,label){
   if(key==='siteName'&&!value){
     setAdminSettingStatus(statusId,'Site name cannot be empty.',true);return toast('Enter a site name.');
   }
-  if(key==='email'&&value&&!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(value)){
+  if(key==='email'&&value&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)){
     setAdminSettingStatus(statusId,'Enter a valid email address.',true);return toast('Please check the contact email address.');
   }
   if(key==='hero'&&!value){
