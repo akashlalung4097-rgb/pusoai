@@ -15,8 +15,8 @@
  if(preview){new MutationObserver(updatePreview).observe(preview,{attributes:true,attributeFilter:['src','style']});preview.addEventListener('load',updatePreview);updatePreview()}
  $('pgRegenerate')?.addEventListener('click',()=>window.generateAiImage?.());$('pgUndo')?.addEventListener('click',()=>window.PusoAIStudioHistory?.restorePrevious());
  $('pgViewAllHistory')?.addEventListener('click',()=>{if(history.length<=5&&!expanded)return;expanded=!expanded;list?.classList.toggle('expanded',expanded);render()});
- const notify=$('pgNotifications'),panel=$('pgNotificationPanel');notify?.addEventListener('click',()=>{const open=notify.getAttribute('aria-expanded')!=='true';notify.setAttribute('aria-expanded',String(open));if(panel)panel.hidden=!open});
- document.addEventListener('click',e=>{if(panel&&!panel.hidden&&!e.target.closest('#pgNotifications')&&!e.target.closest('#pgNotificationPanel')){panel.hidden=true;notify?.setAttribute('aria-expanded','false')}});
+ // Notification center click handling lives in index.html's capture-phase controller.
+ // Do not attach a second toggle here: it reverses the mobile bell state during bubbling.
  const globalSearch=$('pgGlobalSearch');function search(){const q=globalSearch?.value?.trim()||'',target=$('searchInput');if(!q||!target)return;target.value=q;target.dispatchEvent(new Event('input',{bubbles:true}));if(location.hash!=='#explore')location.hash='explore';else $('explore')?.scrollIntoView({behavior:'smooth',block:'start'})}
  globalSearch?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();search()}});globalSearch?.addEventListener('search',search);
  document.querySelectorAll('.pg-sidebar-nav a,.pg-mobile-nav a').forEach(a=>a.addEventListener('click',()=>document.querySelectorAll('.pg-sidebar-nav a').forEach(x=>x.classList.toggle('active',x.getAttribute('href')===a.getAttribute('href')))));
