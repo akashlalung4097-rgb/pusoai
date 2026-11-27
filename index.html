@@ -1474,6 +1474,38 @@ body.pg-preview-modal-open{overflow:hidden!important;touch-action:none!important
 }
 </style>
 
+<style id="pusoai-mobile-preview-close-button-fix">
+/* Keep the full-screen preview close control visible and tappable on phones/tablets. */
+#pgPreviewImageModal #pgPreviewImageModalClose{
+  display:grid!important;
+  visibility:visible!important;
+  opacity:1!important;
+  pointer-events:auto!important;
+  position:fixed!important;
+  top:max(12px,env(safe-area-inset-top))!important;
+  right:max(12px,env(safe-area-inset-right))!important;
+  z-index:2147483647!important;
+  width:48px!important;height:48px!important;
+  min-width:48px!important;min-height:48px!important;
+  padding:0!important;
+  align-items:center!important;justify-content:center!important;
+  border:2px solid #fff!important;border-radius:50%!important;
+  background:#29245f!important;color:#fff!important;
+  font-size:32px!important;line-height:1!important;
+  -webkit-appearance:none!important;appearance:none!important;
+  touch-action:manipulation!important;
+  -webkit-tap-highlight-color:transparent!important;
+}
+@media(max-width:700px){
+  #pgPreviewImageModal #pgPreviewImageModalClose{
+    top:calc(env(safe-area-inset-top) + 12px)!important;
+    right:calc(env(safe-area-inset-right) + 12px)!important;
+    width:52px!important;height:52px!important;
+    min-width:52px!important;min-height:52px!important;
+  }
+}
+</style>
+
 <style id="pusoai-mobile-hide-preview-zoom">
 /* Mobile only: remove both zoom controls from the Create Live Preview.
    Keep fullscreen, download, share, and tap-to-open-full-image behavior. */
