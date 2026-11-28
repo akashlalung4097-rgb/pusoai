@@ -4260,15 +4260,20 @@ function setupPusoaiNotificationCenter(){
   };
 
   const syncFromStorage=raw=>{
-    try{pusoaiNotifications=normalizeItems(JSON.parse(raw||'[]'));}
-    catch(_error){pusoaiNotifications=[];}
-    prunePusoaiNotifications();
+    let parsed=[];
+    try{parsed=JSON.parse(raw||'[]');}
+    catch(_error){parsed=[];}
+    const normalized=normalizeItems(parsed);
+    const changed=JSON.stringify(parsed)!==JSON.stringify(normalized);
+    pusoaiNotifications=normalized;
+    const expired=prunePusoaiNotifications();
+    if(changed||expired)savePusoaiNotifications();
     renderPusoaiNotifications();
   };
 
-  loadPusoaiNotifications();
-  try{renderPusoaiNotifications();}
-  catch(error){console.error('PusoAI notification render error:',error);}
+  try{
+    syncFromStorage(storageGet(PUSOAI_NOTIFICATIONS_KEY)||storageGet(PUSOAI_NOTIFICATIONS_KEY,'session')||'[]');
+  }catch(error){console.error('PusoAI notification initial load error:',error);}
 
   if(document.documentElement.dataset.pusoaiNoticeExpiryTimer!=='ready'){
     document.documentElement.dataset.pusoaiNoticeExpiryTimer='ready';
