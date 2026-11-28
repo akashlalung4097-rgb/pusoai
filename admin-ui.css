@@ -789,3 +789,11 @@ body.light .admin .admin-quick-actions-head h3 { color: var(--adm-ink) !importan
   transform: none;
   box-shadow: none;
 }
+
+ 
+/* Keep owner logout reachable on tablets when the sidebar footer is collapsed. */
+@media (max-width:820px){
+  #adminLogoutMobile{display:inline-flex!important;align-items:center;justify-content:center}
+  .admin .admintop .admin-actions{display:flex;align-items:center;flex-wrap:wrap;gap:7px}
+  .admin .admintop .admin-actions button{min-height:38px}
+}
