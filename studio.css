@@ -684,3 +684,27 @@ input,select,textarea,button{max-width:100%;min-width:0}
   .pg-history-list{grid-template-columns:1fr}
   .pg-mobile-nav a{font-size:10px}
 }
+
+ 
+/* UI audit fixes: the new workspace navigation replaces the legacy mobile bar. */
+@media screen and (max-width:1024px){
+  .mobile-nav{display:none!important}
+}
+.pg-studio-heading h2{
+  margin:9px 0 5px;
+  color:#f5f8ff;
+  font-size:clamp(27px,2.3vw,36px);
+  font-weight:810;
+  line-height:1.2;
+  letter-spacing:-1.3px;
+}
+.pg-composition-control{display:grid;gap:7px;min-width:0}
+.pg-composition-control .pg-field-heading{margin-bottom:0}
+.pg-composition-control .pg-field-heading>span{color:#dce6fa;font-size:10px;font-weight:750}
+.pg-composition-control .pg-ratio-options{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.pg-composition-control .pg-ratio-btn[data-ratio="4:5"]{display:flex!important}
+.pg-composition-control .pg-ratio-btn{min-height:43px;font-size:9px}
+.pg-aspect-note{margin:0;color:#7d8eae;font-size:9px;line-height:1.45}
+body.light .pg-studio-heading h2{color:#17213c!important}
+body.light .pg-composition-control .pg-field-heading>span{color:#333!important}
+body.light .pg-aspect-note{color:#59657a!important}
