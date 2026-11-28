@@ -1329,7 +1329,7 @@ body.ai-gen-lock{overflow:hidden;}
 }
 </style>
 
-<link rel="stylesheet" href="/studio.css?v=20261123-responsive-v2">
+<link rel="stylesheet" href="/studio.css?v=20261128-ui-audit-v1">
   <meta name="google-adsense-account" content="ca-pub-6380411063624039">
 <style id="pusoai-light-generated-download">
 /* Keep the generated-image download action clearly blue in Light Mode only. */
@@ -1805,7 +1805,7 @@ body.light #photoModal #commentInput::placeholder{color:#748096!important;opacit
 @media(max-width:700px){.admin-quick-actions{padding:15px}.admin-quick-grid{grid-template-columns:1fr 1fr}.admin-quick-grid>button{padding:10px 8px;gap:7px}.admin-quick-grid>button>i{flex-basis:30px;height:30px}.admin-photo-toolbar{grid-template-columns:1fr 1fr}.admin-photo-toolbar .admin-photo-search,.admin-photo-toolbar-actions{grid-column:1/-1}.admin-photo-toolbar-actions{justify-content:stretch}.admin-photo-toolbar-actions button{flex:1}.admin-photo-summary{gap:6px}.admin-photo-summary>div{padding:10px}.admin-photo-summary b{font-size:18px}.admin-photo-card{grid-template-columns:64px minmax(0,1fr);gap:10px;padding:10px}.admin-photo-thumb{width:64px;height:58px}.admin-photo-card-actions{grid-column:1/-1;justify-content:flex-end}.admin-photo-card-actions button{flex:1}}
 @media(max-width:390px){.admin-quick-grid{grid-template-columns:1fr}.admin-photo-toolbar{grid-template-columns:1fr}.admin-photo-toolbar .admin-photo-search,.admin-photo-toolbar-actions{grid-column:auto}}
 </style>
-<link rel="stylesheet" href="/admin-ui.css">
+<link rel="stylesheet" href="/admin-ui.css?v=20261128-ui-audit-v1">
 </head>
 <body>
 <div id="aiGenerationOverlay" class="ai-generation-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="aiGenTitle" aria-describedby="aiGenDetail" aria-live="polite">
@@ -1834,7 +1834,7 @@ body.light #photoModal #commentInput::placeholder{color:#748096!important;opacit
 <nav class="pg-mobile-nav" aria-label="Mobile navigation"><a href="#home"><span>⌂</span>Home</a><a href="#studio"><span>✦</span>Create</a><a href="#explore"><span>▦</span>Gallery</a><a href="#generationHistoryPanel"><span>◷</span>History</a></nav>
 <main id="home" class="pg-main">
 <section class="pg-studio-dashboard" id="studio" aria-labelledby="pgStudioTitle">
-<div class="pg-studio-heading"><div><div class="pg-studio-eyebrow"><i></i> PUSOAI CREATIVE WORKSPACE</div><h1 id="pgStudioTitle">AI Image Generation</h1><p>Smart Creativity Starts Here. Turn your ideas into visuals with AI.</p></div><div class="pg-studio-status"><span>✦</span><div><b>AI Studio</b><small>Ready when you are</small></div></div></div>
+<div class="pg-studio-heading"><div><div class="pg-studio-eyebrow"><i></i> PUSOAI CREATIVE WORKSPACE</div><h2 id="pgStudioTitle">AI Image Generation</h2><p>Smart Creativity Starts Here. Turn your ideas into visuals with AI.</p></div><div class="pg-studio-status"><span>✦</span><div><b>AI Studio</b><small>Ready when you are</small></div></div></div>
 <div class="pg-studio-grid">
 <section class="pg-glass-panel pg-generator-panel" id="user-upload" aria-labelledby="pgGeneratorTitle">
 <div class="pg-generator-heading"><div class="pg-generator-orb">✦<i></i></div><div><small>YOUR CREATIVE SPACE</small><h2 id="pgGeneratorTitle">Create your image</h2><p>Describe it. Shape it. Generate it.</p></div></div>
@@ -1843,6 +1843,16 @@ body.light #photoModal #commentInput::placeholder{color:#748096!important;opacit
 <textarea id="userPhotoPrompt" name="prompt" minlength="5" maxlength="1500" placeholder="A cinematic view of a quiet mountain lake at blue hour, soft mist, dramatic natural lighting…" required></textarea><div class="pg-prompt-meta"><span>Be descriptive for better results</span><span id="pgPromptCount">0 / 1500</span></div>
 <div class="pg-upload-section"><div class="pg-field-heading"><label for="userPhotoFile">Reference image</label><small>OPTIONAL</small></div><div class="pg-reference-actions" role="group" aria-label="Add a reference image"><button type="button" id="pgOpenCamera" class="pg-reference-action"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7.5h3l1.5-2h7l1.5 2h3A1.5 1.5 0 0 1 21.5 9v9A1.5 1.5 0 0 1 20 19.5H4A1.5 1.5 0 0 1 2.5 18V9A1.5 1.5 0 0 1 4 7.5Z"/><circle cx="12" cy="13" r="3.5"/></svg><span><b>Live Camera</b><small>Take a new photo</small></span></button><button type="button" id="pgOpenGallery" class="pg-reference-action"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3.5" width="18" height="17" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="m4 17 5-5 3 3 2-2 6 5"/></svg><span><b>Gallery</b><small>Choose an existing image</small></span></button></div><input id="userPhotoFile" class="pg-file-input" name="photo" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif" hidden><div class="pg-upload-status"><span id="aiModeHint" aria-live="polite">Text-to-image mode · No reference selected</span><button type="button" id="cancelSelectedPhoto">Remove</button></div></div>
 <div class="pg-control-grid" id="studioSettings"><div class="pg-control-field"><label for="pgStyleSelect">Visual style</label><select id="pgStyleSelect"><option value="none">Auto · Balanced</option><option value="cinematic">Cinematic</option><option value="photorealistic">Photorealistic</option><option value="digital-art">Digital art</option><option value="anime">Anime</option><option value="illustration">Illustration</option><option value="minimal">Minimal</option><option value="3d">3D render</option></select></div><div class="pg-control-field pg-model-field"><span>AI model</span><b id="pgActiveModel">FLUX.1 Schnell</b><small>Auto-selected for your workflow</small></div></div>
+<div class="pg-composition-control" aria-labelledby="pgAspectLabel">
+  <div class="pg-field-heading"><span id="pgAspectLabel">Image aspect ratio</span><small>DEFAULT · 4:5</small></div>
+  <div class="pg-ratio-options" id="pgAspectOptions" role="group" aria-label="Choose image aspect ratio">
+    <button class="pg-ratio-btn" type="button" data-ratio="1:1" aria-pressed="false"><i class="sq" aria-hidden="true"></i><span>1:1</span></button>
+    <button class="pg-ratio-btn active" type="button" data-ratio="4:5" aria-pressed="true"><i class="port" aria-hidden="true"></i><span>4:5</span></button>
+    <button class="pg-ratio-btn" type="button" data-ratio="3:2" aria-pressed="false"><i class="land" aria-hidden="true"></i><span>3:2</span></button>
+    <button class="pg-ratio-btn" type="button" data-ratio="16:9" aria-pressed="false"><i class="wide" aria-hidden="true"></i><span>16:9</span></button>
+  </div>
+  <p class="pg-aspect-note">Text generation uses composition guidance. Reference-photo edits also apply the selected output dimensions.</p>
+</div>
 
 <div class="pg-generate-actions"><button class="pg-generate-btn" id="generateAiImage" type="button"><span>✦</span> Generate image <b>→</b></button><button class="pg-cancel-generation" id="cancelAiGeneration" type="button" style="display:none">Cancel generation</button></div>
 <div class="pg-secondary-actions"><button class="pg-submit-btn" type="submit" id="submitUserPhoto">Submit to community review</button><button class="pg-clear-btn" type="reset" id="resetUserPhoto">Clear</button><button class="pg-cancel-upload" id="cancelPhotoUpload" type="button" style="display:none">Cancel upload</button></div>
@@ -3677,6 +3687,16 @@ function setupUserUpload(){
       if(cancelGenerationBtn){cancelGenerationBtn.style.display='none';cancelGenerationBtn.disabled=false;}
     },0);
   });
+  const aspectOptions=document.getElementById('pgAspectOptions');
+  aspectOptions?.addEventListener('click',event=>{
+    const button=event.target.closest('button[data-ratio]');
+    if(!button||!aspectOptions.contains(button))return;
+    aspectOptions.querySelectorAll('button[data-ratio]').forEach(option=>{
+      const selected=option===button;
+      option.classList.toggle('active',selected);
+      option.setAttribute('aria-pressed',selected?'true':'false');
+    });
+  });
   document.getElementById('generateAiImage')?.addEventListener('click',generateAiImage);
   document.getElementById('retryAiGeneration')?.addEventListener('click',generateAiImage);
   document.getElementById('aiGenCancel')?.addEventListener('click',()=>cancelGenerationBtn?.click());
@@ -3847,8 +3867,16 @@ async function readAiGenerationResponse(response,onProgress){
 async function generateAiImage(){
   const basePromptText=document.getElementById('userPhotoPrompt')?.value.trim()||'';
   const styleValue=document.getElementById('pgStyleSelect')?.value||'none';
+  const selectedRatio=document.querySelector('#pgAspectOptions .pg-ratio-btn[aria-pressed="true"]')?.dataset.ratio||'4:5';
+  const ratioSettings={
+    '1:1':{width:1024,height:1024,guidance:'Compose the image in a balanced square 1:1 frame.'},
+    '4:5':{width:1024,height:1280,guidance:'Compose the image in a vertical portrait 4:5 frame.'},
+    '3:2':{width:1536,height:1024,guidance:'Compose the image in a landscape 3:2 frame.'},
+    '16:9':{width:1792,height:1008,guidance:'Compose the image in a wide cinematic 16:9 frame.'}
+  };
+  const ratioSetting=ratioSettings[selectedRatio]||ratioSettings['4:5'];
   const styles={cinematic:'Cinematic lighting, rich atmosphere and polished film-still composition.',photorealistic:'Photorealistic detail, natural materials, realistic lighting and textures.','digital-art':'Refined digital art with expressive color and intentional composition.',anime:'High-quality anime illustration, clean linework and expressive lighting.',illustration:'Editorial illustration with refined shapes and balanced color.',minimal:'Minimal composition, restrained palette and clean negative space.','3d':'Polished 3D render, realistic materials and soft global illumination.'};
-  const promptText=[basePromptText,styles[styleValue]||''].filter(Boolean).join(' ');
+  const promptText=[basePromptText,styles[styleValue]||'',ratioSetting.guidance].filter(Boolean).join(' ');
   const btn=document.getElementById('generateAiImage');
   const fileInput=document.getElementById('userPhotoFile');
   const preview=document.getElementById('userPhotoPreview');
@@ -3900,7 +3928,7 @@ async function generateAiImage(){
       response=await fetch(`${SUPABASE_URL}/functions/v1/generate-image`,{
         method:'POST',
         headers:{'Content-Type':'application/json','apikey':SUPABASE_PUBLISHABLE_KEY},
-        body:JSON.stringify({prompt:promptText,clientId,...(reference||{})}),
+        body:JSON.stringify({prompt:promptText,clientId,outputWidth:ratioSetting.width,outputHeight:ratioSetting.height,...(reference||{})}),
         signal:controller.signal
       });
     }catch(fetchError){

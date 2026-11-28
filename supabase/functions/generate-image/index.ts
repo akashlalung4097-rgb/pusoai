@@ -11,7 +11,7 @@ const ALLOWED_ORIGINS = new Set([
 const PROVIDER = "cloudflare_workers_ai";
 const TEXT_MODEL = "@cf/black-forest-labs/flux-1-schnell";
 const EDIT_MODEL = "@cf/black-forest-labs/flux-2-klein-9b";
-const MAX_PROMPT_LENGTH = 1500;
+const MAX_PROMPT_LENGTH = 1800;
 const MAX_IMAGE_BYTES = 2 * 1024 * 1024;
 
 // Server-enforced daily caps (Asia/Kolkata calendar day).
@@ -126,7 +126,7 @@ Deno.serve(async (request: Request) => {
 
   const prompt = String(body?.prompt || "").trim();
   if (prompt.length < 5 || prompt.length > MAX_PROMPT_LENGTH) {
-    return json({ error: "Enter a prompt between 5 and 1,500 characters." }, 400, origin);
+    return json({ error: "The submitted prompt and composition guidance must be between 5 and 1,800 characters." }, 400, origin);
   }
 
   const imageB64 = typeof body.image_b64 === "string" ? body.image_b64.trim() : "";
