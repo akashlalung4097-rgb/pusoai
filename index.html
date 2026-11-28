@@ -1828,7 +1828,7 @@ body.light #photoModal #commentInput::placeholder{color:#748096!important;opacit
 <header class="pg-top-header"><div class="container nav">
 <a class="brand pg-top-brand" href="#home" aria-label="PusoAI Home"><span class="pg-logo-mark" aria-hidden="true"><svg viewBox="0 0 64 64" role="img" focusable="false"><defs><linearGradient id="pusoLogoBg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#168cff"/><stop offset="1" stop-color="#1027bd"/></linearGradient><linearGradient id="pusoLogoEdge" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#42f4ff"/><stop offset="1" stop-color="#3977ff"/></linearGradient></defs><rect x="3" y="3" width="58" height="58" rx="15" fill="url(#pusoLogoBg)" stroke="url(#pusoLogoEdge)" stroke-width="2.5"/><path d="M19 48V17h17c9 0 14 5 14 13S45 43 36 43h-7v5zM29 34h7c3 0 5-1 5-4s-2-4-5-4h-7z" fill="#fff"/><rect x="43" y="9" width="9" height="9" rx="2" fill="#fff"/></svg></span><span>Puso<b>AI</b></span></a>
 <nav class="navlinks" aria-label="Studio modes"><a href="#studio" class="pg-active-link">Image mode</a><a href="#video-mode" class="pg-mode-disabled" aria-disabled="true" title="Video generation is not connected yet">Video mode <small>SOON</small></a><a href="/ai-prompt-guide.html">AI Tools</a></nav>
-<div class="navactions"><label class="pg-global-search" aria-label="Search gallery"><span>⌕</span><input id="pgGlobalSearch" type="search" placeholder="Search gallery…"><kbd>↵</kbd></label><div class="pg-notification-wrap"><button class="iconbtn pg-top-icon" id="pgNotifications" type="button" aria-label="Notifications" aria-haspopup="dialog" aria-expanded="false" aria-controls="pgNotificationPanel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg><span class="pg-notification-count" id="pgNotificationCount" aria-live="polite">0</span></button><section class="pg-notification-popover" id="pgNotificationPanel" hidden aria-label="Notifications"><div class="pg-notification-head"><b>Notifications</b><div class="pg-notification-head-actions"><button type="button" id="pgNotificationReadAll">Mark all read</button><button type="button" id="pgNotificationClose" aria-label="Close notifications">✕</button></div></div><div class="pg-notification-list" id="pgNotificationList"><div class="pg-notification-empty">You’re all caught up.</div></div><div class="pg-notification-foot">Updates for this browser · AI activity · Gallery · Likes · Comments · Auto-delete after 5 days</div></section></div><button class="iconbtn" id="themeBtn" title="Theme" aria-label="Toggle theme">☾</button><button class="admin-nav-btn primary" id="adminOpen" style="display:none">Admin</button></div>
+<div class="navactions"><label class="pg-global-search" aria-label="Search gallery"><span>⌕</span><input id="pgGlobalSearch" type="search" placeholder="Search gallery…"><kbd>↵</kbd></label><div class="pg-notification-wrap"><button class="iconbtn pg-top-icon" id="pgNotifications" type="button" aria-label="Notifications" aria-haspopup="dialog" aria-expanded="false" aria-controls="pgNotificationPanel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg><span class="pg-notification-count" id="pgNotificationCount" aria-live="polite">0</span></button><section class="pg-notification-popover" id="pgNotificationPanel" hidden aria-label="Notifications"><div class="pg-notification-head"><b>Notifications</b><div class="pg-notification-head-actions"><button type="button" id="pgNotificationReadAll">Mark all read</button><button type="button" id="pgNotificationClose" aria-label="Close notifications">✕</button></div></div><div class="pg-notification-list" id="pgNotificationList" aria-live="polite" aria-relevant="additions text"><div class="pg-notification-empty">You’re all caught up.</div></div><div class="pg-notification-foot">Updates for this browser · AI activity · Gallery · Likes · Comments · Auto-delete after 5 days</div></section></div><button class="iconbtn" id="themeBtn" title="Theme" aria-label="Toggle theme">☾</button><button class="admin-nav-btn primary" id="adminOpen" style="display:none">Admin</button></div>
 </div></header>
 <aside class="pg-sidebar" aria-label="Main navigation"><a class="pg-sidebar-logo" href="#home"><span class="pg-sidebar-mark"><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="3" y="3" width="58" height="58" rx="15" fill="url(#pusoLogoBg)" stroke="url(#pusoLogoEdge)" stroke-width="2.5"/><path d="M19 48V17h17c9 0 14 5 14 13S45 43 36 43h-7v5zM29 34h7c3 0 5-1 5-4s-2-4-5-4h-7z" fill="#fff"/><rect x="43" y="9" width="9" height="9" rx="2" fill="#fff"/></svg></span><span>Puso<b>AI</b><small>CREATIVE STUDIO</small></span></a><div class="pg-sidebar-label">WORKSPACE</div><nav class="pg-sidebar-nav"><a class="active" href="#home"><span>⌂</span>Home</a><a href="#studio"><span>✦</span>AI Image Generator</a><a href="#explore"><span>▦</span>Gallery</a><a href="#generationHistoryPanel"><span>◷</span>History</a></nav><div class="pg-sidebar-bottom"><div class="pg-profile-avatar">G</div><div class="pg-profile-copy"><b>Guest Creator</b><small>No account needed</small></div><span class="pg-profile-dot"></span></div></aside>
 <nav class="pg-mobile-nav" aria-label="Mobile navigation"><a href="#home"><span>⌂</span>Home</a><a href="#studio"><span>✦</span>Create</a><a href="#explore"><span>▦</span>Gallery</a><a href="#generationHistoryPanel"><span>◷</span>History</a></nav>
@@ -4194,7 +4194,7 @@ function prunePusoaiNotifications(){
 }
 function loadPusoaiNotifications(){
   try{
-    const saved=JSON.parse(storageGet(PUSOAI_NOTIFICATIONS_KEY)||'[]');
+    const saved=JSON.parse(storageGet(PUSOAI_NOTIFICATIONS_KEY)||storageGet(PUSOAI_NOTIFICATIONS_KEY,'session')||'[]');
     pusoaiNotifications=Array.isArray(saved)?saved:[];
   }catch(_error){pusoaiNotifications=[];}
   prunePusoaiNotifications();
@@ -4202,7 +4202,15 @@ function loadPusoaiNotifications(){
 }
 function savePusoaiNotifications(){
   prunePusoaiNotifications();
-  try{storageSet(PUSOAI_NOTIFICATIONS_KEY,JSON.stringify(pusoaiNotifications.slice(0,60)));}catch(error){console.warn('Notification storage unavailable:',error);}
+  const serialized=JSON.stringify(pusoaiNotifications.slice(0,60));
+  // Fall back to tab-session storage when local storage is blocked or full.
+  // This keeps the bell functional without pretending that private-mode data
+  // will sync to other tabs or devices.
+  if(!storageSet(PUSOAI_NOTIFICATIONS_KEY,serialized)){
+    storageSet(PUSOAI_NOTIFICATIONS_KEY,serialized,'session');
+  }else{
+    storageRemove(PUSOAI_NOTIFICATIONS_KEY,'session');
+  }
 }
 function renderPusoaiNotifications(){
   if(prunePusoaiNotifications())savePusoaiNotifications();
@@ -4352,7 +4360,7 @@ function setupPusoaiNotificationCenter(){
   });
   document.addEventListener('visibilitychange',()=>{
     if(document.visibilityState==='visible'){
-      syncFromStorage(storageGet(PUSOAI_NOTIFICATIONS_KEY)||'[]');
+      syncFromStorage(storageGet(PUSOAI_NOTIFICATIONS_KEY)||storageGet(PUSOAI_NOTIFICATIONS_KEY,'session')||'[]');
     }
   });
 }
