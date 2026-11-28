@@ -769,3 +769,23 @@ body.light .admin .admin-quick-actions-head h3 { color: var(--adm-ink) !importan
   outline: 3px solid color-mix(in srgb, var(--adm-accent) 32%, transparent);
   outline-offset: 2px;
 }
+
+/* Admin is a control surface: no decorative global entrance, glow or floating animation. */
+#adminPanel *,
+#adminPanel *::before,
+#adminPanel *::after {
+  animation: none !important;
+}
+#adminPanel button {
+  transform: none;
+  box-shadow: none;
+  transition: color 150ms ease, background-color 150ms ease, border-color 150ms ease;
+}
+#adminPanel button:hover {
+  transform: none;
+  box-shadow: none;
+}
+#adminPanel .admin-photo-card:hover {
+  transform: none;
+  box-shadow: none;
+}
